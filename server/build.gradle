@@ -25,16 +25,15 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	//swagger
-	implementation 'io.springfox:springfox-swagger2:3.0.0'
-	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
 
 	//mapstruct
 	implementation 'org.mapstruct:mapstruct:1.5.2.Final'
-	implementation 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 
