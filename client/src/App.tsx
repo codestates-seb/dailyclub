@@ -1,17 +1,17 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { ThemeProvider } from "styled-components";
-import Login from "./pages/Login";
-import SignUp from "./pages/SignUp";
-import Main from "./pages/Main";
-import { GlobalStyles } from "./styles";
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import Main from './pages/Main';
+import { GlobalStyles } from './styles';
 
-function App() {
+const App: React.FC = () => {
   return (
     <div>
       <ThemeProvider
         theme={{
-          lightGrey: "#e2e6e8",
-          accent: "#38d9a9",
+          lightGrey: '#e2e6e8',
+          accent: '#38d9a9',
         }}
       >
         <GlobalStyles />
@@ -25,6 +25,6 @@ function App() {
       </ThemeProvider>
     </div>
   );
-}
+};
 
 export default App;
