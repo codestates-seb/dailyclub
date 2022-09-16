@@ -1,4 +1,4 @@
-package com.codestates.team5.dailyclub.common;
+package com.codestates.team5.dailyclub.common.audit;
 
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
