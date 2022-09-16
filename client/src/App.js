@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Main from "./pages/Main";
 import { GlobalStyles } from "./styles";
+import Header from "./components/Header";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
       >
         <GlobalStyles />
         <BrowserRouter>
+          <Header isLoggedIn={true} />
           <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/signup" element={<SignUp />} />
