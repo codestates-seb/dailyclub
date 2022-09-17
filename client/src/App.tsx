@@ -5,6 +5,7 @@ import SignUp from './pages/SignUp';
 import Main from './pages/Main';
 import { GlobalStyles } from './styles';
 import Header from 'components/Header';
+import Footer from 'components/Footer';
 
 const App: React.FC = () => {
   return (
@@ -23,6 +24,7 @@ const App: React.FC = () => {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
           </Routes>
+          <Footer />
         </BrowserRouter>
       </ThemeProvider>
     </div>
