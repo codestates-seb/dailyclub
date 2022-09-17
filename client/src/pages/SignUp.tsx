@@ -1,4 +1,6 @@
+import Layout from 'components/Layout';
+
 function SignUp() {
-  return <>회원가입</>;
+  return <Layout>회원가입</Layout>;
 }
 export default SignUp;
