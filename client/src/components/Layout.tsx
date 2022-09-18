@@ -9,6 +9,7 @@ const Content = styled.main`
   /* position때문에 justify, align center 적용 안됨*/
   left: 50%;
   transform: translate(-50%, 0);
+  padding: 4rem 0;
 `;
 function Layout({ children }: PropsWithChildren) {
   return <Content>{children}</Content>;
