@@ -1,7 +1,7 @@
 package com.codestates.team5.dailyclub.user.entity;
 
 
-import com.codestates.team5.dailyclub.common.Auditable;
+import com.codestates.team5.dailyclub.common.audit.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
