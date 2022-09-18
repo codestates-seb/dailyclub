@@ -61,7 +61,7 @@ const LoginText = styled.div`
   display: flex;
   align-items: center;
   font-weight: 300;
-  font-size: 0.5rem;
+  font-size: 1.1rem;
   margin-left: 1rem;
   color: #ff5924;
 `;
