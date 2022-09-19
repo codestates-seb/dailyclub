@@ -27,7 +27,7 @@ export const ModalView = styled.div`
   border-radius: 5px;
 `;
 
-const MessageInput = styled.input`
+const MessageInput = styled.textarea`
   padding: 5px;
   width: 100%;
   height: 100%;
@@ -80,7 +80,7 @@ function MessageModal() {
       <ModalView>
         <ModalTitle>문의내용</ModalTitle>
         <MessageForm>
-          <MessageInput type="textarea"></MessageInput>
+          <MessageInput></MessageInput>
           <BtnGroup>
             <SendBtn>보내기</SendBtn>
             <SendCancelBtn>취소하기</SendCancelBtn>

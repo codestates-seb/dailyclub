@@ -1,5 +1,5 @@
-import { createGlobalStyle } from "styled-components";
-import reset from "styled-reset";
+import { createGlobalStyle } from 'styled-components';
+import reset from 'styled-reset';
 
 export const GlobalStyles = createGlobalStyle`
   ${reset}
@@ -13,6 +13,9 @@ export const GlobalStyles = createGlobalStyle`
     font-family:'Open Sans', sans-serif;
   }
   input {
+    all:unset;
+  }
+  textarea {
     all:unset;
   }
   a {
