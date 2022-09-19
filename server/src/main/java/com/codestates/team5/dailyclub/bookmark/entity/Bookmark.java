@@ -1,6 +1,6 @@
 package com.codestates.team5.dailyclub.bookmark.entity;
 
-import com.codestates.team5.dailyclub.common.Auditable;
+import com.codestates.team5.dailyclub.common.audit.Auditable;
 import com.codestates.team5.dailyclub.program.entity.Program;
 import com.codestates.team5.dailyclub.user.entity.User;
 import lombok.AllArgsConstructor;
