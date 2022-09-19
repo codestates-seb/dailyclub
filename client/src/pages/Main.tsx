@@ -6,6 +6,7 @@ import QuestionMark from '../images/QuestionMark.svg';
 import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
 import { useState } from 'react';
+import ProgressBar from 'components/ProgressBar';
 
 const WrapContainer = styled.div``;
 const RecruitText = styled.div`
@@ -276,7 +277,12 @@ export default function Main() {
                 </ProgBanner>
                 <ProgTitle>{el.title}</ProgTitle>
                 <LevelPercent percent={el?.percent} />
-                <ProgProgressBar>진행바</ProgProgressBar>
+                <ProgProgressBar>
+                  <ProgressBar
+                    currentPerson={el.currentPerson}
+                    totalPerson={el.totalPerson}
+                  />
+                </ProgProgressBar>
                 <ProgWrapper>
                   <ProgPerson>
                     모집인원 {el.currentPerson} / {el.totalPerson}
