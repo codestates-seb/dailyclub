@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
-import { faEnvelope } from '@fortawesome/free-regular-svg-icons';
 import { useState } from 'react';
+import Logo from '../images/Logo.svg';
+import Pen from '../images/Pen.svg';
+import Message from '../images/Message.svg';
+import Search from '../images/Search.svg';
 
 const HeaderContainer = styled.div`
   position: fixed;
@@ -27,7 +28,7 @@ const HeaderContent = styled.div`
 const IconContainer = styled.div`
   display: flex;
 `;
-const Logo = styled.div``;
+const LogoContent = styled.div``;
 const Icon = styled.div`
   margin-left: 1rem;
   display: flex;
@@ -190,13 +191,19 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
     <>
       <HeaderContainer>
         <HeaderContent>
-          <Logo>
-            <Link to="/">로고</Link>
-          </Logo>
+          <LogoContent>
+            <Link to="/">
+              <img src={Logo} alt="logo" style={{ height: 55, width: 90 }} />
+            </Link>
+          </LogoContent>
           <IconContainer>
             <SearchForm>
               <SearchBtn>
-                <FontAwesomeIcon icon={faSearch} size="lg" />
+                <img
+                  src={Search}
+                  alt="logo"
+                  style={{ height: 15, width: 15 }}
+                />
               </SearchBtn>
               <SearchInput placeholder="프로그램 / 모임을 검색해보세요" />
             </SearchForm>
@@ -204,12 +211,20 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
               <>
                 <Icon>
                   <Link to="/">
-                    <FontAwesomeIcon icon={faPenToSquare} size="2xl" />
+                    <img
+                      src={Pen}
+                      alt="logo"
+                      style={{ height: 25, width: 25 }}
+                    />
                   </Link>
                 </Icon>
                 <Icon>
                   <Link to="/">
-                    <FontAwesomeIcon icon={faEnvelope} size="2xl" />
+                    <img
+                      src={Message}
+                      alt="logo"
+                      style={{ height: 25, width: 25 }}
+                    />
                   </Link>
                 </Icon>
                 <Icon>
