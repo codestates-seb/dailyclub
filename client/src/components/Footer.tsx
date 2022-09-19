@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 const FooterBox = styled.div`
+  margin-top: 50vh;
   height: 150px;
   width: 100%;
   background-color: #262729;
