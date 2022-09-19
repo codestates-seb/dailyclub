@@ -9,7 +9,6 @@ const LavelTop = styled.div`
   justify-content: center;
   width: 4.8rem;
   padding: 0.2rem 0.4rem;
-  margin-bottom: 0.5rem;
   font-size: 0.5rem;
   font-weight: 600;
   border-radius: 10px;

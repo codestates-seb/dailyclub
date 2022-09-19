@@ -1,13 +1,16 @@
 import axios from 'axios';
 import Layout from 'components/Layout';
 import OauthBtn from 'components/OAuth/OauthBtn';
+import OauthGoogleBtn from 'components/OAuth/OauthGoogleBtn';
+import OauthNaverBtn from 'components/OAuth/OauthNaverBtn';
 import OauthTitle from 'components/OAuth/OauthTitle';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const LoginContainer = styled.div`
-  padding: 0 220px;
+  margin: 0 auto;
+  width: 360px;
 `;
 const LoginForm = styled.form`
   display: flex;
@@ -92,6 +95,8 @@ export default function Login() {
             <Link to="/signup">회원가입</Link>
           </SignUpText>
         </WrapperColumn>
+        <OauthGoogleBtn loginText="로그인" />
+        <OauthNaverBtn loginText="로그인" />
       </LoginContainer>
     </Layout>
   );
