@@ -33,8 +33,24 @@ public class Message extends Auditable {
     @NotNull
     private String text;
 
-    @NotNull
-    private Character statusRead = 'F';
+    @Enumerated(value = EnumType.STRING)
+    private Message.readStatus readStatus;
+
+
+
+    public enum readStatus {
+        READ("READ"),
+        UNREADN("UNREAD");
+
+        private String readStatus;
+        readStatus(String readStatus) {
+            this.readStatus = readStatus;
+        }
+
+        public String getReadStatus() {
+            return this.readStatus;
+        }
+    }
 
 
 

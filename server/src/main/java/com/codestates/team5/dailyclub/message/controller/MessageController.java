@@ -24,12 +24,13 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/messages")
 public class MessageController {
+    //hidden 없애기
 
     private final MessageService messageService;
     private final MessageMapper messageMapper;
 
     @Operation(summary = "메세지 작성")
-    @ApiResponse(content = @Content(schema = @Schema(implementation = MessageDto.Response.class)))
+    @ApiResponse(responseCode = "201", description = "CREATED", content = @Content(schema = @Schema(implementation = MessageDto.Response.class)))
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> postMessage(@RequestBody MessageDto.Post requestBody) {
         Message message = messageMapper.messagePostToMessage(requestBody);
@@ -37,26 +38,27 @@ public class MessageController {
         return new ResponseEntity<>(messageMapper.messageToMessageResponseDto(response), HttpStatus.CREATED);
     }
     @Operation(summary = "메세지 하나 조회")
-    @ApiResponse(content = @Content(schema = @Schema(implementation = MessageDto.Response.class)))
-    @GetMapping(value = "/{message-id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getMessage(@Parameter(hidden = true) @PathVariable("message-id") long id) {
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = MessageDto.Response.class)))
+    @GetMapping(value = "/{messageId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getMessage( @PathVariable("messageId") long id) {
         Message response = messageService.findMessage(id);
         return new ResponseEntity<>(messageMapper.messageToMessageResponseDto(response), HttpStatus.OK);
     }
 
     @Operation(summary = "메세지 리스트 조회")
-    @ApiResponse(content = @Content(schema = @Schema(implementation = MessageDto.Response.class)))
-    @GetMapping( produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getMessages(int page, int size) {
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = MessageDto.Response.class)))
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MultiResponseDto<MessageDto.Response>> getMessages(@Parameter(description = "페이지 번호") @RequestParam int page,
+                                                                             @Parameter(description = "한 페이지당 알림 수") @RequestParam int size) {
         Page<Message> pageMessages = messageService.findMessages(page -1, size);
         List<Message> messages = pageMessages.getContent();
         List<MessageDto.Response> responseDtos = messageMapper.messagesToMessageResponseDtos(messages);
         return new ResponseEntity<>(new MultiResponseDto<>(responseDtos), HttpStatus.OK);
     }
     @Operation(summary = "메세지 삭제")
-    @ApiResponse(content = @Content(schema = @Schema(implementation = MessageDto.Response.class)))
-    @DeleteMapping(value = "/{message-id}" ,produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteMessage (@Parameter(hidden = true) @PathVariable("message-id") long id) {
+    @ApiResponse(responseCode = "204", description = "NO CONTENT")
+    @DeleteMapping(value = "/{messageId}" ,produces = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteMessage ( @PathVariable("messageId") long id) {
         messageService.deleteMessage(id);
     }
 
