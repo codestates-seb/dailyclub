@@ -1,3 +1,4 @@
+import AreaFilter from 'components/AreaFilter';
 import Layout from 'components/Layout';
 import { useState } from 'react';
 import styled from 'styled-components';
@@ -177,6 +178,16 @@ const CreateBtn = styled.button`
   font-size: 20px;
 `;
 
+const AreaInputWrap = styled.div`
+  height: 100%;
+  width: 100%;
+  border: 1px solid white;
+  border-radius: 5px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+`;
+
 function ProgCreate() {
   // const [image, setImage] = useState();
   const [kind, setKind] = useState('00');
@@ -234,7 +245,9 @@ function ProgCreate() {
             <RecruitContents>
               <Redstar>*</Redstar>
               <RecruitName>모집지역</RecruitName>
-              <RecruitInput></RecruitInput>
+              <AreaInputWrap>
+                <AreaFilter></AreaFilter>
+              </AreaInputWrap>
             </RecruitContents>
             <RecruitContents>
               <Redstar>*</Redstar>
