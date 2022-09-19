@@ -7,7 +7,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const SignUpContainer = styled.div`
-  padding: 0 220px;
+  margin: 0 auto;
+  width: 360px;
 `;
 const SignUpForm = styled.form`
   display: flex;

@@ -7,7 +7,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const LoginContainer = styled.div`
-  padding: 0 220px;
+  margin: 0 auto;
+  width: 360px;
 `;
 const LoginForm = styled.form`
   display: flex;
