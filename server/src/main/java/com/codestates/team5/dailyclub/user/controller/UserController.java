@@ -27,7 +27,7 @@ public class UserController {
     private final UserMapper userMapper;
 
     @Operation(summary = "회원가입")
-    @ApiResponse(content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
+    @ApiResponse(responseCode = "201", description = "CREATED", content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> postUser(@RequestBody UserDto.Post requestBody) {
         User user = userMapper.userPostToUser(requestBody);
@@ -36,34 +36,35 @@ public class UserController {
 
     }
     @Operation(summary = "회원정보 수정")
-    @ApiResponse(content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
-    @PatchMapping(value = "/{user-id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> patchUser(@RequestBody UserDto.Patch requestBody, @Parameter( hidden = true ) @PathVariable("user-id") long id) {
+    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
+    @PatchMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> patchUser(@RequestBody UserDto.Patch requestBody, @PathVariable("userId") long id) {
         User user = userMapper.userPatchToUser(requestBody);
         User response = userService.updateUser(user, id);
         return new ResponseEntity<>(userMapper.userToUserResponseDto(response), HttpStatus.OK);
 
     }
     @Operation(summary = "회원 한명 조회")
-    @ApiResponse(content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
-    @GetMapping(value = "/{user-id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUser( @Parameter( hidden = true ) @PathVariable("user-id") long id) {
+    @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
+    @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getUser(@PathVariable("userId") long id) {
         User response = userService.findUser(id);
         return new ResponseEntity<>(userMapper.userToUserResponseDto(response), HttpStatus.OK);
     }
     @Operation(summary = "회원 리스트")
-    @ApiResponse
+    @ApiResponse(responseCode = "200", description = "OK")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MultiResponseDto<UserDto.Response>> getUsers(int page, int size) {
+    public ResponseEntity<MultiResponseDto<UserDto.Response>> getUsers(@Parameter(description = "페이지 번호") @RequestParam int page,
+                                                                       @Parameter(description = "한 페이지당 알림 수") @RequestParam int size) {
         Page<User> pageUsers = userService.findUsers(page - 1, size);
         List<User> users = pageUsers.getContent();
         List<UserDto.Response> responseDtos = userMapper.usersToUserResponseDtos(users);
         return new ResponseEntity<>(new MultiResponseDto<>(responseDtos), HttpStatus.OK);
     }
     @Operation(summary = "회원 탈퇴")
-    @ApiResponse(content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
-    @DeleteMapping(value = "/{user-id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteUser ( @Parameter( hidden = true) @PathVariable("user-id") long id) {
+    @ApiResponse(responseCode = "204", description = "NOT CONTENT")
+    @DeleteMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteUser (@PathVariable("userId") long id) {
         userService.deleteUser(id);
     }
 
