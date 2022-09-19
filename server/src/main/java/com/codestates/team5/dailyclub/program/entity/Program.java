@@ -8,9 +8,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Getter
 @Entity
@@ -41,10 +50,10 @@ public class Program extends Auditable {
     private Location location;
 
     @NotNull
-    private LocalDateTime programDate;
+    private LocalDate programDate;
 
-//  수정 예정
-    private String picture;
+    @Lob
+    private byte[] picture;
 
     @NotNull
     private Integer minKind;
@@ -56,7 +65,6 @@ public class Program extends Auditable {
         POSSIBLE,
         IMMINENT,
         IMPOSSIBLE;
-
     }
 
 }
