@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MessageService {
-    public Message createMessage (Message message) {
+    public Message createMessage (Message message, long userId) {
         return null;
     }
 
