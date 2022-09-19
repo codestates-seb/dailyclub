@@ -13,24 +13,35 @@ const RecruitText = styled.div`
   font-weight: 600;
   margin-bottom: 2rem;
 `;
-
 const IngContainer = styled.div``;
 const FilterContainer = styled.div`
   display: flex;
 `;
-const DateContainer = styled.button`
+const DateInput = styled.input`
   height: 30px;
-  width: 100px;
+  width: 115px;
   border: 0.7px solid lightGrey;
   border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-left: 0.3rem;
-  padding: 0 0.3rem;
+  padding: 0 0.4rem;
+  &::placeholder {
+    color: black;
+  }
 `;
-const LevelRange = styled(DateContainer)`
+const LevelRange = styled.button`
   position: relative;
+  height: 30px;
+  width: 130px;
+  border: 0.7px solid lightGrey;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 0.3rem;
+  padding: 0 0.4rem;
 `;
 const WrapLevel = styled.div`
   position: absolute;
@@ -133,7 +144,16 @@ interface ProgProps {
 }
 export default function Main() {
   const [levelOpened, setLevelOpened] = useState(false);
-  const [rangeValue, setRangeValue] = useState('00');
+  const [rangeValue, setRangeValue] = useState('');
+  const [dateSelected, setDateSelected] = useState('');
+
+  const progFilterProps = {
+    location: '',
+    date: dateSelected,
+    levelRange: rangeValue,
+  };
+  // console.log(progFilterProps); // filter 조회 api 보낼때 객체
+
   const programList: ProgProps[] = [
     {
       id: 1,
@@ -209,11 +229,19 @@ export default function Main() {
           <RecruitText>모집 중인 모임</RecruitText>
           <FilterContainer>
             <AreaFilter />
-            <DateContainer>
-              기간 <img src={DownArrow} alt="down arrow" />
-            </DateContainer>
+            <DateInput
+              type="text"
+              required
+              placeholder="날짜 선택"
+              aria-required="true"
+              // value={dateSelected}
+              onBlur={(e) => (e.target.type = 'text')}
+              onChange={(e) => setDateSelected(e.target.value)}
+              // onChange={(e) => console.log(e.target.value)}
+              onFocus={(e) => (e.target.type = 'date')}
+            />
             <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
-              친절도 &nbsp;
+              친절도 &nbsp;{rangeValue}%
               <img src={QuestionMark} alt="question mark" />
               <img src={DownArrow} alt="down arrow" />
               {levelOpened ? (
@@ -259,6 +287,7 @@ export default function Main() {
             ))}
           </ProgContainer>
         </IngContainer>
+
         <DoneContainer>
           <RecruitText>모집 마감된 모임</RecruitText>
           <ProgContainer>
