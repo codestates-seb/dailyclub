@@ -145,15 +145,16 @@ interface ProgProps {
 }
 export default function Main() {
   const [levelOpened, setLevelOpened] = useState(false);
+  const [areaSelected, setAreaSelected] = useState('');
   const [rangeValue, setRangeValue] = useState('');
   const [dateSelected, setDateSelected] = useState('');
 
   const progFilterProps = {
-    location: '',
+    location: areaSelected,
     date: dateSelected,
     levelRange: rangeValue,
   };
-  // console.log(progFilterProps); // filter 조회 api 보낼때 객체
+  // console.log(progFilterProps); // 필터조회api 보낼때 객체 {location: '경기/강원', date: '2022-09-07', levelRange: '12'}
 
   const programList: ProgProps[] = [
     {
@@ -218,27 +219,20 @@ export default function Main() {
     },
   ];
 
-  const handleRangeVal = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRangeValue(e.target.value);
-    // console.log(e.target.value);
-  };
-
   return (
     <Layout>
       <WrapContainer>
         <IngContainer>
           <RecruitText>모집 중인 모임</RecruitText>
           <FilterContainer>
-            <AreaFilter />
+            <AreaFilter setAreaSelected={setAreaSelected} />
             <DateInput
               type="text"
               required
               placeholder="날짜 선택"
               aria-required="true"
-              // value={dateSelected}
               onBlur={(e) => (e.target.type = 'text')}
               onChange={(e) => setDateSelected(e.target.value)}
-              // onChange={(e) => console.log(e.target.value)}
               onFocus={(e) => (e.target.type = 'date')}
             />
             <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
@@ -258,7 +252,7 @@ export default function Main() {
                     min={0}
                     max={100}
                     step={1}
-                    onChange={handleRangeVal}
+                    onChange={(e) => setRangeValue(e.target.value)}
                   />
                   <RangeValue>{rangeValue}%</RangeValue>
                 </WrapLevel>
@@ -308,7 +302,12 @@ export default function Main() {
                 </ProgBanner>
                 <ProgTitle>{el.title}</ProgTitle>
                 <LevelPercent percent={el?.percent} />
-                <ProgProgressBar>진행바</ProgProgressBar>
+                <ProgProgressBar>
+                  <ProgressBar
+                    currentPerson={el.totalPerson}
+                    totalPerson={el.totalPerson}
+                  />
+                </ProgProgressBar>
                 <ProgWrapper>
                   <ProgPerson>
                     모집인원 {el.totalPerson} / {el.totalPerson}

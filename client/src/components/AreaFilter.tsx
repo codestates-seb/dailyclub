@@ -47,7 +47,11 @@ export const DropDouwnList = styled.li`
   }
 `;
 
-function AreaFilter() {
+interface AreaProps {
+  setAreaSelected?: React.Dispatch<React.SetStateAction<string>>;
+}
+
+function AreaFilter({ setAreaSelected }: AreaProps) {
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [area, setArea] = useState<string>('지역');
 
@@ -58,6 +62,7 @@ function AreaFilter() {
   const handleClickArea = (e: React.MouseEvent<HTMLElement>) => {
     setArea((e.target as any).textContent);
     setIsClicked(!isClicked);
+    if (setAreaSelected) setAreaSelected((e.target as any).textContent);
   };
 
   const areaList: string[] = [
