@@ -36,7 +36,7 @@ public class NoticeDto {
     public static class Response {
         @Schema(description = "공지사항 ID", example = "1")
         private Long id;
-        @Schema(description = "공지사항 ID", example = "1")
+        @Schema(description = "유저 ID", example = "3")
         private Long userId;
         @Schema(description = "제목", example = "공지사항 제목입니다.")
         private String title;
