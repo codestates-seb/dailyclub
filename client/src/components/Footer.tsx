@@ -1,6 +1,8 @@
 import styled from 'styled-components';
 
 const FooterBox = styled.div`
+  position: relative;
+  top: 60px;
   height: 150px;
   width: 100%;
   background-color: #262729;
