@@ -288,7 +288,6 @@ export default function Main() {
             ))}
           </ProgContainer>
         </IngContainer>
-
         <DoneContainer>
           <RecruitText>모집 마감된 모임</RecruitText>
           <ProgContainer>

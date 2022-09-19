@@ -55,7 +55,8 @@ function AreaFilter({ setAreaSelected }: AreaProps) {
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [area, setArea] = useState<string>('지역');
 
-  const handleClickFilterButton = () => {
+  const handleClickFilterButton = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
     setIsClicked(!isClicked);
   };
 
