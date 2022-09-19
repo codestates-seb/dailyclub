@@ -104,6 +104,30 @@ const RecruitInput = styled.input`
   justify-content: center;
 `;
 
+const KindInputWrap = styled.div`
+  height: 100%;
+  width: 100%;
+  padding-left: 5px;
+  border: 1px solid #e2e6e8;
+  border-radius: 5px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const KindInput = styled.input`
+  width: 80%;
+  height: 3px;
+  margin: 1rem;
+  background: #ff5924;
+`;
+
+const KindValue = styled.div`
+  width: 20%;
+  font-size: 1.1rem;
+`;
+
 const ImageAdd = styled.div`
   display: flex;
   align-items: center;
@@ -154,11 +178,16 @@ const CreateBtn = styled.button`
 `;
 
 function ProgCreate() {
-  const [image, setImage] = useState();
+  // const [image, setImage] = useState();
+  const [kind, setKind] = useState('00');
 
-  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log((e.target as any).files);
+  const handleKindValue = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setKind(e.target.value);
   };
+
+  // const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setImage((e.target as any).files);
+  // };
 
   return (
     <Layout>
@@ -211,13 +240,17 @@ function ProgCreate() {
               <Redstar>*</Redstar>
               <RecruitName>친절도</RecruitName>
               {/* 친절도 인풋입니다 */}
-              <RecruitInput
-                type="range"
-                min="0"
-                max="100"
-                step="10"
-                name="kind"
-              ></RecruitInput>
+              <KindInputWrap>
+                <KindInput
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  name="kind"
+                  onChange={handleKindValue}
+                ></KindInput>
+                <KindValue>{kind}%</KindValue>
+              </KindInputWrap>
             </RecruitContents>
             <RecruitContents>
               <ImageAdd>이미지 첨부</ImageAdd>
@@ -233,11 +266,12 @@ function ProgCreate() {
               type="file"
               name="avatar"
               accept="image/*"
-              onChange={handleImage}
+              // onChange={handleImage}
             ></ImageInput>
             <CreateBtn>등록하기</CreateBtn>
           </RecruitInfo>
         </CreateForm>
+        {/* {image ? <img src={image}></img> : null} */}
       </CreateContainer>
     </Layout>
   );
