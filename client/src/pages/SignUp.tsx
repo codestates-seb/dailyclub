@@ -1,6 +1,8 @@
 import axios from 'axios';
 import Layout from 'components/Layout';
 import OauthBtn from 'components/OAuth/OauthBtn';
+import OauthGoogleBtn from 'components/OAuth/OauthGoogleBtn';
+import OauthNaverBtn from 'components/OAuth/OauthNaverBtn';
 import OauthTitle from 'components/OAuth/OauthTitle';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
@@ -116,6 +118,8 @@ export default function SignUp() {
           </LoginText>
           하세요
         </LoginLink>
+        <OauthGoogleBtn signupText="가입" />
+        <OauthNaverBtn signupText="가입" />
       </SignUpContainer>
     </Layout>
   );
