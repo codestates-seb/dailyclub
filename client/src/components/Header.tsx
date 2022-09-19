@@ -193,7 +193,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
         <HeaderContent>
           <LogoContent>
             <Link to="/">
-              <img src={Logo} alt="logo" style={{ height: 73, width: 90 }} />
+              <img src={Logo} alt="logo" style={{ height: 55, width: 90 }} />
             </Link>
           </LogoContent>
           <IconContainer>
