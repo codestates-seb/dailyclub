@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Layout from 'components/Layout';
 import OauthBtn from 'components/OAuth/OauthBtn';
+import OauthGoogleBtn from 'components/OAuth/OauthGoogleBtn';
 import OauthTitle from 'components/OAuth/OauthTitle';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
@@ -94,6 +95,7 @@ export default function Login() {
           </SignUpText>
         </WrapperColumn>
       </LoginContainer>
+      <OauthGoogleBtn />
     </Layout>
   );
 }

@@ -12,11 +12,12 @@ const WrapContainer = styled.div``;
 const RecruitText = styled.div`
   font-size: 1.2rem;
   font-weight: 600;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 `;
 const IngContainer = styled.div``;
 const FilterContainer = styled.div`
   display: flex;
+  margin-bottom: 1rem;
 `;
 const DateInput = styled.input`
   height: 30px;
