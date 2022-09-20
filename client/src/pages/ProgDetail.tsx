@@ -69,7 +69,7 @@ const ProglInfoWrap = styled.div`
     border: 1px solid #ddd;
     top: 74px;
     margin-bottom: 20px;
-    border-radius: 4px;
+    border-radius: 5px;
     padding: 0 20px;
     margin: 5px;
     margin-top: 10px;
@@ -96,7 +96,7 @@ const ProgRegion = styled.div`
 `
 
 const ProgApply = styled.button`
-    background-color: #1ebd8e;
+    background-color: #ff5100;
     color: white;
     box-sizing: border-box;
     max-width: 100%;
@@ -106,7 +106,7 @@ const ProgApply = styled.button`
     margin-bottom: 20px;
     padding: 10px 0;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     font-size: 18px;
     text-align: center;
 `
@@ -121,7 +121,7 @@ const LeaderInfo = styled.div`
     border: 1px solid #ddd;
     top: 74px;
     margin-bottom: 20px;
-    border-radius: 4px;
+    border-radius: 5px;
     padding: 20px;
     margin: 5px;
     margin-top: 10px;
@@ -146,7 +146,7 @@ const H3 = styled.h3`
 const MemItem = styled.div`
     margin: 0.7rem 0.7rem 0.7rem 0;
     border: 1px solid #efefef;
-    border-radius: 4px;
+    border-radius: 5px;
     padding: 15px;
 `
 const MemItemWrap1 = styled.div`
