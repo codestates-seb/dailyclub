@@ -215,6 +215,7 @@ function ProgCreate() {
               type="text"
               placeholder="제목을 입력해주세요."
               name="title"
+              required
             ></TitleInput>
             <ProgramInfoTitle>
               <Redstar>*</Redstar>
@@ -224,6 +225,7 @@ function ProgCreate() {
             <ContentsInput
               name="contents"
               placeholder="프로그램 설명을 입력해주세요."
+              required
             ></ContentsInput>
           </ProgramInfo>
           <RecruitInfo>
@@ -235,13 +237,18 @@ function ProgCreate() {
               <Redstar>*</Redstar>
               <RecruitName>모집인원</RecruitName>
               {/* 모집인원 인풋입니다 */}
-              <RecruitInput type="number" min="2" name="people"></RecruitInput>
+              <RecruitInput
+                type="number"
+                min="2"
+                name="people"
+                required
+              ></RecruitInput>
             </RecruitContents>
             <RecruitContents>
               <Redstar>*</Redstar>
               <RecruitName>진행날짜</RecruitName>
               {/* 진행날짜 인풋입니다 */}
-              <RecruitInput type="date" name="date"></RecruitInput>
+              <RecruitInput type="date" name="date" required></RecruitInput>
             </RecruitContents>
             <RecruitContents>
               <Redstar>*</Redstar>
@@ -262,6 +269,7 @@ function ProgCreate() {
                   step="1"
                   name="kind"
                   onChange={handleKindValue}
+                  required
                 ></KindInput>
                 <KindValue>{kind}%</KindValue>
               </KindInputWrap>
