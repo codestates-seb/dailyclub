@@ -139,8 +139,8 @@ export const ClubItem = styled.div`
 export const ClubImg = styled.div`
   border: 0.7px solid gray;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 30px;
 `;
 export const ClubInfo = styled.div`
   margin-left: 1rem;
