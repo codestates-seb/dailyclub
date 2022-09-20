@@ -1,6 +1,8 @@
 import AreaFilter from 'components/AreaFilter';
 import Layout from 'components/Layout';
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { ReactElement } from 'react';
+import { useState, useRef } from 'react';
 import styled from 'styled-components';
 
 const CreateContainer = styled.div`
@@ -193,6 +195,29 @@ function ProgCreate() {
   // const [image, setImage] = useState();
   const [kind, setKind] = useState('00');
 
+  const firstRef = useRef<any>(null);
+  const secondRef = useRef<any>(null); //focus 처리시 에러
+
+  //처음 렌더링 될 때 제목인풋에 포커즈
+  useEffect(() => {
+    firstRef.current.focus();
+  }, []);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
+
+  //제목인풋에서 엔터누를시 프로그램 설명 인풋으로 포커즈
+  const handleInput = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      if (event.target === firstRef.current) {
+        secondRef.current.focus();
+      } else {
+        return;
+      }
+    }
+  };
+
   const handleKindValue = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKind(e.target.value);
   };
@@ -204,7 +229,7 @@ function ProgCreate() {
   return (
     <Layout>
       <CreateContainer>
-        <CreateForm>
+        <CreateForm onSubmit={handleSubmit}>
           <ProgramInfo>
             <ProgramInfoTitle>
               <Redstar>*</Redstar>
@@ -215,6 +240,8 @@ function ProgCreate() {
               type="text"
               placeholder="제목을 입력해주세요."
               name="title"
+              ref={firstRef}
+              onKeyUp={handleInput}
               required
             ></TitleInput>
             <ProgramInfoTitle>
@@ -225,6 +252,7 @@ function ProgCreate() {
             <ContentsInput
               name="contents"
               placeholder="프로그램 설명을 입력해주세요."
+              ref={secondRef}
               required
             ></ContentsInput>
           </ProgramInfo>
@@ -290,7 +318,7 @@ function ProgCreate() {
               accept="image/*"
               // onChange={handleImage}
             ></ImageInput>
-            <CreateBtn>등록하기</CreateBtn>
+            <CreateBtn type="submit">등록하기</CreateBtn>
           </RecruitInfo>
         </CreateForm>
         {/* {image ? <img src={image}></img> : null} */}
