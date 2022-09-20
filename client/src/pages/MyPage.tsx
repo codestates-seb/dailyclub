@@ -5,10 +5,11 @@ import ProgressBar from 'components/ProgressBar';
 import LevelPercent from 'components/LevelPercent';
 import QuestionMark from '../images/QuestionMark.svg';
 import BookMarkTab from 'components/BookMarkTab';
+import MessageTab from 'components/Tab/MessageTab';
 
 const MyPageContainer = styled.div`
   display: flex;
-  height: 100%;
+  height: 100vh;
 `;
 
 /* 프로필 부분 - 정석 */
@@ -277,10 +278,7 @@ function MyPage() {
       name: '메시지함',
       content: (
         <>
-          <div>
-            메시지함 - 각자 파일작업 가능할듯
-            <div>메시지 목록써라</div>
-          </div>
+          <MessageTab />
         </>
       ),
     },

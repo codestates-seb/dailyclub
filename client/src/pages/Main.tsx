@@ -8,7 +8,9 @@ import LevelPercent from 'components/LevelPercent';
 import { useState } from 'react';
 import ProgressBar from 'components/ProgressBar';
 
-const WrapContainer = styled.div``;
+const WrapContainer = styled.div`
+  margin-bottom: 5rem;
+`;
 const RecruitText = styled.div`
   font-size: 1.2rem;
   font-weight: 600;
