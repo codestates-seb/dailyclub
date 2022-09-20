@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Layout from 'components/Layout';
 import styled from 'styled-components';
+import MessageTab from 'components/Tab/MessageTab';
 
 const MyPageContainer = styled.div`
   display: flex;
@@ -186,10 +187,7 @@ function MyPage() {
       name: '메시지함',
       content: (
         <>
-          <div>
-            메시지함 - 각자 파일작업 가능할듯
-            <div>메시지 목록써라</div>
-          </div>
+          <MessageTab />
         </>
       ),
     },
