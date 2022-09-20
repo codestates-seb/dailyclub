@@ -1,27 +1,36 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const FooterBox = styled.div`
-  margin-top: 50vh;
+  position: absolute;
+  bottom: 0;
   height: 150px;
   width: 100%;
-  background-color: #262729;
-  margin-top: 100vh;
-`;
-const FooterText1 = styled.h1`
-  padding-top: 30px;
+  background-color: rgb(38, 39, 41);
   color: white;
-  text-align: center;
+  padding: 0 20rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
-const FooterText2 = styled.h2`
-  color: white;
-  padding-top: 10px;
-  text-align: center;
+const FooterText1 = styled.div`
+  padding-bottom: 30px;
 `;
+const FooterText2 = styled.div`
+  padding-bottom: 30px;
+`;
+const InfoContainer = styled.div`
+  flex: 2;
+`;
+
 export default function Footer() {
   return (
     <FooterBox>
-      <FooterText1>Copyright ⓒ Daily Club</FooterText1>
-      <FooterText2>김준형 고민정 문태경 최정석 황인준</FooterText2>
+      <InfoContainer>
+        <FooterText1>Copyright ⓒ Daily Club</FooterText1>
+        <FooterText2>김준형 고민정 문태경 최정석 황인준</FooterText2>
+      </InfoContainer>
+      <Link to="/notice">공지사항</Link>
     </FooterBox>
   );
 }

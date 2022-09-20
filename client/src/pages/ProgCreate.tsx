@@ -5,7 +5,8 @@ import styled from 'styled-components';
 
 const CreateContainer = styled.div`
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  margin-bottom: 10rem;
 `;
 
 const CreateForm = styled.form`

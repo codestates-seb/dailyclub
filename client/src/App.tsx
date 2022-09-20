@@ -8,10 +8,11 @@ import Header from 'components/Header';
 import Footer from 'components/Footer';
 import ProgCreate from 'pages/ProgCreate';
 import MyPage from 'pages/MyPage';
+import NoticeList from 'pages/NoticeList';
 
 const App: React.FC = () => {
   return (
-    <div>
+    <div className="wrap">
       <ThemeProvider
         theme={{
           lightGrey: '#e2e6e8',
@@ -27,6 +28,7 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/createprogram" element={<ProgCreate />} />
             <Route path="/mypage" element={<MyPage />} />
+            <Route path="/notice" element={<NoticeList />} />
           </Routes>
           <Footer />
         </BrowserRouter>
