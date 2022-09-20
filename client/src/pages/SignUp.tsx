@@ -11,6 +11,7 @@ import styled from 'styled-components';
 const SignUpContainer = styled.div`
   margin: 0 auto;
   width: 360px;
+  height: 100vh;
 `;
 const SignUpForm = styled.form`
   display: flex;

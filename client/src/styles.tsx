@@ -11,6 +11,7 @@ export const GlobalStyles = createGlobalStyle`
   body {
     font-size:14px;
     font-family:'Open Sans', sans-serif;
+    height: 100%;
   }
   input {
     all:unset;
@@ -26,5 +27,9 @@ export const GlobalStyles = createGlobalStyle`
     background-color: white;
     cursor: pointer;
   }
-  
+  .wrap {
+  position: relative;
+  min-height: 100%;
+  padding-bottom: 114px;
+}
 `;

@@ -8,7 +8,7 @@ import QuestionMark from '../images/QuestionMark.svg';
 
 const MyPageContainer = styled.div`
   display: flex;
-  height: 100%;
+  height: 100vh;
 `;
 
 /* 프로필 부분 - 정석 */
