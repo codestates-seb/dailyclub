@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import Layout from 'components/Layout';
 import styled from 'styled-components';
+import ProgressBar from 'components/ProgressBar';
+import LevelPercent from 'components/LevelPercent';
+import QuestionMark from '../images/QuestionMark.svg';
 
 const MyPageContainer = styled.div`
   display: flex;
@@ -11,14 +14,82 @@ const MyPageContainer = styled.div`
 const Profile = styled.div`
   width: 40%;
   height: 100%;
-  border: 1px solid gray; // 구분위해 임시 표시
+  display: flex;
+  justify-content: end;
+  margin: 1rem;
+`;
+
+const ProfileWrap = styled.div`
+  width: 70%;
+  height: 40%;
+  padding: 2rem 1rem 2rem 1rem;
+  border: 1px solid #e2e6e8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const ProfileImage = styled.div`
+  width: 7rem;
+  height: 7rem;
+  margin: 1rem;
+  background-color: #e2e6e8;
+  border-radius: 50%;
+`;
+
+const ProfileNickname = styled.div`
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 1rem;
+`;
+
+const ProfileIntro = styled.div`
+  font-weight: lighter;
+  margin-bottom: 1rem;
+`;
+
+const ProfileUpdateBtn = styled.button`
+  width: 10rem;
+  height: 2rem;
+  border: 1px solid #e2e6e8;
+  border-radius: 5px;
+  color: #ff5924;
+  margin-bottom: 1rem;
+`;
+
+const KindWrap = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+`;
+
+const UpdateInput = styled.input`
+  width: 10rem;
+  height: 2rem;
+  border: 1px solid #e2e6e8;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+`;
+
+const UpdateImageInput = styled.input`
+  display: none;
+`;
+const UpdateImageLabel = styled.label`
+  width: 7rem;
+  height: 7rem;
+  margin: 1rem;
+  background-color: #e2e6e8;
+  border-radius: 50%;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 /* 탭 부분 */
 const TabContainer = styled.div`
   width: 60%;
   height: 100%;
-  border: 1px solid gray; // 구분위해 임시 표시
 `;
 const TabMenu = styled.ul`
   color: #bdbdbd;
@@ -146,6 +217,23 @@ const programList: ProgProps[] = [
   },
 ];
 
+// 유저정보 데이터
+const userProps: {
+  id: number;
+  nickname: string;
+  picture: string;
+  introduction: string;
+  kind: number;
+  role: string;
+} = {
+  id: 1,
+  nickname: '냥냥',
+  picture: '사진',
+  introduction: '자기소개 입니다.',
+  kind: 50,
+  role: 'USER',
+};
+
 function MyPage() {
   const [currentTab, setCurrentTab] = useState<number>(0);
   const menuArr = [
@@ -218,11 +306,67 @@ function MyPage() {
     </li>
   ));
 
+  const [isUpdateMode, setIsUpdateMode] = useState<boolean>(false);
+
+  //프로필 수정모드 변경 함수입니다
+  const handleUpdateMode = () => {
+    setIsUpdateMode(true);
+  };
+
+  //프로필 수정하는 함수입니다
+  const profileUpdate = () => {
+    setIsUpdateMode(false);
+  };
   return (
     <Layout>
       <MyPageContainer>
         {/* 프로필 부분 - 정석 */}
-        <Profile></Profile>
+        <Profile>
+          <ProfileWrap>
+            {isUpdateMode ? (
+              <>
+                <UpdateImageLabel htmlFor="file"></UpdateImageLabel>
+                <UpdateImageInput
+                  id="file"
+                  type="file"
+                  name="avatar"
+                  accept="image/*"
+                ></UpdateImageInput>
+                <UpdateInput
+                  type="text"
+                  value={userProps.nickname}
+                ></UpdateInput>
+                <UpdateInput
+                  type="text"
+                  value={userProps.introduction}
+                ></UpdateInput>
+                <ProfileUpdateBtn onClick={profileUpdate}>
+                  수정완료
+                </ProfileUpdateBtn>
+              </>
+            ) : (
+              <>
+                <ProfileImage></ProfileImage>
+                <ProfileNickname>{userProps.nickname}</ProfileNickname>
+                <ProfileIntro>{userProps.introduction}</ProfileIntro>
+                <ProfileUpdateBtn onClick={handleUpdateMode}>
+                  프로필 수정
+                </ProfileUpdateBtn>
+              </>
+            )}
+            <KindWrap>
+              <div>
+                친절도 &nbsp;
+                <img src={QuestionMark} alt="question mark" />
+              </div>
+              <LevelPercent percent={userProps.kind}></LevelPercent>
+            </KindWrap>
+            <ProgressBar
+              currentPerson={userProps.kind}
+              totalPerson={100}
+            ></ProgressBar>
+          </ProfileWrap>
+        </Profile>
 
         {/* 탭 모임목록부분 - 태경 */}
         <TabContainer>
