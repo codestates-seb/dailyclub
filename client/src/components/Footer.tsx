@@ -5,6 +5,7 @@ const FooterBox = styled.div`
   height: 150px;
   width: 100%;
   background-color: #262729;
+  margin-top: 100vh;
 `;
 const FooterText1 = styled.h1`
   padding-top: 30px;

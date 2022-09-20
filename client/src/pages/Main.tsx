@@ -6,31 +6,44 @@ import QuestionMark from '../images/QuestionMark.svg';
 import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
 import { useState } from 'react';
+import ProgressBar from 'components/ProgressBar';
 
 const WrapContainer = styled.div``;
 const RecruitText = styled.div`
   font-size: 1.2rem;
   font-weight: 600;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 `;
-
 const IngContainer = styled.div``;
 const FilterContainer = styled.div`
   display: flex;
+  margin-bottom: 1rem;
 `;
-const DateContainer = styled.button`
+const DateInput = styled.input`
   height: 30px;
-  width: 100px;
+  width: 115px;
   border: 0.7px solid lightGrey;
   border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-left: 0.3rem;
-  padding: 0 0.3rem;
+  padding: 0 0.4rem;
+  &::placeholder {
+    color: black;
+  }
 `;
-const LevelRange = styled(DateContainer)`
+const LevelRange = styled.button`
   position: relative;
+  height: 30px;
+  width: 130px;
+  border: 0.7px solid lightGrey;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 0.3rem;
+  padding: 0 0.4rem;
 `;
 const WrapLevel = styled.div`
   position: absolute;
@@ -133,7 +146,17 @@ interface ProgProps {
 }
 export default function Main() {
   const [levelOpened, setLevelOpened] = useState(false);
-  const [rangeValue, setRangeValue] = useState('00');
+  const [areaSelected, setAreaSelected] = useState('');
+  const [rangeValue, setRangeValue] = useState('');
+  const [dateSelected, setDateSelected] = useState('');
+
+  const progFilterProps = {
+    location: areaSelected,
+    date: dateSelected,
+    levelRange: rangeValue,
+  };
+  // console.log(progFilterProps); // 필터조회api 보낼때 객체 {location: '경기/강원', date: '2022-09-07', levelRange: '12'}
+
   const programList: ProgProps[] = [
     {
       id: 1,
@@ -197,23 +220,24 @@ export default function Main() {
     },
   ];
 
-  const handleRangeVal = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setRangeValue(e.target.value);
-    // console.log(e.target.value);
-  };
-
   return (
     <Layout>
       <WrapContainer>
         <IngContainer>
           <RecruitText>모집 중인 모임</RecruitText>
           <FilterContainer>
-            <AreaFilter />
-            <DateContainer>
-              기간 <img src={DownArrow} alt="down arrow" />
-            </DateContainer>
+            <AreaFilter setAreaSelected={setAreaSelected} />
+            <DateInput
+              type="text"
+              required
+              placeholder="날짜 선택"
+              aria-required="true"
+              onBlur={(e) => (e.target.type = 'text')}
+              onChange={(e) => setDateSelected(e.target.value)}
+              onFocus={(e) => (e.target.type = 'date')}
+            />
             <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
-              친절도 &nbsp;
+              친절도 &nbsp;{rangeValue}%
               <img src={QuestionMark} alt="question mark" />
               <img src={DownArrow} alt="down arrow" />
               {levelOpened ? (
@@ -229,7 +253,7 @@ export default function Main() {
                     min={0}
                     max={100}
                     step={1}
-                    onChange={handleRangeVal}
+                    onChange={(e) => setRangeValue(e.target.value)}
                   />
                   <RangeValue>{rangeValue}%</RangeValue>
                 </WrapLevel>
@@ -248,7 +272,12 @@ export default function Main() {
                 </ProgBanner>
                 <ProgTitle>{el.title}</ProgTitle>
                 <LevelPercent percent={el?.percent} />
-                <ProgProgressBar>진행바</ProgProgressBar>
+                <ProgProgressBar>
+                  <ProgressBar
+                    currentPerson={el.currentPerson}
+                    totalPerson={el.totalPerson}
+                  />
+                </ProgProgressBar>
                 <ProgWrapper>
                   <ProgPerson>
                     모집인원 {el.currentPerson} / {el.totalPerson}
@@ -273,7 +302,12 @@ export default function Main() {
                 </ProgBanner>
                 <ProgTitle>{el.title}</ProgTitle>
                 <LevelPercent percent={el?.percent} />
-                <ProgProgressBar>진행바</ProgProgressBar>
+                <ProgProgressBar>
+                  <ProgressBar
+                    currentPerson={el.totalPerson}
+                    totalPerson={el.totalPerson}
+                  />
+                </ProgProgressBar>
                 <ProgWrapper>
                   <ProgPerson>
                     모집인원 {el.totalPerson} / {el.totalPerson}
