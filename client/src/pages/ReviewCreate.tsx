@@ -52,7 +52,7 @@ export default function ReviewCreate () {
     const [checkedSurvey, setCheckedSurvey] = useState<string[]>([])
     const onSurveyChecked = (checked : string[]) => {
         setCheckedSurvey(checked)
-        console.log(checked)
+        console.log(checked) 
     }
 
     return (

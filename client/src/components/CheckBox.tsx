@@ -24,7 +24,7 @@ const CheckBoxList : FunctionComponent<Props> = ({
             <span>{survey}</span>
         </li>
     )}
-    </ol>  );
+    </ol>  ); 
 }
  
 export default CheckBoxList;
