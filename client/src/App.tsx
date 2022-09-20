@@ -9,6 +9,7 @@ import Footer from 'components/Footer';
 import ProgCreate from 'pages/ProgCreate';
 import MyPage from 'pages/MyPage';
 import NoticeList from 'pages/NoticeList';
+import NoticeDetail from 'pages/NoticeDetail';
 
 const App: React.FC = () => {
   return (
@@ -29,6 +30,7 @@ const App: React.FC = () => {
             <Route path="/createprogram" element={<ProgCreate />} />
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/notice" element={<NoticeList />} />
+            <Route path="/notice/:noticeId" element={<NoticeDetail />} />
           </Routes>
           <Footer />
         </BrowserRouter>

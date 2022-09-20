@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Layout from 'components/Layout';
 import styled from 'styled-components';
-import MessageTab from 'components/Tab/MessageTab';
 import ProgressBar from 'components/ProgressBar';
 import LevelPercent from 'components/LevelPercent';
 import QuestionMark from '../images/QuestionMark.svg';
@@ -140,8 +139,8 @@ export const ClubItem = styled.div`
 export const ClubImg = styled.div`
   border: 0.7px solid gray;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 35px;
+  height: 30px;
 `;
 export const ClubInfo = styled.div`
   margin-left: 1rem;
