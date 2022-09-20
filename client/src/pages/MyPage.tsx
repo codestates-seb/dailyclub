@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import ProgressBar from 'components/ProgressBar';
 import LevelPercent from 'components/LevelPercent';
 import QuestionMark from '../images/QuestionMark.svg';
+import BookMarkTab from 'components/BookMarkTab';
 
 const MyPageContainer = styled.div`
   display: flex;
@@ -114,46 +115,48 @@ const TabContent = styled.div`
   margin: 1rem;
 `;
 
-const ClubContainer = styled.div`
+export const ClubContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   @media screen and (max-width: 500px) {
     grid-template-columns: 1fr;
   }
 `;
-const ClubTabTitle = styled.div`
+export const ClubTabTitle = styled.div`
   font-weight: 500;
   font-size: 1rem;
   margin: 2rem 0;
 `;
-const ClubItem = styled.div`
+export const ClubItem = styled.div`
   display: flex;
-  width: 100%;
-  margin: 0 0 1.4rem 1.4rem;
-  padding-right: 1.2rem;
+  width: 90%;
+  margin: 0 1.4rem 1.4rem 0;
+  padding: 1.2rem;
+  border: 1px solid #e2e6e8;
+  border-radius: 5px;
 `;
-const ClubImg = styled.div`
+export const ClubImg = styled.div`
   border: 0.7px solid gray;
   border-radius: 50%;
   width: 50px;
   height: 50px;
 `;
-const ClubInfo = styled.div`
+export const ClubInfo = styled.div`
   margin-left: 1rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 `;
-const ClubTitle = styled.div`
+export const ClubTitle = styled.div`
   font-size: 0.7rem;
   font-weight: 600;
 `;
-const ClubBody = styled.div`
+export const ClubBody = styled.div`
   font-size: 0.6rem;
   font-weight: 300;
   color: gray;
 `;
-const ClubDate = styled.div`
+export const ClubDate = styled.div`
   font-size: 0.6rem;
   color: #767676;
 `;
@@ -285,10 +288,7 @@ function MyPage() {
       name: '북마크',
       content: (
         <>
-          <div>
-            북마크 - 각자 파일작업 가능할듯
-            <div>북마크 목록써라</div>
-          </div>
+          <BookMarkTab />
         </>
       ),
     },
