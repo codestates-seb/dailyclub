@@ -7,6 +7,7 @@ import { GlobalStyles } from './styles';
 import Header from 'components/Header';
 import Footer from 'components/Footer';
 import ProgCreate from 'pages/ProgCreate';
+import MyPage from 'pages/MyPage';
 
 const App: React.FC = () => {
   return (
@@ -25,6 +26,7 @@ const App: React.FC = () => {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
             <Route path="/createprogram" element={<ProgCreate />} />
+            <Route path="/mypage" element={<MyPage />} />
           </Routes>
           <Footer />
         </BrowserRouter>
