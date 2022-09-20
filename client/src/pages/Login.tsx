@@ -11,6 +11,7 @@ import styled from 'styled-components';
 const LoginContainer = styled.div`
   margin: 0 auto;
   width: 360px;
+  height: 100vh;
 `;
 const LoginForm = styled.form`
   display: flex;
