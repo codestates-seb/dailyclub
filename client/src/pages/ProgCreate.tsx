@@ -1,7 +1,5 @@
-import AreaFilter from 'components/AreaFilter';
 import Layout from 'components/Layout';
 import { useEffect } from 'react';
-import { ReactElement } from 'react';
 import { useState, useRef } from 'react';
 import styled from 'styled-components';
 
@@ -181,19 +179,23 @@ const CreateBtn = styled.button`
   font-size: 20px;
 `;
 
-const AreaInputWrap = styled.div`
+const AreaSelect = styled.select`
   height: 100%;
   width: 100%;
-  border: 1px solid white;
+  border: 1px solid #e2e6e8;
   border-radius: 5px;
   text-align: center;
   display: flex;
   align-items: center;
 `;
 
+const AreaOption = styled.option`
+  margin-left: 5px;
+`;
+
 function ProgCreate() {
   // const [image, setImage] = useState();
-  const [kind, setKind] = useState('00');
+  const [kind, setKind] = useState('50');
 
   const firstRef = useRef<any>(null);
   const secondRef = useRef<any>(null); //focus 처리시 에러
@@ -251,7 +253,8 @@ function ProgCreate() {
             {/* 프로그램 설명 인풋입니다 */}
             <ContentsInput
               name="contents"
-              placeholder="프로그램 설명을 입력해주세요."
+              placeholder="프로그램 설명을 입력해주세요. 
+              ex) 모이는 장소, 진행시간, 회비, 오픈 카카오톡 링크 등"
               ref={secondRef}
               required
             ></ContentsInput>
@@ -281,9 +284,18 @@ function ProgCreate() {
             <RecruitContents>
               <Redstar>*</Redstar>
               <RecruitName>모집지역</RecruitName>
-              <AreaInputWrap>
-                <AreaFilter></AreaFilter>
-              </AreaInputWrap>
+              <AreaSelect name="area">
+                <option value="지역">지역</option>
+                <option value="서울">서울</option>
+                <option value="경기">경기</option>
+                <option value="강원">강원</option>
+                <option value="인천">인천</option>
+                <option value="대전/충청">대전/충청</option>
+                <option value="대구/경북">대구/경북</option>
+                <option value="부산/울산/경남">부산/울산/경남</option>
+                <option value="광주/전라">광주/전라</option>
+                <option value="제주">제주</option>
+              </AreaSelect>
             </RecruitContents>
             <RecruitContents>
               <Redstar>*</Redstar>
