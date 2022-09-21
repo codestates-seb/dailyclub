@@ -1,5 +1,6 @@
 import Layout from 'components/Layout';
 import LevelPercent from 'components/LevelPercent';
+import ProgressBar from 'components/ProgressBar';
 import styled from 'styled-components';
 import User from '../images/User.svg';
 import Bookmark from '../images/BookmarkBtn.svg';
@@ -7,6 +8,7 @@ import Calendar from '../images/Calendar.svg';
 import Loc from '../images/Location.svg';
 import Info from '../images/Info.svg';
 import Msg from '../images/Message.svg';
+import QuestionMark from '../images/QuestionMark.svg';
 
 const ProgPageDetail = styled.div`
     max-width: 1200px;
@@ -14,6 +16,7 @@ const ProgPageDetail = styled.div`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin-bottom: 50px;
 `
 const ProgDetailWrap = styled.div`
     position: relative;
@@ -133,12 +136,24 @@ const LeaderInfo = styled.div`
     margin-top: 10px;
 `
 
-const SendMsg = styled.button`
+const ProfileNickname = styled.div`
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 1rem;
+`;
+
+const SendMsg = styled.div`
+    font-size: 18px;
+    text-align: center;
+    font-weight: lighter;
+`
+
+const SendMsgBtn = styled.button`
     width: 100%;
     border: 1px solid #EFEFEF;
     padding: 15px;
     margin-top: 10px;
-    text-align: center;
+    flex-direction: row;
 `
 
 const H2 = styled.h2`
@@ -146,8 +161,13 @@ const H2 = styled.h2`
 `
 
 const H3 = styled.h3`
+    margin-left: 10px;
     font-size: 18px;
 `
+const ProfileIntro = styled.div`
+  font-weight: lighter;
+  margin-bottom: 1rem;
+`;
 
 const MemItem = styled.div`
     margin: 0.7rem 0.7rem 0.7rem 0;
@@ -173,6 +193,7 @@ const MemIntro = styled.div`
 `
 
 const ApplyDate = styled.div`
+    margin-top: 10px;
 `
 
 const Icon = styled.div`
@@ -189,6 +210,12 @@ const BookmarkBtn = styled.button`
     max-width: 100%;
     border: none;
 `
+const KindWrap = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+`;
 
 interface MemersProps {
     id: number;
@@ -197,6 +224,20 @@ interface MemersProps {
     intro: string;
     date: string;
 }
+
+const userProps: {
+    id: number;
+    nickname: string;
+    introduction: string;
+    kind: number;
+    role: string;
+  } = {
+    id: 1,
+    nickname: '일리더',
+    introduction: '자기소개 입니다.',
+    kind: 50,
+    role: 'USER',
+  };
 
 export default function ProgDetail() {
 
@@ -211,21 +252,21 @@ export default function ProgDetail() {
         {
             id: 2,
             nickname: '삼멤버',
-            percent: 80,
+            percent: 75,
             intro: '한줄소개',
             date: '3',
         },
         {
             id: 3,
             nickname: '사멤버',
-            percent: 100,
+            percent: 50,
             intro: '한줄소개',
             date: '2',
         },
         {
             id: 4,
             nickname: '오멤버',
-            percent: 80,
+            percent: 25,
             intro: '한줄소개',
             date: '1',
         },
@@ -240,38 +281,8 @@ export default function ProgDetail() {
                     </ProgTitleSection>
                     <ProgTxtSection>
                         <H2>소개글</H2>
-                        <ProgTextHead>
-                            목적
-                            <ProgText>
-                                아사모 아이유를 사랑하는 사람들의 모임
-                            </ProgText>
-                        </ProgTextHead>
-                        <ProgTextHead>
-                            진행방법
-                            <ProgText>카카오톡, 슬랙으로 입장</ProgText>
-                        </ProgTextHead>
-                        <ProgTextHead>
-                            모이는 장소
-                            <ProgText>고척돔 00편의점 앞</ProgText>
-                        </ProgTextHead>
-                        <ProgTextHead>
-                            진행시간
-                            <ProgText>
-                                09/13 화 13:00 ~ 15:00
-                            </ProgText>
-                        </ProgTextHead>
-                        <ProgTextHead>
-                            회비
-                            <ProgText>
-                                응원봉 30,000원에 대한 회비
-                            </ProgText>
-                        </ProgTextHead>
-                        <ProgTextHead>
-                            기타
-                            <ProgText>
-                                인천인 환영합니다~
-                            </ProgText>
-                        </ProgTextHead>
+                        <ProgTextHead>소제목</ProgTextHead>
+                        <ProgText>내용</ProgText>
                     </ProgTxtSection>
                     <ProgMemberContent>
                         <H2>함께하는 멤버(신청자)</H2>
@@ -283,7 +294,17 @@ export default function ProgDetail() {
                                         <MemIntro>{el.intro}</MemIntro>
                                     </MemItemWrap1>
                                     <MemItemWrap2>
-                                        <LevelPercent percent={el?.percent} />
+                                    <KindWrap>
+                                        <div>
+                                            친절도 &nbsp;
+                                            <img src={QuestionMark} alt="question mark" />
+                                        </div>
+                                        <LevelPercent percent={el.percent}></LevelPercent>
+                                        </KindWrap>
+                                        <ProgressBar
+                                        currentPerson={el.percent}
+                                        totalPerson={100}
+                                        ></ProgressBar>
                                         <ApplyDate>{el.date}시간 전 신청</ApplyDate>
                                     </MemItemWrap2>
                                 </MemItem>
@@ -360,13 +381,23 @@ export default function ProgDetail() {
                     <H2>모임장 정보</H2>
                     <LeaderInfo>
                         <MemName>
-                            일리더
+                            <ProfileNickname>{userProps.nickname}</ProfileNickname>
                         </MemName>
                         <MemIntro>
-                            한주우우울소개애애ㅐㅐㅐㅐㅐ
+                            <ProfileIntro>{userProps.introduction}</ProfileIntro>
                         </MemIntro>
-                        친절도 퍼센트바 와씨;;
-                        <SendMsg><img src={Msg} alt='logo' style={{height: 25, width: 25}} />메시지 보내기</SendMsg>
+                        <KindWrap>
+                            <div>
+                                친절도 &nbsp;
+                                <img src={QuestionMark} alt="question mark" />
+                            </div>
+                            <LevelPercent percent={userProps.kind}></LevelPercent>
+                            </KindWrap>
+                            <ProgressBar
+                                currentPerson={userProps.kind}
+                                totalPerson={100}
+                                ></ProgressBar>
+                        <SendMsgBtn><SendMsg><img src={Msg} alt='logo' style={{height: 20, width: 20}} /> 메시지 보내기</SendMsg></SendMsgBtn>
                     </LeaderInfo>
                 </ProgDetailInfo>
             </ProgPageDetail>
