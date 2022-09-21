@@ -102,13 +102,13 @@ const ProgRecruitment = styled.button`
   top: 0.5rem;
   left: 0.5rem;
   border: none;
-  border-radius: 2px;
+  border-radius: 5px;
   color: white;
   font-size: 0.7rem;
   font-weight: 600;
   width: 4rem;
   height: 1.4rem;
-  background-color: orange;
+  background-color: darkGray;
 `;
 const ProgBookmark = styled.button`
   position: absolute;
@@ -138,7 +138,7 @@ const DoneContainer = styled.div`
 
 interface ProgProps {
   id: number;
-  status: string;
+  numStatus: string;
   title: string;
   booked: boolean;
   percent: number;
@@ -162,7 +162,7 @@ export default function Main() {
   const programList: ProgProps[] = [
     {
       id: 1,
-      status: '모집중',
+      numStatus: '모집중',
       title: '[서울] 아이유 콘서트 동행 구합니다...',
       booked: false,
       percent: 100,
@@ -172,7 +172,7 @@ export default function Main() {
     },
     {
       id: 2,
-      status: '마감임박',
+      numStatus: '마감임박',
       title: '[영국] 손흥민 직관 동행 구합니다...',
       booked: false,
       percent: 20,
@@ -182,7 +182,7 @@ export default function Main() {
     },
     {
       id: 3,
-      status: '모집종료',
+      numStatus: '모집종료',
       title: '[대구] 대구 풋살구장 사람구합니다...',
       booked: false,
       percent: 80,
@@ -192,7 +192,7 @@ export default function Main() {
     },
     {
       id: 4,
-      status: '모집중',
+      numStatus: '모집중',
       title: '[서울] 홍대 라멘투어 마제소바,돈...',
       booked: false,
       percent: 70,
@@ -202,7 +202,7 @@ export default function Main() {
     },
     {
       id: 5,
-      status: '모집중',
+      numStatus: '모집중',
       title: '[대구] 대구 풋살구장 사람구합니다...',
       booked: false,
       percent: 69,
@@ -212,7 +212,7 @@ export default function Main() {
     },
     {
       id: 6,
-      status: '모집중',
+      numStatus: '모집중',
       title: '[대구] 대구 풋살구장 사람구합니다...',
       booked: false,
       percent: 50,
@@ -266,7 +266,21 @@ export default function Main() {
             {programList?.map((el: ProgProps) => (
               <ProgItem key={el.id}>
                 <ProgBanner>
-                  <ProgRecruitment>{el.status}</ProgRecruitment>
+                  <ProgRecruitment
+                    style={{
+                      backgroundColor: `${
+                        el.numStatus === '모집중'
+                          ? '#38D9A9'
+                          : null || el.numStatus === '마감임박'
+                          ? '#d22a2a'
+                          : null || el.numStatus === '모집종료'
+                          ? 'darkGray'
+                          : null
+                      }`,
+                    }}
+                  >
+                    {el.numStatus}
+                  </ProgRecruitment>
                   <ProgImg>사진</ProgImg>
                   <ProgBookmark>
                     <img src={Bookmark} alt="bookmark" />

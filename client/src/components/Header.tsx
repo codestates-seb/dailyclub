@@ -17,6 +17,7 @@ const HeaderContainer = styled.div`
   border: 1px solid #ebebeb;
   display: flex;
   justify-content: center;
+  background-color: white;
 `;
 const HeaderContent = styled.div`
   min-width: 60%;
