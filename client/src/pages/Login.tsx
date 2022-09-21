@@ -36,7 +36,7 @@ const FormError = styled.div`
 `;
 
 interface LoginVal {
-  username: string;
+  loginId: string;
   password: string;
 }
 
@@ -50,7 +50,7 @@ export default function Login() {
   } = useForm<LoginVal>();
 
   const handleLoginSubmit: SubmitHandler<LoginVal> = (data) => {
-    console.log(data); // {username: '입력값', password: '입력값'}
+    console.log(data); // {loginId: '입력값', password: '입력값'}
     /** 테스트 서버, api주소 나오면 밑과 URL 주석해제후 사용*/
     /* axios
       .post(`${URL}/login`, {
@@ -73,10 +73,10 @@ export default function Login() {
         <OauthTitle>L O G I N</OauthTitle>
         <LoginForm onSubmit={handleSubmit(handleLoginSubmit)}>
           <LoginInput
-            {...register('username', { required: true })}
+            {...register('loginId', { required: true })}
             placeholder="아이디"
           />
-          {errors.username && errors.username.type === 'required' && (
+          {errors.loginId && errors.loginId.type === 'required' && (
             <FormError>아이디를 입력해주세요.</FormError>
           )}
           <LoginInput

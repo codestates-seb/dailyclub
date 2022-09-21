@@ -249,9 +249,9 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
                   <Link to="/mypage"></Link>
                 </UserProfileImg>
                 <UserNickName>닉네임</UserNickName>
-                <MyPageBtn>
-                  <Link to="/mypage">마이페이지</Link>
-                </MyPageBtn>
+                <Link to="/mypage">
+                  <MyPageBtn>마이페이지</MyPageBtn>
+                </Link>
               </UserContent>
               <NotificationContainer>
                 <NotificationLabel>새 알림 {1}</NotificationLabel>

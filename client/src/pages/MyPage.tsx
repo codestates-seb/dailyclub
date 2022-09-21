@@ -6,6 +6,7 @@ import LevelPercent from 'components/LevelPercent';
 import QuestionMark from '../images/QuestionMark.svg';
 import BookMarkTab from 'components/BookMarkTab';
 import MessageTab from 'components/Tab/MessageTab';
+import { Link } from 'react-router-dom';
 
 const MyPageContainer = styled.div`
   display: flex;
@@ -23,7 +24,7 @@ const Profile = styled.div`
 
 const ProfileWrap = styled.div`
   width: 70%;
-  height: 40%;
+  height: 43%;
   padding: 2rem 1rem 2rem 1rem;
   border: 1px solid #e2e6e8;
   display: flex;
@@ -161,6 +162,17 @@ export const ClubDate = styled.div`
   font-size: 0.6rem;
   color: #767676;
 `;
+const UserWrapBtn = styled.div`
+  margin-top: 2rem;
+`;
+const WithdrawalBtn = styled.button`
+  border: none;
+  padding-right: 0.3rem;
+  &:hover {
+    font-weight: 600;
+  }
+`;
+const LogoutBtn = styled(WithdrawalBtn)``;
 
 /** 모임목록 더미데이터 */
 interface ProgProps {
@@ -363,6 +375,10 @@ function MyPage() {
               currentPerson={userProps.kind}
               totalPerson={100}
             ></ProgressBar>
+            <UserWrapBtn>
+              <WithdrawalBtn>회원탈퇴</WithdrawalBtn>
+              <LogoutBtn>로그아웃</LogoutBtn>
+            </UserWrapBtn>
           </ProfileWrap>
         </Profile>
 
