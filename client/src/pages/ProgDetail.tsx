@@ -1,6 +1,12 @@
 import Layout from 'components/Layout';
 import LevelPercent from 'components/LevelPercent';
 import styled from 'styled-components';
+import User from '../images/User.svg';
+import Bookmark from '../images/BookmarkBtn.svg';
+import Calendar from '../images/Calendar.svg';
+import Loc from '../images/Location.svg';
+import Info from '../images/Info.svg';
+import Msg from '../images/Message.svg';
 
 const ProgPageDetail = styled.div`
     max-width: 1200px;
@@ -69,7 +75,7 @@ const ProglInfoWrap = styled.div`
     border: 1px solid #ddd;
     top: 74px;
     margin-bottom: 20px;
-    border-radius: 4px;
+    border-radius: 5px;
     padding: 0 20px;
     margin: 5px;
     margin-top: 10px;
@@ -96,17 +102,17 @@ const ProgRegion = styled.div`
 `
 
 const ProgApply = styled.button`
-    background-color: #1ebd8e;
+    background-color: #ff5100;
     color: white;
     box-sizing: border-box;
     max-width: 100%;
-    width: 100%;
+    width: 70%;
     margin-top: 15px;
     margin-left: 0!important;
     margin-bottom: 20px;
     padding: 10px 0;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     font-size: 18px;
     text-align: center;
 `
@@ -121,7 +127,7 @@ const LeaderInfo = styled.div`
     border: 1px solid #ddd;
     top: 74px;
     margin-bottom: 20px;
-    border-radius: 4px;
+    border-radius: 5px;
     padding: 20px;
     margin: 5px;
     margin-top: 10px;
@@ -146,7 +152,7 @@ const H3 = styled.h3`
 const MemItem = styled.div`
     margin: 0.7rem 0.7rem 0.7rem 0;
     border: 1px solid #efefef;
-    border-radius: 4px;
+    border-radius: 5px;
     padding: 15px;
 `
 const MemItemWrap1 = styled.div`
@@ -167,7 +173,21 @@ const MemIntro = styled.div`
 `
 
 const ApplyDate = styled.div`
+`
+
+const Icon = styled.div`
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+`
+
+const BtnWrap = styled.div`
     
+`
+
+const BookmarkBtn = styled.button`
+    max-width: 100%;
+    border: none;
 `
 
 interface MemersProps {
@@ -275,23 +295,67 @@ export default function ProgDetail() {
                     <H2>모집정보</H2>
                     <ProglInfoWrap>
                         <ProgPeople>
+                            <Icon>
+                                <img
+                                    src={User}
+                                    alt='logo'
+                                    style={{height: 25, width: 25}}
+                                    />
+                                    
                             <H3>모집인원</H3>
+                            </Icon>
                             <ProgInfoText>99 / 100</ProgInfoText>
                         </ProgPeople>
                         <ProgDate>
+                            <Icon>
+                                <img
+                                    src={Calendar}
+                                    alt='logo'
+                                    style={{height: 25, width: 25}}
+                                    />
+                                    
                             <H3>모집일정</H3>
+                            </Icon>
                             <ProgInfoText>2022.09.20. 까지 모집</ProgInfoText>
                         </ProgDate>
                         <ProgRegion>
-                            <H3>모집지역</H3>
+                            <Icon>
+                                <img
+                                    src={Loc}
+                                    alt='logo'
+                                    style={{height: 25, width: 25}}
+                                    />
+                                <H3>모집지역</H3>
+                            </Icon>
                             <ProgInfoText>인천</ProgInfoText>
                         </ProgRegion>
                         <ProgMessage>
-                            음오아예    
+                            <Icon>
+                                <img
+                                    src={Info}
+                                    alt='logo'
+                                    style={{height: 25, width: 25}}
+                                    />
+                                    <H3>안내사항</H3>
+                            </Icon>   
                         </ProgMessage>
+                        <BtnWrap>
+                            <BookmarkBtn>
+                            <Icon>
+                            <img
+                                src={Bookmark}
+                                alt='logo'
+                                style={{height: 25, width: 25}}
+                                />
+                            </Icon>
+                            </BookmarkBtn>
+                        
+                        
                         <ProgApply>
                             신청하기
                         </ProgApply>
+                        </BtnWrap>
+                            
                     </ProglInfoWrap>
                     <H2>모임장 정보</H2>
                     <LeaderInfo>
@@ -302,7 +366,7 @@ export default function ProgDetail() {
                             한주우우울소개애애ㅐㅐㅐㅐㅐ
                         </MemIntro>
                         친절도 퍼센트바 와씨;;
-                        <SendMsg>메시지 보내기</SendMsg>
+                        <SendMsg><img src={Msg} alt='logo' style={{height: 25, width: 25}} />메시지 보내기</SendMsg>
                     </LeaderInfo>
                 </ProgDetailInfo>
             </ProgPageDetail>
