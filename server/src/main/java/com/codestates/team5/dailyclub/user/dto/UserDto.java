@@ -16,7 +16,9 @@ public class UserDto {
     @Schema(name = "회원 가입 API 스펙", title = "회원 가입 API 스펙")
     public static class Post {
         @Schema(description = "로그인 ID", example = "meow123")
-        private Long loginId;
+        private String loginId;
+        @Schema(description = "패스워드", example = "rerewr")
+        private String password;
         @Schema(description = "닉네임", example = "냥냥")
         private String nickname;
         @Schema(description = "email", example = "abcd@sdfe.com")
@@ -46,6 +48,8 @@ public class UserDto {
     public static class Response {
         @Schema(description = "유저 ID", example = "1")
         private Long id;
+        @Schema(description = "로그인 ID", example = "meow123")
+        private String loginId;
         @Schema(description = "닉네임", example = "냥냥")
         private String nickname;
         //      수정예정
