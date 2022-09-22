@@ -23,6 +23,11 @@ public class SecurityConfig {
     private final UserRepository userRepository;
 
     @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
     public WebSecurityCustomizer configure() {
         return (web) ->web.ignoring().antMatchers(
                 "/h2/**", "/api/users", "/swagger-ui.html"
