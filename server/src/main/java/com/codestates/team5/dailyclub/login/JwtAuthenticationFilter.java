@@ -31,14 +31,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             //JSON 형식을 사용 할 때 응답들을 직렬화하고, 요청들을 역직렬화 할 때 사용하며 spring-boot-stater-web에 기본적으로 Jackson 라이브러리가 있다.
             ObjectMapper objectMapper = new ObjectMapper();
             User user = objectMapper.readValue(request.getInputStream(),User.class);
-            //LoginId와 Password를 조합해서 Security가 알아볼 수 잇는 UsernamePasswordAuthenticationToken 만들기
+            //LoginId와 Password를 조합해서 Security가 알아볼 수 잇는 UsernamePasswordAuthenticationToken 만든다.
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getLoginId(), user.getPassword());
             //AuthenticationManager에 token을 넘기면 UserDetailService가 받아 처리하도록 하다.
-            //authenticationManger는 알아서 PrincipalDetailsService를 호출한다.
-            //authentication 안에 인증이 됐는지 안됐는지가 들어있다.
-            //token에 있는 유저정보에 대한 인증을 한다.
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
-            //authentication 객체를 return 한다.
             return authentication;
         }
         catch (IOException e) {
@@ -51,7 +47,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, Authentication authentication) throws  IOException, SecurityException {
         System.out.println("인증 성공 유저 처리");
         //인증이 성공한 유저의 정보를 저장한다.
-        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal(); //권한을 가져와서 principalDetails 에 넣기
+        PrincipalDetails principalDetails = (PrincipalDetails) authentication.getPrincipal();
         //JWT토큰을 생성하여 Response 헤더에 추가한다.
         String jwtToken = JWT.create()
                 .withSubject("todo jwt token")

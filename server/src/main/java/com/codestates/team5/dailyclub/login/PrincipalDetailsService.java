@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PrincipalDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
-    //특정 에러 발생시키는 것 해보기
+
     @Override
-    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException { // 유저를 불러와서 userDetails로 반환
+    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
         User user = userRepository.findByLoginId(loginId);
         if (user == null) throw new UsernameNotFoundException("해당 ID가 존재하지 않습니다.");
         return new PrincipalDetails(user);

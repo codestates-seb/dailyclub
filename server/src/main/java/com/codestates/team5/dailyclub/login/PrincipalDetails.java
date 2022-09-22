@@ -14,19 +14,18 @@ public class PrincipalDetails implements UserDetails {
     private final User user;
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() { //계정이 갖고 있는 권한(ROLE)을 목록으로 return
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        //계정이 갖고 있는 권한(ROLE)을 목록으로 return
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(() -> String.valueOf(user.getRole()));
         return authorities;
     }
 
-    //Password 갖고오기.
     @Override
     public String getPassword() {
         return user.getPassword();
     }
 
-    //loginId로 바꾸는 작업 필요
     @Override
     public String getUsername() {
         return user.getLoginId();
