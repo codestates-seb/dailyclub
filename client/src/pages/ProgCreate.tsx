@@ -1,9 +1,8 @@
 import axios from 'axios';
 import Layout from 'components/Layout';
-import { useEffect } from 'react';
-import { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { redirect } from 'react-router-dom';
 import styled from 'styled-components';
-import React from 'react';
 
 const CreateContainer = styled.div`
   width: 100%;
@@ -199,8 +198,9 @@ function ProgCreate() {
   const [programDate, setProgramDate] = useState<string>('');
   const [imageFile, setImageFile] = useState<string | Blob>('');
   const [minkind, setMinKind] = useState<string>('50');
+  const [imagePreview, setImagePreview] = useState('');
 
-  const URL = process.env.REACT_APP_DEV_URL;
+  const DevURL = process.env.REACT_APP_DEV_URL;
   const firstRef = useRef<any>(null);
   const secondRef = useRef<any>(null); //focus 처리시 에러
 
@@ -221,16 +221,12 @@ function ProgCreate() {
     formData.append('minKind', minkind);
     formData.append('imageFile', imageFile);
 
-    for (let values of formData.values()) {
-      console.log(values); // formData 객체의 정보 확인하는 법
-    }
-
     axios({
       method: 'post',
-      url: `${URL}/api/programs`,
+      url: `${DevURL}/api/programs`,
       headers: { 'Content-Type': 'multipart/form-data' },
       data: formData,
-    }).then((res) => console.log(res.data));
+    });
   };
 
   //제목인풋에서 엔터누를시 프로그램 설명 인풋으로 포커즈
@@ -238,8 +234,6 @@ function ProgCreate() {
     if (event.key === 'Enter') {
       if (event.target === firstRef.current) {
         secondRef.current.focus();
-      } else {
-        return;
       }
     }
   };
@@ -271,6 +265,8 @@ function ProgCreate() {
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setImageFile((e.target as any).files[0]);
+    // @ts-ignore
+    setImagePreview(URL.createObjectURL((e.target as any).files[0]));
   };
 
   return (
@@ -291,7 +287,7 @@ function ProgCreate() {
               onKeyUp={handleInput}
               required
               onChange={handleTitle}
-            ></TitleInput>
+            />
             <ProgramInfoTitle>
               <Redstar>*</Redstar>
               <Label>프로그램 설명</Label>
@@ -304,7 +300,7 @@ function ProgCreate() {
               ref={secondRef}
               onChange={handleText}
               required
-            ></ContentsInput>
+            />
           </ProgramInfo>
           <RecruitInfo>
             <RecruitInfoTitle>
@@ -321,7 +317,7 @@ function ProgCreate() {
                 name="people"
                 onChange={handleNumofRecruits}
                 required
-              ></RecruitInput>
+              />
             </RecruitContents>
             <RecruitContents>
               <Redstar>*</Redstar>
@@ -332,7 +328,7 @@ function ProgCreate() {
                 name="date"
                 onChange={handleProgramDate}
                 required
-              ></RecruitInput>
+              />
             </RecruitContents>
             <RecruitContents>
               <Redstar>*</Redstar>
@@ -363,7 +359,7 @@ function ProgCreate() {
                   name="kind"
                   onChange={handleMinKindValue}
                   required
-                ></KindInput>
+                />
                 <KindValue>{minkind}%</KindValue>
               </KindInputWrap>
             </RecruitContents>
@@ -373,16 +369,22 @@ function ProgCreate() {
                 저작권에 위배되지 않는 파일을 업로드 해주세요.
               </ImageRule>
             </RecruitContents>
-            <ImageLabel htmlFor="file">
-              우리 모임을 소개할 이미지를 첨부해주세요.
-            </ImageLabel>
+            {!imageFile ? (
+              <ImageLabel htmlFor="file">
+                우리 모임을 소개할 이미지를 첨부해주세요.
+              </ImageLabel>
+            ) : (
+              <ImageLabel htmlFor="file">
+                <img width="100%" height="100%" src={imagePreview}></img>
+              </ImageLabel>
+            )}
             <ImageInput
               id="file"
               type="file"
               name="avatar"
               accept="image/*"
               onChange={handleImage}
-            ></ImageInput>
+            />
             <CreateBtn type="submit">등록하기</CreateBtn>
           </RecruitInfo>
         </CreateForm>
