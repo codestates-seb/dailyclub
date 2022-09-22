@@ -45,7 +45,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
             filterChain.doFilter(request,response);
         }
-        super.doFilterInternal(request,response,filterChain);
+        else {super.doFilterInternal(request,response,filterChain);}
 
     }
 
