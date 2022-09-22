@@ -210,7 +210,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
             {isLoggedIn ? (
               <>
                 <Icon>
-                  <Link to="/program/create">
+                  <Link to="/programs/create">
                     <img
                       src={Pen}
                       alt="logo"
