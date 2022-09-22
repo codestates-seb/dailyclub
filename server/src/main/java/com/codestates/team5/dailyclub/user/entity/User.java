@@ -63,6 +63,12 @@ public class User extends Auditable {
         }
     }
 
+    public void update(String nickname, String introduction, String picture) {
+        this.nickname = nickname;
+        this.introduction = introduction;
+        this.picture = picture;
+    }
+
 
 }
 
