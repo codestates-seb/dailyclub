@@ -23,7 +23,7 @@ const NoticeDetailTitle = styled.div`
   font-weight: 600;
   font-size: 1.2rem;
 `;
-const NoticeDetailEditBtn = styled.button`
+export const NoticeDetailEditBtn = styled.button`
   height: 1.9rem;
   padding: 0 1rem;
   margin-left: 1rem;
