@@ -204,7 +204,6 @@ function ProgCreate() {
   const [minkind, setMinKind] = useState<string>('50');
 
   const URL = process.env.REACT_APP_DEV_URL;
-
   const firstRef = useRef<any>(null);
   const secondRef = useRef<any>(null); //focus 처리시 에러
 

@@ -36,7 +36,7 @@ const LoginText = styled.div`
 `;
 
 interface SignUpVal {
-  username: string;
+  loginId: string;
   email: string;
   password: string;
   nickname: string;
@@ -52,11 +52,11 @@ export default function SignUp() {
   } = useForm<SignUpVal>();
 
   const handleLoginSubmit: SubmitHandler<SignUpVal> = (data) => {
-    console.log(data); // {username: '입력값', email: '입력값', password: '입력값', nickname: '입력값'}
+    console.log(data); // {loginId: '입력값', email: '입력값', password: '입력값', nickname: '입력값'}
 
     /** 테스트 서버, api주소 나오면 밑에 주석해제후 url들 수정해서 사용*/
     /* axios
-      .post(`${URL}/users`, {
+      .post(`${URL}/api/users`, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -66,8 +66,8 @@ export default function SignUp() {
         navigate('/login');
         console.log('회원등록 응답 :', res.data);
       })
-      .catch((error) => console.log(error));
-       */
+      .catch((err) => console.log(err.response.data)); 
+      */
   };
 
   return (
@@ -76,10 +76,10 @@ export default function SignUp() {
         <OauthTitle>J O I N</OauthTitle>
         <SignUpForm onSubmit={handleSubmit(handleLoginSubmit)}>
           <SignUpInput
-            {...register('username', { required: true })}
+            {...register('loginId', { required: true })}
             placeholder="아이디"
           />
-          {errors.username && errors.username.type === 'required' && (
+          {errors.loginId && errors.loginId.type === 'required' && (
             <FormError>아이디를 입력해주세요.</FormError>
           )}
           <SignUpInput
