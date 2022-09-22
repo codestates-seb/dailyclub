@@ -3,6 +3,7 @@ import Layout from 'components/Layout';
 import { useEffect } from 'react';
 import { useState, useRef } from 'react';
 import styled from 'styled-components';
+import React from 'react';
 
 const CreateContainer = styled.div`
   width: 100%;
@@ -188,10 +189,6 @@ const AreaSelect = styled.select`
   text-align: center;
   display: flex;
   align-items: center;
-`;
-
-const AreaOption = styled.option`
-  margin-left: 5px;
 `;
 
 function ProgCreate() {
