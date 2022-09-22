@@ -28,7 +28,7 @@ export default function Footer() {
     <FooterBox>
       <InfoContainer>
         <FooterText1>Copyright ⓒ Daily Club</FooterText1>
-        <FooterText2>김준형 고민정 문태경 최정석 황인준</FooterText2>
+        <FooterText2>김준형 고민정 문태경 최정석 황인준 김유현</FooterText2>
       </InfoContainer>
       <Link to="/notice">공지사항</Link>
     </FooterBox>
