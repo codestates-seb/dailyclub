@@ -42,10 +42,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProgramController {
 
-    /**
-     * 프로그램 신청 / 취소 API 만들기!!!
-     */
-
     private final ProgramService programService;
     private final ProgramMapper programMapper;
 
@@ -83,7 +79,7 @@ public class ProgramController {
     @PatchMapping(value = "/{programId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProgramDto.Response> patchProgram(@ParameterObject @ModelAttribute ProgramDto.Patch programPatchDto,
                                                             @RequestPart(required = false) MultipartFile imageFile,
-                                                            @PathVariable("programId") Long id) {
+                                                            @PathVariable("programId") Long programId) {
         Program program = new Program();
         return new ResponseEntity<>(programMapper.programToProgramResponseDto(program), HttpStatus.OK);
     }
@@ -97,8 +93,11 @@ public class ProgramController {
     )
     @GetMapping("/{programId}")
     public ResponseEntity<ProgramDto.Response> getProgram(@PathVariable("programId") Long id) {
-        Program program = new Program();
-        return new ResponseEntity<>(programMapper.programToProgramResponseDto(program), HttpStatus.OK);
+        Program program = programService.findProgram(id);
+
+        ProgramDto.Response response = programMapper.programToProgramResponseDto(program);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Operation(summary = "프로그램 리스트 조회")
@@ -126,8 +125,8 @@ public class ProgramController {
             description = "NO CONTENT")
     )
     @DeleteMapping("/{programId}")
-    public void deleteProgram(@PathVariable("programId") Long id) {
-        programService.deleteProgram(id);
+    public void deleteProgram(@PathVariable("programId") Long programId) {
+        programService.deleteProgram(programId);
     }
 
 
