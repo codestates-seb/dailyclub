@@ -15,6 +15,7 @@ public class AbstractEnumAttributeConverter<E extends Enum<E> & CommonEnum> impl
 
     @Override
     public String convertToDatabaseColumn(E attribute) {
+        targetEnumClass = attribute.getDeclaringClass();
         return EnumValueConvertUtils.toDescription(attribute);
     }
 
