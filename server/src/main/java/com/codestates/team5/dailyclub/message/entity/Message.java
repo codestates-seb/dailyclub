@@ -34,7 +34,6 @@ public class Message extends Auditable {
     private String text;
 
 
-
     public enum readStatus {
         READ("READ"),
         UNREADN("UNREAD");

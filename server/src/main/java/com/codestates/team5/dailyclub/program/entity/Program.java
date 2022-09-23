@@ -1,6 +1,5 @@
 package com.codestates.team5.dailyclub.program.entity;
 
-
 import com.codestates.team5.dailyclub.apply.entity.Apply;
 import com.codestates.team5.dailyclub.common.audit.Auditable;
 import com.codestates.team5.dailyclub.common.enumeration.CommonEnum;
@@ -25,7 +24,6 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Getter
 @Entity
@@ -56,7 +54,6 @@ public class Program extends Auditable {
 
     @NotNull
     private LocalDate programDate;
-
 
     @NotNull
     private Integer minKind;
@@ -99,6 +96,7 @@ public class Program extends Auditable {
 
     public void setUser(User user) {
         this.user = user;
+
     }
 
 }

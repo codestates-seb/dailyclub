@@ -82,4 +82,5 @@ public class NoticeController {
         noticeService.deleteNotice(id);
    }
 
+
 }

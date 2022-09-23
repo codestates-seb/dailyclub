@@ -16,7 +16,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class Notification extends Auditable {
 
     @Id
@@ -30,6 +29,7 @@ public class Notification extends Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
     private Program program;
+
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -72,6 +72,7 @@ public class Notification extends Auditable {
             this.type = type;
         }
     }
+
 
 }
 
