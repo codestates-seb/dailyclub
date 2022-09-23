@@ -1,7 +1,6 @@
 import axios from 'axios';
 import Layout from 'components/Layout';
 import React, { useState, useRef, useEffect } from 'react';
-import { redirect } from 'react-router-dom';
 import styled from 'styled-components';
 
 const CreateContainer = styled.div`
@@ -200,7 +199,7 @@ function ProgCreate() {
   const [minkind, setMinKind] = useState<string>('50');
   const [imagePreview, setImagePreview] = useState('');
 
-  const DevURL = process.env.REACT_APP_DEV_URL;
+  const DEV_URL = process.env.REACT_APP_DEV_URL;
   const firstRef = useRef<any>(null);
   const secondRef = useRef<any>(null); //focus 처리시 에러
 
@@ -223,7 +222,7 @@ function ProgCreate() {
 
     axios({
       method: 'post',
-      url: `${DevURL}/api/programs`,
+      url: `${DEV_URL}/api/programs`,
       headers: { 'Content-Type': 'multipart/form-data' },
       data: formData,
     });
