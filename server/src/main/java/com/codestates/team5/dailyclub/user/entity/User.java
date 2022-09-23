@@ -1,7 +1,8 @@
 package com.codestates.team5.dailyclub.user.entity;
 
 
-import com.codestates.team5.dailyclub.common.Auditable;
+
+import com.codestates.team5.dailyclub.common.audit.Auditable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -61,6 +62,12 @@ public class User extends Auditable {
         public String getRole() {
             return this.role;
         }
+    }
+
+    public void update(String nickname, String introduction, String picture) {
+        this.nickname = nickname;
+        this.introduction = introduction;
+        this.picture = picture;
     }
 
 

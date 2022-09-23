@@ -1,0 +1,31 @@
+spring:
+  springdoc:
+    swagger-ui:
+    path: /swagger-ui.html
+    groups-order: DESC
+    operationsSorter: method
+    disable-swagger-default-url: true
+    display-request-duration: true
+  api-docs:
+    path: /api-docs
+  show-actuator: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  paths-to-match:
+    - /api/**
+  h2:
+    console:
+      enabled: true
+      path: /h2 # ~/h2? console ??
+      settings:
+        web-allow-others: true # ?? ip? ??
+  datasource:
+    url: jdbc:h2:mem:test
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
