@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Layout from 'components/Layout';
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
 const CreateContainer = styled.div`
@@ -198,11 +199,13 @@ function ProgCreate() {
   const [imageFile, setImageFile] = useState<string | Blob>(''); //기본이미지일때 구현이 필요함
   const [minkind, setMinKind] = useState<string>('50');
   const [imagePreview, setImagePreview] = useState('');
-  // const [params, setParams] = useState<string>('');
+  const [progId, setProgId] = useState<number>();
 
   const DEV_URL = process.env.REACT_APP_DEV_URL;
   const firstRef = useRef<any>(null);
   const secondRef = useRef<any>(null); //focus 처리시 에러
+
+  const navigate = useNavigate();
 
   //처음 렌더링 될 때 제목인풋에 포커즈
   useEffect(() => {
@@ -226,7 +229,13 @@ function ProgCreate() {
       url: `${DEV_URL}/api/programs`,
       headers: { 'Content-Type': 'multipart/form-data' },
       data: formData,
-    }).then((res) => res.data.id);
+    }).then((res) => {
+      setProgId(res.data.id);
+      console.log(progId);
+    });
+    // .then((res) => {
+    //   navigate(`/programs/${progId}`);
+    // });
   };
 
   //제목인풋에서 엔터누를시 프로그램 설명 인풋으로 포커즈
