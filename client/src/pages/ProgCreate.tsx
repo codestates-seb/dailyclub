@@ -3,7 +3,6 @@ import Layout from 'components/Layout';
 import React, { useState, useRef, useEffect } from 'react';
 import { redirect } from 'react-router-dom';
 import styled from 'styled-components';
-import React from 'react';
 
 const CreateContainer = styled.div`
   width: 100%;
@@ -203,8 +202,6 @@ function ProgCreate() {
 
   const DevURL = process.env.REACT_APP_DEV_URL;
 
-
-
   const firstRef = useRef<any>(null);
   const secondRef = useRef<any>(null); //focus 처리시 에러
 
@@ -231,7 +228,6 @@ function ProgCreate() {
       headers: { 'Content-Type': 'multipart/form-data' },
       data: formData,
     });
-
   };
 
   //제목인풋에서 엔터누를시 프로그램 설명 인풋으로 포커즈
