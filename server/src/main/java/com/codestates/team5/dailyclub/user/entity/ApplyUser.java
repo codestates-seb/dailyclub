@@ -1,6 +1,7 @@
 package com.codestates.team5.dailyclub.user.entity;
 
-import com.codestates.team5.dailyclub.common.Auditable;
+
+import com.codestates.team5.dailyclub.common.audit.Auditable;
 import com.codestates.team5.dailyclub.program.entity.Program;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,9 +29,5 @@ public class ApplyUser extends Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
     private Program program;
-
-
-
-
 
 }
