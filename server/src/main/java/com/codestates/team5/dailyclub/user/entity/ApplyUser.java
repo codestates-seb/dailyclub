@@ -29,8 +29,4 @@ public class ApplyUser extends Auditable {
     @JoinColumn(name = "program_id")
     private Program program;
 
-
-
-
-
 }

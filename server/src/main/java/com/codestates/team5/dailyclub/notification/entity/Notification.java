@@ -1,6 +1,5 @@
 package com.codestates.team5.dailyclub.notification.entity;
 
-
 import com.codestates.team5.dailyclub.common.audit.Auditable;
 import com.codestates.team5.dailyclub.program.entity.Program;
 import com.codestates.team5.dailyclub.user.entity.User;
@@ -17,6 +16,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class Notification extends Auditable {
 
     @Id
@@ -72,5 +72,6 @@ public class Notification extends Auditable {
             this.type = type;
         }
     }
+
 }
 

@@ -1,5 +1,6 @@
 package com.codestates.team5.dailyclub.program.entity;
 
+
 import com.codestates.team5.dailyclub.apply.entity.Apply;
 import com.codestates.team5.dailyclub.common.audit.Auditable;
 import com.codestates.team5.dailyclub.common.enumeration.CommonEnum;
@@ -11,7 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,6 +25,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Getter
 @Entity
@@ -56,8 +57,10 @@ public class Program extends Auditable {
     @NotNull
     private LocalDate programDate;
 
+
     @NotNull
     private Integer minKind;
+
 
     @Builder.Default //@Builder 사용 시 초기값 설정
     @Convert(converter = ProgramStatusConverter.class)
@@ -97,5 +100,6 @@ public class Program extends Auditable {
     public void setUser(User user) {
         this.user = user;
     }
+
 }
 

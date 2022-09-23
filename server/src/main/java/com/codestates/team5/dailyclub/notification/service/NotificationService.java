@@ -31,4 +31,5 @@ public class NotificationService {
         notificationRepository.findById(id)
                 .ifPresent(Notification::changeStatusRead);
     }
+
 }

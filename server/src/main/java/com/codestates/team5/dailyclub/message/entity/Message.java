@@ -33,9 +33,6 @@ public class Message extends Auditable {
     @NotNull
     private String text;
 
-    @Enumerated(value = EnumType.STRING)
-    private Message.readStatus readStatus;
-
 
 
     public enum readStatus {
@@ -51,6 +48,7 @@ public class Message extends Auditable {
             return this.readStatus;
         }
     }
+
 
 
 

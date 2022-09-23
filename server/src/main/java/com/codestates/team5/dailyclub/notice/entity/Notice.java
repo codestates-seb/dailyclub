@@ -1,6 +1,5 @@
 package com.codestates.team5.dailyclub.notice.entity;
 
-
 import com.codestates.team5.dailyclub.common.audit.Auditable;
 import com.codestates.team5.dailyclub.user.entity.User;
 import lombok.AllArgsConstructor;
