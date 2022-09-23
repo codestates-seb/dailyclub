@@ -113,9 +113,6 @@ public class ProgramDto {
         @Schema(title = "프로그램 이미지 리스트")
         private List<ProgramImageDto.Response> programImages;
 
-        @Schema(title = "신청 인원 리스트")
-        private List<UserDto.Response> applyList;
-
     }
 
 }
