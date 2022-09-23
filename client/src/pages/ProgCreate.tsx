@@ -195,9 +195,10 @@ function ProgCreate() {
   const [numOfRecruits, setNumOfRecruits] = useState<string>('');
   const [location, setLocation] = useState<string>('');
   const [programDate, setProgramDate] = useState<string>('');
-  const [imageFile, setImageFile] = useState<string | Blob>('');
+  const [imageFile, setImageFile] = useState<string | Blob>(''); //기본이미지일때 구현이 필요함
   const [minkind, setMinKind] = useState<string>('50');
   const [imagePreview, setImagePreview] = useState('');
+  // const [params, setParams] = useState<string>('');
 
   const DEV_URL = process.env.REACT_APP_DEV_URL;
   const firstRef = useRef<any>(null);
@@ -225,7 +226,7 @@ function ProgCreate() {
       url: `${DEV_URL}/api/programs`,
       headers: { 'Content-Type': 'multipart/form-data' },
       data: formData,
-    });
+    }).then((res) => res.data.id);
   };
 
   //제목인풋에서 엔터누를시 프로그램 설명 인풋으로 포커즈

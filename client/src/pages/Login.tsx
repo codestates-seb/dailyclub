@@ -41,7 +41,7 @@ interface LoginVal {
 }
 
 export default function Login() {
-  // const URL = process.env.REACT_APP_DEV_URL;
+  const URL = process.env.REACT_APP_DEV_URL;
   const navigate = useNavigate();
   const {
     register,
@@ -52,19 +52,15 @@ export default function Login() {
   const handleLoginSubmit: SubmitHandler<LoginVal> = (data) => {
     console.log(data); // {loginId: '입력값', password: '입력값'}
     /** 테스트 서버, api주소 나오면 밑과 URL 주석해제후 사용*/
-    /* axios
-      .post(`${URL}/login`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        data: data,
+    axios.defaults.withCredentials = true; // withCredentials 전역 설정
+    axios
+      .post(`http://14.34.31.34:8080/login`, JSON.stringify(data), {
+        headers: { 'Content-Type': 'application/json' },
       })
       .then((res) => {
+        console.log(res);
         navigate('/');
-        console.log(res.data);
-      })
-      .catch((error) => console.log(error)); 
-      */
+      });
   };
 
   return (
