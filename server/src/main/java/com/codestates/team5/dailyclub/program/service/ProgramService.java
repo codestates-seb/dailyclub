@@ -48,11 +48,20 @@ public class ProgramService {
         return createdProgram;
     }
 
-    public void deleteProgram(Long id) {
+    public void deleteProgram(Long programId) {
 
+    }
+
+    public Program findProgram(Long programId) {
+        return programRepository.findById(programId)
+                    .orElseThrow(() ->
+                        new RuntimeException("존재하지 않는 프로그램입니다.")
+                    );
     }
 
     public Page<Program> findPrograms(int page, int size, SearchFilterDto searchFilterDto) {
         return null;
     }
+
+
 }
