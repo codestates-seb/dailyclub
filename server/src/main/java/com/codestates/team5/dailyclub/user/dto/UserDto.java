@@ -52,6 +52,8 @@ public class UserDto {
         private String loginId;
         @Schema(description = "닉네임", example = "냥냥")
         private String nickname;
+        @Schema(description = "email", example = "abcd@sdfe.com")
+        private String email;
         //      수정예정
         @Schema(description = "프로필 사진", example = "사진")
         private String picture;
