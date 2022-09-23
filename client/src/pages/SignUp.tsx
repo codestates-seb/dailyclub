@@ -43,7 +43,7 @@ interface SignUpVal {
 }
 
 export default function SignUp() {
-  // const URL = process.env.REACT_APP_URL;
+  const URL = process.env.REACT_APP_DEV_URL;
   const navigate = useNavigate();
   const {
     register,
@@ -55,19 +55,18 @@ export default function SignUp() {
     console.log(data); // {loginId: '입력값', email: '입력값', password: '입력값', nickname: '입력값'}
 
     /** 테스트 서버, api주소 나오면 밑에 주석해제후 url들 수정해서 사용*/
-    /* axios
+    axios
       .post(`${URL}/api/users`, {
         headers: {
           'Content-Type': 'application/json',
         },
-        data: data,
+        data,
       })
       .then((res) => {
         navigate('/login');
-        console.log('회원등록 응답 :', res.data);
+        console.log('회원등록 응답 :', res);
       })
-      .catch((err) => console.log(err.response.data)); 
-      */
+      .catch((err) => console.log(err));
   };
 
   return (

@@ -16,6 +16,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx"
+    // "downlevelIteration": true //코드가 너무 방대해지기 때문에 downlevelIteration 옵션을 설정할 수 있도록 하고
+    // //기본 값은 false로 설정하여 가장 기본적인 Array 타입만을 사용하게 해서 변환되는 코드량을 줄이기 위한 것이다.
   },
   "include": ["src", "src/custom.d.ts"],
   "exclude": ["node_modules"]
