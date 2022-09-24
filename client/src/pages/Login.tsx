@@ -1,12 +1,13 @@
 import axios from 'axios';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { LoginVal } from 'types/user';
 import Layout from 'components/Layout';
 import OauthBtn from 'components/OAuth/OauthBtn';
 import OauthGoogleBtn from 'components/OAuth/OauthGoogleBtn';
 import OauthNaverBtn from 'components/OAuth/OauthNaverBtn';
 import OauthTitle from 'components/OAuth/OauthTitle';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
 
 const LoginContainer = styled.div`
   margin: 0 auto;
@@ -35,13 +36,8 @@ const FormError = styled.div`
   padding-left: 1rem;
 `;
 
-interface LoginVal {
-  loginId: string;
-  password: string;
-}
-
 export default function Login() {
-  const URL = process.env.REACT_APP_DEV_URL;
+  const URL = process.env.REACT_APP_DEV_TWO_URL; //민정님주소
   const navigate = useNavigate();
   const {
     register,
@@ -50,24 +46,28 @@ export default function Login() {
   } = useForm<LoginVal>();
 
   const handleLoginSubmit: SubmitHandler<LoginVal> = (data) => {
-    console.log(data); // {loginId: '입력값', password: '입력값'}
-    /** 테스트 서버, api주소 나오면 밑과 URL 주석해제후 사용*/
+    // console.log(data); // {loginId: '입력값', password: '입력값'}
+    axios.defaults.withCredentials = true; // withCredentials 전역 설정
     axios
-      .post(
-        `${URL}/login`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          data: data,
-        },
-        { withCredentials: true } // 헤더에 Authorization 항목있거나 쿠키를 첨부할때 추가
-      )
+      .post(`${URL}/login`, data, {
+        headers: { 'Content-Type': 'application/json' },
+      })
       .then((res) => {
-        navigate('/');
-        console.log(res);
+        if (res.status === 200) {
+          let jwtToken = res.headers.Authorization;
+          console.log('받은토큰 :', jwtToken);
+          axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+          navigate('/');
+        }
       })
       .catch((error) => console.log(error));
+    // localStorage.setItem('Authorization', jwtToken);
+    // const accessToken = JSON.parse(localStorage.getItem('accessToken') as string);
+    // if (accessToken) {
+    //   axios.defaults.headers.common[
+    //     'Authorization'
+    //   ] = `Bearer ${accessToken}`;
+    // }
   };
 
   return (
