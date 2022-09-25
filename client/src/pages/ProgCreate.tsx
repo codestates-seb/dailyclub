@@ -199,7 +199,6 @@ function ProgCreate() {
   const [imageFile, setImageFile] = useState<string | Blob>(''); //기본이미지일때 구현이 필요함
   const [minkind, setMinKind] = useState<string>('50');
   const [imagePreview, setImagePreview] = useState('');
-  const [progId, setProgId] = useState<number>();
 
   const DEV_URL = process.env.REACT_APP_DEV_URL;
   const firstRef = useRef<any>(null);
@@ -230,12 +229,8 @@ function ProgCreate() {
       headers: { 'Content-Type': 'multipart/form-data' },
       data: formData,
     }).then((res) => {
-      setProgId(res.data.id);
-      console.log(progId);
+      navigate(`/programs/${res.data.id}`);
     });
-    // .then((res) => {
-    //   navigate(`/programs/${progId}`);
-    // });
   };
 
   //제목인풋에서 엔터누를시 프로그램 설명 인풋으로 포커즈
