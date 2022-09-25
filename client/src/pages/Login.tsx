@@ -52,22 +52,15 @@ export default function Login() {
   const handleLoginSubmit: SubmitHandler<LoginVal> = (data) => {
     console.log(data); // {loginId: '입력값', password: '입력값'}
     /** 테스트 서버, api주소 나오면 밑과 URL 주석해제후 사용*/
+    axios.defaults.withCredentials = true; // withCredentials 전역 설정
     axios
-      .post(
-        `${URL}/login`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          data: data,
-        },
-        { withCredentials: true } // 헤더에 Authorization 항목있거나 쿠키를 첨부할때 추가
-      )
-      .then((res) => {
-        navigate('/');
-        console.log(res);
+      .post(``, JSON.stringify(data), {
+        headers: { 'Content-Type': 'application/json' },
       })
-      .catch((error) => console.log(error));
+      .then((res) => {
+        console.log(res);
+        navigate('/');
+      });
   };
 
   return (
