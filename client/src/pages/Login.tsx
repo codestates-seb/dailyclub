@@ -3,6 +3,8 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { LoginVal } from 'types/user';
+// import { API } from 'apis/api';
+import { setLocalStorage } from 'apis/localStorage';
 import Layout from 'components/Layout';
 import OauthBtn from 'components/OAuth/OauthBtn';
 import OauthGoogleBtn from 'components/OAuth/OauthGoogleBtn';
@@ -47,6 +49,7 @@ export default function Login() {
 
   const handleLoginSubmit: SubmitHandler<LoginVal> = (data) => {
     // console.log(data); // {loginId: '입력값', password: '입력값'}
+    // API.login(data); // test해봐야 함
     axios.defaults.withCredentials = true; // withCredentials 전역 설정
     axios
       .post(`${URL}/login`, data, {
@@ -54,8 +57,9 @@ export default function Login() {
       })
       .then((res) => {
         if (res.status === 200) {
-          let jwtToken = res.headers.Authorization;
-          console.log('받은토큰 :', jwtToken);
+          let jwtToken = res.headers.Authorization; // 응답헤더에서 토큰 받기
+          console.log('받은 토큰 :', jwtToken);
+          setLocalStorage('jwt_token', jwtToken); // 토큰 localStorage에 저장
           axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
           navigate('/');
         }
