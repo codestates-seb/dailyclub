@@ -7,10 +7,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
-        info = @Info(
-                title = "DailyClub API 명세서",
-                version = "v1"
-        )
+    info = @Info(
+        title = "DailyClub API 명세서",
+        version = "v1"
+    )
 )
 @Configuration
 public class SwaggerConfig {
