@@ -10,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,6 +19,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
@@ -42,6 +45,7 @@ public class Program extends Auditable {
     @NotNull
     private String title;
 
+    @Lob
     @NotNull
     private String text;
 
@@ -57,16 +61,37 @@ public class Program extends Auditable {
     @NotNull
     private Integer minKind;
 
-
     @Builder.Default //@Builder 사용 시 초기값 설정
     @Convert(converter = ProgramStatusConverter.class)
     private ProgramStatus programStatus = ProgramStatus.POSSIBLE;
 
     @Builder.Default
-    @OneToMany(mappedBy = "program")
+    @OneToMany(mappedBy = "program", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ProgramImage> programImages = new ArrayList<>();
 
 
+    //비즈니스 메서드
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    //update method
+    public void updateProgram(Program program) {
+        this.title = program.getTitle();
+        this.text = program.getText();
+        this.numOfRecruits = program.getNumOfRecruits();
+        this.location = program.getLocation();
+        this.programDate = program.getProgramDate();
+        this.minKind = program.getMinKind();
+    }
+
+    public void updateProgramStatus(Program.ProgramStatus programStatus) {
+        this.programStatus = programStatus;
+    }
+
+
+    //Enum class
     @Getter
     @AllArgsConstructor
     public enum ProgramStatus implements CommonEnum {
@@ -92,11 +117,5 @@ public class Program extends Auditable {
 
         private final String description;
     }
-
-    public void setUser(User user) {
-        this.user = user;
-
-    }
-
 }
 

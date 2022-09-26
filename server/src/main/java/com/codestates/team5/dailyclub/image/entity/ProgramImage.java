@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -50,4 +49,11 @@ public class ProgramImage {
         program.getProgramImages().add(this);
     }
 
+    //비즈니스 메소드
+    public void updateProgramImage(ProgramImage programImage) {
+        this.size = programImage.getSize();
+        this.contentType = programImage.getContentType();
+        this.originalName = programImage.getOriginalName();
+        this.bytes = programImage.getBytes();
+    }
 }
