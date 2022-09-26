@@ -9,6 +9,8 @@ import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link } from 'react-router-dom';
+import { useAppSelector } from 'stores/hooks';
+import { searchActions } from 'stores/searchReducer';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -156,16 +158,18 @@ export default function Main() {
   // const URL = process.env.REACT_APP_DEV_URL;
   const URL = `http://localhost:3001`; // json-server
 
+  const searchKeyword = useAppSelector((state) => state.search.keyword);
   const [levelOpened, setLevelOpened] = useState(false);
   const [areaSelected, setAreaSelected] = useState('');
   const [rangeValue, setRangeValue] = useState('');
   const [dateSelected, setDateSelected] = useState('');
   const [programs, setPrograms] = useState<Array<Object>>([]);
+  console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
 
-  /** 필터 조회api */
+  /** 필터 조회api - 키워드,지역,날짜,친절도*/
   // .get(
   //   `${URL}/api/programs?page=1&size=10
-  // &keyword=${}&location=${areaSelected}&programDate=${dateSelected}&programStatus=POSSIBLE`
+  // &keyword=${searchKeyword}&location=${areaSelected}&programDate=${dateSelected}&programStatus=POSSIBLE`
   // )
 
   useEffect(() => {
