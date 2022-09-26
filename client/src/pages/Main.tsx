@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import AreaFilter from 'components/AreaFilter';
 import Layout from 'components/Layout';
 import styled from 'styled-components';
@@ -5,8 +7,8 @@ import Bookmark from '../images/Bookmark.svg';
 import QuestionMark from '../images/QuestionMark.svg';
 import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
-import { useState } from 'react';
 import ProgressBar from 'components/ProgressBar';
+import { Link } from 'react-router-dom';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -138,89 +140,57 @@ const DoneContainer = styled.div`
 
 interface ProgProps {
   id: number;
-  numStatus: string;
+  programStatus: string;
   title: string;
-  booked: boolean;
-  percent: number;
-  currentPerson: number;
-  totalPerson: number;
-  date: string;
+  text: string;
+  // programImages?: string; // 추가예정
+  minKind: number;
+  currentPerson: number; // api엔 없음
+  numOfRecruits: number; // numOfRecruits 수정
+  location: string;
+  programDate: string;
+  bookmarkId?: number;
+  writer: string; // 수정
 }
 export default function Main() {
+  // const URL = process.env.REACT_APP_DEV_URL;
+  const URL = `http://localhost:3001`; // json-server
+
   const [levelOpened, setLevelOpened] = useState(false);
   const [areaSelected, setAreaSelected] = useState('');
   const [rangeValue, setRangeValue] = useState('');
   const [dateSelected, setDateSelected] = useState('');
+  const [programs, setPrograms] = useState<Array<Object>>([]);
+
+  /** 필터 조회api */
+  // .get(
+  //   `${URL}/api/programs?page=1&size=10
+  // &keyword=${}&location=${areaSelected}&programDate=${dateSelected}&programStatus=POSSIBLE`
+  // )
+
+  useEffect(() => {
+    const getProgramList = async () => {
+      await axios
+        .get(`${URL}/programs`)
+        .then(({ data }) => {
+          setPrograms(data);
+          // const accessToken = JSON.parse(localStorage.getItem('key') as string);
+          // if (accessToken) {
+          //   axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+          // }
+        })
+        .catch((err) => console.log(err.message));
+    };
+    getProgramList();
+  }, []);
 
   const progFilterProps = {
+    keyword: '',
     location: areaSelected,
-    date: dateSelected,
-    levelRange: rangeValue,
+    programDate: dateSelected,
+    levelRange: rangeValue, // api문서엔 없음
   };
-  // console.log(progFilterProps); // 필터조회api 보낼때 객체 {location: '경기/강원', date: '2022-09-07', levelRange: '12'}
-
-  const programList: ProgProps[] = [
-    {
-      id: 1,
-      numStatus: '모집중',
-      title: '[서울] 아이유 콘서트 동행 구합니다...',
-      booked: false,
-      percent: 100,
-      currentPerson: 4,
-      totalPerson: 8,
-      date: '11',
-    },
-    {
-      id: 2,
-      numStatus: '마감임박',
-      title: '[영국] 손흥민 직관 동행 구합니다...',
-      booked: false,
-      percent: 20,
-      currentPerson: 8,
-      totalPerson: 10,
-      date: '11',
-    },
-    {
-      id: 3,
-      numStatus: '모집종료',
-      title: '[대구] 대구 풋살구장 사람구합니다...',
-      booked: false,
-      percent: 80,
-      currentPerson: 3,
-      totalPerson: 11,
-      date: '11',
-    },
-    {
-      id: 4,
-      numStatus: '모집중',
-      title: '[서울] 홍대 라멘투어 마제소바,돈...',
-      booked: false,
-      percent: 70,
-      currentPerson: 4,
-      totalPerson: 10,
-      date: '11',
-    },
-    {
-      id: 5,
-      numStatus: '모집중',
-      title: '[대구] 대구 풋살구장 사람구합니다...',
-      booked: false,
-      percent: 69,
-      currentPerson: 4,
-      totalPerson: 10,
-      date: '11',
-    },
-    {
-      id: 6,
-      numStatus: '모집중',
-      title: '[대구] 대구 풋살구장 사람구합니다...',
-      booked: false,
-      percent: 50,
-      currentPerson: 4,
-      totalPerson: 10,
-      date: '11',
-    },
-  ];
+  // console.log(progFilterProps); // 필터조회api 보낼때 객체
 
   return (
     <Layout>
@@ -263,75 +233,95 @@ export default function Main() {
             </LevelRange>
           </FilterContainer>
           <ProgContainer>
-            {programList?.map((el: ProgProps) => (
-              <ProgItem key={el.id}>
-                <ProgBanner>
-                  <ProgRecruitment
-                    style={{
-                      backgroundColor: `${
-                        el.numStatus === '모집중'
-                          ? '#38D9A9'
-                          : null || el.numStatus === '마감임박'
-                          ? '#d22a2a'
-                          : null || el.numStatus === '모집종료'
-                          ? 'darkGray'
-                          : null
-                      }`,
-                    }}
-                  >
-                    {el.numStatus}
-                  </ProgRecruitment>
-                  <ProgImg>사진</ProgImg>
-                  <ProgBookmark>
-                    <img src={Bookmark} alt="bookmark" />
-                  </ProgBookmark>
-                </ProgBanner>
-                <ProgTitle>{el.title}</ProgTitle>
-                <LevelPercent percent={el?.percent} />
-                <ProgProgressBar>
-                  <ProgressBar
-                    currentPerson={el.currentPerson}
-                    totalPerson={el.totalPerson}
-                  />
-                </ProgProgressBar>
-                <ProgWrapper>
-                  <ProgPerson>
-                    모집인원 {el.currentPerson} / {el.totalPerson}
-                  </ProgPerson>
-                  <ProgDate>{el.date}일 남음</ProgDate>
-                </ProgWrapper>
-              </ProgItem>
-            ))}
+            {programs &&
+              programs?.map((el: any) => (
+                <Link to={`/programs/${el.id}`} key={el.id}>
+                  <ProgItem>
+                    <ProgBanner>
+                      <ProgRecruitment
+                        style={{
+                          backgroundColor: `${
+                            el.programStatus === '모집중'
+                              ? '#38D9A9'
+                              : null || el.programStatus === '마감임박'
+                              ? '#d22a2a'
+                              : null || el.programStatus === '모집종료'
+                              ? 'darkGray'
+                              : null
+                          }`,
+                        }}
+                      >
+                        {el.programStatus}
+                      </ProgRecruitment>
+                      <ProgImg>사진</ProgImg>
+                      <ProgBookmark>
+                        <img src={Bookmark} alt="bookmark" />
+                      </ProgBookmark>
+                    </ProgBanner>
+                    <ProgTitle>
+                      [{el.location}] {el.title.slice(0, 16)}...
+                    </ProgTitle>
+                    <LevelPercent percent={el.minKind} />
+                    <ProgProgressBar>
+                      <ProgressBar
+                        currentPerson={el.currentPerson}
+                        totalPerson={el.numOfRecruits}
+                      />
+                    </ProgProgressBar>
+                    <ProgWrapper>
+                      <ProgPerson>
+                        모집인원 {el.currentPerson} / {el.numOfRecruits}
+                      </ProgPerson>
+                      <ProgDate>
+                        {Math.floor(
+                          (+new Date(el.programDate) - +new Date()) /
+                            (1000 * 60 * 60 * 24)
+                        )}
+                        일 남음
+                      </ProgDate>
+                    </ProgWrapper>
+                  </ProgItem>
+                </Link>
+              ))}
           </ProgContainer>
         </IngContainer>
         <DoneContainer>
           <RecruitText>모집 마감된 모임</RecruitText>
           <ProgContainer>
-            {programList?.map((el: ProgProps) => (
-              <ProgItem key={el.id}>
-                <ProgBanner>
-                  <ProgRecruitment>모집종료</ProgRecruitment>
-                  <ProgImg>사진</ProgImg>
-                  <ProgBookmark>
-                    <img src={Bookmark} alt="bookmark" />
-                  </ProgBookmark>
-                </ProgBanner>
-                <ProgTitle>{el.title}</ProgTitle>
-                <LevelPercent percent={el?.percent} />
-                <ProgProgressBar>
-                  <ProgressBar
-                    currentPerson={el.totalPerson}
-                    totalPerson={el.totalPerson}
-                  />
-                </ProgProgressBar>
-                <ProgWrapper>
-                  <ProgPerson>
-                    모집인원 {el.totalPerson} / {el.totalPerson}
-                  </ProgPerson>
-                  <ProgDate>{el.date}일 남음</ProgDate>
-                </ProgWrapper>
-              </ProgItem>
-            ))}
+            {programs &&
+              programs?.map((el: any) => (
+                <ProgItem key={el.id}>
+                  <ProgBanner>
+                    <ProgRecruitment>모집종료</ProgRecruitment>
+                    <ProgImg>사진</ProgImg>
+                    <ProgBookmark>
+                      <img src={Bookmark} alt="bookmark" />
+                    </ProgBookmark>
+                  </ProgBanner>
+                  <ProgTitle>
+                    [{el.location}] {el.title.slice(0, 16)}...
+                  </ProgTitle>
+                  <LevelPercent percent={el.minKind} />
+                  <ProgProgressBar>
+                    <ProgressBar
+                      currentPerson={el.numOfRecruits}
+                      totalPerson={el.numOfRecruits}
+                    />
+                  </ProgProgressBar>
+                  <ProgWrapper>
+                    <ProgPerson>
+                      모집인원 {el.numOfRecruits} / {el.numOfRecruits}
+                    </ProgPerson>
+                    <ProgDate>
+                      {Math.floor(
+                        (+new Date(el.programDate) - +new Date()) /
+                          (1000 * 60 * 60 * 24)
+                      )}
+                      일 남음
+                    </ProgDate>
+                  </ProgWrapper>
+                </ProgItem>
+              ))}
           </ProgContainer>
         </DoneContainer>
       </WrapContainer>
