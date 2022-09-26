@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     private final String[] ALLOWED_ORIGINS = {
-        "http://localhost:3030",
+        "http://localhost:3000",
         "http://stackoverflow-bucket-codestates-5.s3-website.ap-northeast-2.amazonaws.com/"
     };
 
