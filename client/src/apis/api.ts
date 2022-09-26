@@ -1,53 +1,67 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
+import { getLocalStorage } from './localStorage';
 
-interface ProgramType {
-  id: string;
-  title: string;
-}
-
-const instance = axios.create({
-  baseURL: process.env.REACT_APP_DEV_URL,
+/** 기본 api 인스턴스 */
+const BaseInstance = axios.create({
+  baseURL: process.env.REACT_APP_DEV_TWO_URL,
+  // baseURL: process.env.REACT_APP_DEV_URL,
 });
 
-const responseBody = (response: AxiosResponse) => response.data;
-
-const requests = {
-  get: (url: string) => instance.get(url).then(responseBody),
-  post: (url: string, body: {}) => instance.post(url, body).then(responseBody),
-  put: (url: string, body: {}) => instance.put(url, body).then(responseBody),
-  delete: (url: string) => instance.post(url).then(responseBody),
-};
+/** 인증 필요한 api = 인스턴스 생성 후, interceptor에서 사용자인증(헤더담는) 작업 */
+const authInstance = axios.create({
+  baseURL: process.env.REACT_APP_DEV_URL,
+});
+authInstance.interceptors.request.use(
+  (config: AxiosRequestConfig): AxiosRequestConfig => {
+    if (config.headers!.Authorization === undefined || null) {
+      const token = getLocalStorage('jwt_token');
+      if (token) config.headers!.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export const API = {
   // User
+  login: <T>(data: T) => {
+    return authInstance({ method: 'POST', url: `/login`, data });
+  },
+  getUserInfo: (userId: number) => {
+    return authInstance({ method: 'GET', url: `/api/users/${userId}` });
+  },
+  editUserInfo: <D>(userId: number, data: D) => {
+    return authInstance({
+      method: 'PUT',
+      url: `/api/users/${userId}`,
+      data,
+    });
+  },
 
-  // login: <T>(data: T) => {
-  //   return requests({ method: 'POST' as Method, url: REQUEST_URL.LOGIN, data });
-  // },
-  login: <T>(data: T): Promise<ProgramType[]> =>
-    requests.post('/login', { data }),
-
-  // Program
-  getProgram: (): Promise<ProgramType[]> => requests.get('program'),
-  getAProgram: (id: number): Promise<ProgramType> =>
-    requests.get(`programs/${id}`),
-  createPost: (post: ProgramType): Promise<ProgramType> =>
-    requests.post('programs', post),
-  updatePost: (post: ProgramType, id: number): Promise<ProgramType> =>
-    requests.put(`programs/${id}`, post),
-  deletePost: (id: number): Promise<void> => requests.delete(`programs/${id}`),
+  // Program 임시
+  getProgram: () => {
+    return BaseInstance({ method: 'GET', url: `/api/programs` });
+  },
+  getAProgram: (programId: number) => {
+    return BaseInstance({ method: 'GET', url: `/api/programs/${programId}` });
+  },
+  createProgram: <T>(data: T) => {
+    return authInstance({
+      method: 'POST',
+      url: `/api/programs`,
+      data,
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+  updateProgram: <D>(programId: number, data: D) => {
+    return authInstance({
+      method: 'PUT',
+      url: `/api/programs/${programId}`,
+      data,
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+  },
+  deleteProgram: <I>(programId: I) => {
+    return authInstance({ method: 'DELETE', url: `programs/${programId}` });
+  },
 };
-
-/* 사용할 때
-	useEffect(() => {
-		Program.getProgram()
-			.then((data) => {
-				setPosts(data);
-			})
-			.catch((err) => {
-				setIsError(true);
-			});
-		return () => {};
-	}, []);
-
-*/
