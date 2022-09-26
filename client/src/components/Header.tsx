@@ -1,8 +1,10 @@
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { useAppDispatch } from 'stores/hooks';
+import { searchActions } from 'stores/searchReducer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
 import Logo from '../images/Logo.svg';
 import Pen from '../images/Pen.svg';
 import Message from '../images/Message.svg';
@@ -187,6 +189,20 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
   ];
 
   const [isopened, setIsOpened] = useState<boolean>(false);
+  const [InputValue, setInputValue] = useState('');
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handelSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    dispatch(searchActions.getKeyword(InputValue)); //헤더 input값 전역상태에 저장
+  };
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      navigate('/'); // 엔터 시 질문목록 메인페이지로 이동
+      // setInputValue(''); // input창만 비우고 싶은데 전달할 전역상태까지 비워져버림
+    }
+  };
 
   return (
     <>
@@ -198,7 +214,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
             </Link>
           </LogoContent>
           <IconContainer>
-            <SearchForm>
+            <SearchForm onSubmit={handelSearchSubmit}>
               <SearchBtn>
                 <img
                   src={Search}
@@ -206,7 +222,12 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
                   style={{ height: 15, width: 15 }}
                 />
               </SearchBtn>
-              <SearchInput placeholder="프로그램 / 모임을 검색해보세요" />
+              <SearchInput
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyPress={handleKeyPress}
+                value={InputValue}
+                placeholder="프로그램 / 모임을 검색해보세요"
+              />
             </SearchForm>
             {isLoggedIn ? (
               <>
