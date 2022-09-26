@@ -9,6 +9,10 @@ import Loc from '../images/Location.svg';
 import Info from '../images/Info.svg';
 import Msg from '../images/Message.svg';
 import QuestionMark from '../images/QuestionMark.svg';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { ProgramDetailVal } from 'types/programs';
 
 const ProgPageDetail = styled.div`
   max-width: 1200px;
@@ -29,8 +33,8 @@ const ProgDetailWrap = styled.div`
 
 const ProgDetailInfo = styled.div`
   width: 35%;
+  margin-bottom: 10px;
   box-sizing: border-box;
-  padding: 20px;
 `;
 
 const ProgDetailImg = styled.div`
@@ -53,15 +57,10 @@ const ProgTxtSection = styled.div`
   font-weight: 600;
 `;
 
-const ProgTextHead = styled.div`
-  margin-top: 20px;
-  font-weight: 600;
-`;
-
 const ProgText = styled.div`
   margin-top: 5px;
   margin-bottom: 5px;
-  font-size: 12px;
+  font-size: 18px;
   font-weight: 500;
 `;
 
@@ -81,7 +80,6 @@ const ProglInfoWrap = styled.div`
   margin-bottom: 20px;
   border-radius: 5px;
   padding: 0 20px;
-  margin: 5px;
   margin-top: 10px;
 `;
 
@@ -133,7 +131,6 @@ const LeaderInfo = styled.div`
   margin-bottom: 20px;
   border-radius: 5px;
   padding: 20px;
-  margin: 5px;
   margin-top: 10px;
 `;
 
@@ -145,7 +142,9 @@ const ProfileNickname = styled.div`
 
 const SendMsg = styled.div`
   font-size: 18px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-weight: lighter;
 `;
 
@@ -239,6 +238,18 @@ const userProps: {
 };
 
 export default function ProgDetail() {
+  const DEV_URL = process.env.REACT_APP_DEV_URL;
+  const params = useParams();
+
+  const [data, setData] = useState<ProgramDetailVal>();
+  const [progImg, setProgImg] = useState<string>('');
+
+  useEffect(() => {
+    axios.get(`${DEV_URL}/api/programs/${params.programId}`).then((res) => {
+      setData(res.data);
+    });
+  }, []);
+
   const memberList: MemersProps[] = [
     {
       id: 1,
@@ -273,14 +284,14 @@ export default function ProgDetail() {
     <Layout>
       <ProgPageDetail>
         <ProgDetailWrap>
-          <ProgDetailImg>사진</ProgDetailImg>
+          <ProgDetailImg>
+            <img src={progImg}></img>
+          </ProgDetailImg>
           <ProgTitleSection>
-            [서울] 아이유 콘서트 솔플 하시는 분 찾습니다.
+            [{data?.location}]{data?.title}
           </ProgTitleSection>
           <ProgTxtSection>
-            <H2>소개글</H2>
-            <ProgTextHead>소제목</ProgTextHead>
-            <ProgText>내용</ProgText>
+            <ProgText>{data?.text}</ProgText>
           </ProgTxtSection>
           <ProgMemberContent>
             <H2>함께하는 멤버(신청자)</H2>
@@ -319,7 +330,7 @@ export default function ProgDetail() {
 
                 <H3>모집인원</H3>
               </Icon>
-              <ProgInfoText>99 / 100</ProgInfoText>
+              <ProgInfoText>2 / {data?.numOfRecruits}</ProgInfoText>
             </ProgPeople>
             <ProgDate>
               <Icon>
@@ -329,22 +340,23 @@ export default function ProgDetail() {
                   style={{ height: 25, width: 25 }}
                 />
 
-                <H3>모집일정</H3>
+                <H3>진행날짜</H3>
               </Icon>
-              <ProgInfoText>2022.09.20. 까지 모집</ProgInfoText>
+              <ProgInfoText>{data?.programDate}</ProgInfoText>
             </ProgDate>
             <ProgRegion>
               <Icon>
                 <img src={Loc} alt="logo" style={{ height: 25, width: 25 }} />
                 <H3>모집지역</H3>
               </Icon>
-              <ProgInfoText>인천</ProgInfoText>
+              <ProgInfoText>{data?.location}</ProgInfoText>
             </ProgRegion>
             <ProgMessage>
               <Icon>
                 <img src={Info} alt="logo" style={{ height: 25, width: 25 }} />
-                <H3>안내사항</H3>
+                <H3>최소 친절도</H3>
               </Icon>
+              <ProgInfoText>{data?.minKind}% 이상</ProgInfoText>
             </ProgMessage>
             <BtnWrap>
               <BookmarkBtn>
@@ -363,20 +375,24 @@ export default function ProgDetail() {
           <H2>모임장 정보</H2>
           <LeaderInfo>
             <MemName>
-              <ProfileNickname>{userProps.nickname}</ProfileNickname>
+              <ProfileNickname>{data?.writer.nickname}</ProfileNickname>
             </MemName>
             <MemIntro>
-              <ProfileIntro>{userProps.introduction}</ProfileIntro>
+              <ProfileIntro>{data?.writer.introduction}</ProfileIntro>
             </MemIntro>
             <KindWrap>
               <div>
                 친절도 &nbsp;
                 <img src={QuestionMark} alt="question mark" />
               </div>
-              <LevelPercent percent={userProps.kind}></LevelPercent>
+              <LevelPercent
+                //@ts-ignore
+                percent={data?.writer.kind}
+              ></LevelPercent>
             </KindWrap>
             <ProgressBar
-              currentPerson={userProps.kind}
+              //@ts-ignore
+              currentPerson={data?.writer.kind}
               totalPerson={100}
             ></ProgressBar>
             <SendMsgBtn>
