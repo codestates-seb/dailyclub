@@ -1,12 +1,22 @@
 import axios from 'axios';
+<<<<<<< HEAD
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { SignUpVal } from 'types/user';
+=======
+>>>>>>> e6a6be84ff2aeeaa3970c70b21a42926759018d2
 import Layout from 'components/Layout';
 import OauthBtn from 'components/OAuth/OauthBtn';
 import OauthGoogleBtn from 'components/OAuth/OauthGoogleBtn';
 import OauthNaverBtn from 'components/OAuth/OauthNaverBtn';
 import OauthTitle from 'components/OAuth/OauthTitle';
+<<<<<<< HEAD
+=======
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+>>>>>>> e6a6be84ff2aeeaa3970c70b21a42926759018d2
 
 const SignUpContainer = styled.div`
   margin: 0 auto;
@@ -35,6 +45,10 @@ const LoginText = styled.div`
   color: #1ebd8e;
 `;
 
+<<<<<<< HEAD
+export default function SignUp() {
+  const URL = process.env.REACT_APP_DEV_TWO_URL; //민정님주소
+=======
 interface SignUpVal {
   loginId: string;
   email: string;
@@ -44,6 +58,7 @@ interface SignUpVal {
 
 export default function SignUp() {
   const URL = process.env.REACT_APP_DEV_URL;
+>>>>>>> e6a6be84ff2aeeaa3970c70b21a42926759018d2
   const navigate = useNavigate();
   const {
     register,
@@ -52,6 +67,15 @@ export default function SignUp() {
   } = useForm<SignUpVal>();
 
   const handleLoginSubmit: SubmitHandler<SignUpVal> = (data) => {
+<<<<<<< HEAD
+    // console.log(data); // {loginId: '입력값', email: '입력값', password: '입력값', nickname: '입력값'}
+    /** 회원가입 API */
+    axios
+      .post(`${URL}/api/users`, data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+=======
     console.log(data); // {loginId: '입력값', email: '입력값', password: '입력값', nickname: '입력값'}
 
     /** 테스트 서버, api주소 나오면 밑에 주석해제후 url들 수정해서 사용*/
@@ -61,6 +85,7 @@ export default function SignUp() {
           'Content-Type': 'application/json',
         },
         data,
+>>>>>>> e6a6be84ff2aeeaa3970c70b21a42926759018d2
       })
       .then((res) => {
         navigate('/login');
