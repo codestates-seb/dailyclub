@@ -1,4 +1,4 @@
-package com.codestates.team5.dailyclub.login;
+package com.codestates.team5.dailyclub.jwt;
 
 import com.codestates.team5.dailyclub.user.entity.User;
 import lombok.Data;
@@ -9,13 +9,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Data
-public class PrincipalDetails implements UserDetails {
-
+public class AuthDetails implements UserDetails {
     private final User user;
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        //계정이 갖고 있는 권한(ROLE)을 목록으로 return
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(() -> String.valueOf(user.getRole()));
         return authorities;
