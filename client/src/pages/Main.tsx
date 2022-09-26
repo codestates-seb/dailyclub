@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+
 import AreaFilter from 'components/AreaFilter';
 import Layout from 'components/Layout';
 import styled from 'styled-components';
@@ -9,6 +10,7 @@ import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link } from 'react-router-dom';
+
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -283,6 +285,7 @@ export default function Main() {
                   </ProgItem>
                 </Link>
               ))}
+
           </ProgContainer>
         </IngContainer>
         <DoneContainer>
