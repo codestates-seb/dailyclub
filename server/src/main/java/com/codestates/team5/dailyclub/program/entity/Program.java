@@ -1,11 +1,10 @@
 package com.codestates.team5.dailyclub.program.entity;
 
-import com.codestates.team5.dailyclub.apply.entity.Apply;
 import com.codestates.team5.dailyclub.common.audit.Auditable;
 import com.codestates.team5.dailyclub.common.enumeration.CommonEnum;
 import com.codestates.team5.dailyclub.image.entity.ProgramImage;
-import com.codestates.team5.dailyclub.program.util.LocationConverter;
-import com.codestates.team5.dailyclub.program.util.ProgramStatusConverter;
+import com.codestates.team5.dailyclub.program.util.converter.LocationConverter;
+import com.codestates.team5.dailyclub.program.util.converter.ProgramStatusConverter;
 import com.codestates.team5.dailyclub.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
