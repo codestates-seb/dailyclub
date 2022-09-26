@@ -2,7 +2,10 @@ package com.codestates.team5.dailyclub.apply.service;
 
 import com.codestates.team5.dailyclub.apply.entity.Apply;
 import com.codestates.team5.dailyclub.apply.repository.ApplyRepository;
+import com.codestates.team5.dailyclub.program.entity.Program;
 import com.codestates.team5.dailyclub.program.repository.ProgramRepository;
+import com.codestates.team5.dailyclub.program.service.ProgramService;
+import com.codestates.team5.dailyclub.user.entity.User;
 import com.codestates.team5.dailyclub.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,22 +21,36 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ApplyService {
 
+    private final ProgramService programService;
     private final ApplyRepository applyRepository;
     private final UserRepository userRepository;
     private final ProgramRepository programRepository;
 
     public Apply createApply(Long loginUserId, Long programId) {
+        User userById = userRepository.getReferenceById(loginUserId);
+        Program programById = programRepository.getReferenceById(programId);
+
         Apply apply = Apply.builder()
-                            .user(userRepository.getReferenceById(loginUserId))
-                            .program(programRepository.getReferenceById(programId))
+                            .user(userById)
+                            .program(programById)
                             .build();
 
-        return applyRepository.save(apply);
+        //apply 등록
+        Apply savedApply = applyRepository.save(apply);
+
+        //check programStatus
+        Program.ProgramStatus programStatus
+            = programService.checkProgramStatus(programId, programById.getNumOfRecruits());
+
+        //program dirty checking
+        programById.updateProgramStatus(programStatus);
+
+        return savedApply;
     }
 
     public Page<Apply> findAppliesByProgramId(int page, int size, Long programId) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id").descending());
-        return applyRepository.findAllByCriteriaId(pageRequest, programId);
+        return applyRepository.findAllByProgramId(pageRequest, programId);
     }
 
     public Page<Apply> findAppliesByUserId(int page, int size, Long userId) {

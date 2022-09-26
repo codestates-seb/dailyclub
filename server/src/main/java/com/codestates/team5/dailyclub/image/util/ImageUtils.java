@@ -20,9 +20,10 @@ public class ImageUtils {
         byte[] bytes = imageFile.getBytes();
 
         return ProgramImage.builder()
-                    .size(size)
-                    .contentType(contentType)
-                    .originalName(originalName)
-                    .bytes(bytes).build();
+            .size(size)
+            .contentType(contentType)
+            .originalName(originalName)
+            .bytes(bytes)
+            .build();
     }
 }
