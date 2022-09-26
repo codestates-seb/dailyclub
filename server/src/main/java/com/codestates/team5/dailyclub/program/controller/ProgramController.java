@@ -56,13 +56,10 @@ public class ProgramController {
     public ResponseEntity<ProgramDto.Response> postProgram(@ParameterObject @ModelAttribute ProgramDto.Post programPostDto,
                                                            @RequestPart(required = false) MultipartFile imageFile) throws IOException {
         Long loginUserId = 1L;
-        Program program = programMapper.programPostDtoToProgram(programPostDto);
-
-        //MultipartFile -> ProgramImage 변환
-        ProgramImage programImage = ImageUtils.parseToProgramImage(imageFile);
+        Program programFromPostDto = programMapper.programPostDtoToProgram(programPostDto);
 
         //ProgramService 호출 (Program 등록 후 ProgramImage 등록)
-        Program createdProgram = programService.createProgram(loginUserId, program, programImage);
+        Program createdProgram = programService.createProgram(loginUserId, programFromPostDto, imageFile);
 
         ProgramDto.Response response = programMapper.programToProgramResponseDto(createdProgram);
 
@@ -79,9 +76,18 @@ public class ProgramController {
     @PatchMapping(value = "/{programId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProgramDto.Response> patchProgram(@ParameterObject @ModelAttribute ProgramDto.Patch programPatchDto,
                                                             @RequestPart(required = false) MultipartFile imageFile,
-                                                            @PathVariable("programId") Long programId) {
-        Program program = new Program();
-        return new ResponseEntity<>(programMapper.programToProgramResponseDto(program), HttpStatus.OK);
+                                                            @PathVariable("programId") Long programId) throws IOException {
+        Long loginUserId = 1L;
+        Program programFromPatchDto = programMapper.programPatchDtoToProgram(programPatchDto);
+
+        Program updatedProgram = programService.updateProgram(
+            loginUserId,
+            programFromPatchDto,
+            programPatchDto.getProgramImageId(),
+            imageFile
+        );
+
+        return new ResponseEntity<>(programMapper.programToProgramResponseDto(updatedProgram), HttpStatus.OK);
     }
 
     @Operation(summary = "프로그램 조회")
@@ -107,7 +113,7 @@ public class ProgramController {
             description = "OK"
         )
     )
-    @GetMapping(consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @GetMapping
     public ResponseEntity<MultiResponseDto<ProgramDto.Response>> getPrograms(@Parameter(description = "페이지 번호") @RequestParam int page,
                                                                              @Parameter(description = "한 페이지당 프로그램 수") @RequestParam int size,
                                                                              @ParameterObject @ModelAttribute SearchFilterDto searchFilterDto) {

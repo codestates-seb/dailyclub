@@ -67,6 +67,9 @@ public class ProgramDto {
 
         @Schema(description = "최소 신청 가능 친절 %", example = "70")
         private Integer minKind;
+
+        @Schema(description = "프로그램 이미지 ID")
+        private Long programImageId;
     }
 
     @Schema(name = "프로그램 응답 API 스펙", title = "프로그램 응답 API 스펙")
