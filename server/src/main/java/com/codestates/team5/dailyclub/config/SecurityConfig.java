@@ -39,7 +39,7 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) ->web.ignoring().antMatchers(
-                "/h2/**", "/api/users", "/swagger-ui.html"
+                "/h2/**", "/swagger-ui.html"
         );
     }
 
@@ -56,10 +56,6 @@ public class SecurityConfig {
         http
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                //쿠키로 담아져서 세션이 가게 됨
-//                .formLogin()
-//                .loginPage("/login")
-//                .and()
                 .httpBasic().disable()
                 .apply(new JwtLogin())
                 .and()
@@ -92,6 +88,7 @@ public class SecurityConfig {
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
+        configuration.addExposedHeader("Authorization");
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
