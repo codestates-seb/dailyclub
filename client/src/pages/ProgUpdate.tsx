@@ -1,7 +1,7 @@
 import axios from 'axios';
 import Layout from 'components/Layout';
 import React, { useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 const CreateContainer = styled.div`
@@ -218,6 +218,7 @@ interface PrevProgramProps {
 }
 
 function ProgUpdate() {
+  const URL = process.env.REACT_APP_DEV_URL;
   const [title, setTitle] = useState<string>('');
   const [text, setText] = useState<string>('');
   const [numOfRecruits, setNumOfRecruits] = useState<string>('');
@@ -227,9 +228,10 @@ function ProgUpdate() {
   const [prev, setPrev] = useState<any>({});
   const [imagePreview, setImagePreview] = useState('');
   const [minkind, setMinKind] = useState<string>(`${prev && prev?.minKind}`);
+  const [prevImgId, setPrevImgId] = useState<any>();
 
-  const URL = process.env.REACT_APP_DEV_URL;
   const { programId } = useParams();
+  const navigate = useNavigate();
 
   const firstRef = useRef<any>(null);
   const secondRef = useRef<any>(null); //focus 처리시 에러
@@ -240,9 +242,18 @@ function ProgUpdate() {
       .then(({ data }) => {
         setPrev(data);
         setMinKind(data?.minKind);
+        setPrevImgId(data?.programImages && data?.programImages[0].id); // 이전 img Id
+        /** 이미지 받아오기 */
+        setPicture(
+          `data:${data.programImages[0].contentType};base64,${data?.programImages[0].bytes}`
+        );
+        setImagePreview(
+          `data:${data.programImages[0].contentType};base64,${data?.programImages[0].bytes}`
+        );
       })
       .catch((err) => console.log(err));
   };
+  // console.log(prevImgId);
 
   //처음 렌더링 될 때 제목인풋에 포커즈
   useEffect(() => {
@@ -254,24 +265,30 @@ function ProgUpdate() {
     e.preventDefault();
     const formData = new FormData();
 
+    formData.append('id', programId!);
     formData.append('title', title);
     formData.append('text', text);
     formData.append('numOfRecruits', numOfRecruits);
     formData.append('location', location);
     formData.append('programDate', programDate);
     formData.append('minKind', minkind);
-    formData.append('picture', picture);
+    formData.append('imageFile', picture);
+    formData.append('programImageId', prevImgId);
 
     for (let values of formData.values()) {
       console.log(values); // formData 객체의 정보 확인하는 법
     }
 
-    // axios({
-    //   method: 'patch',
-    //   url: `${URL}/api/programs/${programId}`,
-    //   headers: {"Content-Type": "multipart/form-data"},
-    //   data: formData
-    // });
+    axios({
+      method: 'patch',
+      url: `${URL}/api/programs/${programId}`,
+      headers: { 'Content-Type': 'multipart/form-data' },
+      data: formData,
+    })
+      .then(() => {
+        navigate(`/programs/${programId}`);
+      })
+      .catch((err) => console.log(err));
   };
 
   //제목인풋에서 엔터누를시 프로그램 설명 인풋으로 포커즈
@@ -310,7 +327,8 @@ function ProgUpdate() {
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setPicture((e.target as any).files[0]);
-    // setImagePreview(URL.createObjectURL((e.target as any).files[0]));
+    // @ts-ignore
+    setImagePreview(window.URL.createObjectURL((e.target as any).files[0]));
   };
 
   return (
@@ -331,7 +349,7 @@ function ProgUpdate() {
               onKeyUp={handleInput}
               required
               onChange={handleTitle}
-            ></TitleInput>
+            />
             <ProgramInfoTitle>
               <Redstar>*</Redstar>
               <Label>프로그램 설명</Label>
@@ -343,7 +361,7 @@ function ProgUpdate() {
               ref={secondRef}
               onChange={handleText}
               required
-            ></ContentsInput>
+            />
           </ProgramInfo>
           <RecruitInfo>
             <RecruitInfoTitle>
@@ -361,7 +379,7 @@ function ProgUpdate() {
                 onChange={handleNumofRecruits}
                 required
                 defaultValue={prev && prev?.numOfRecruits}
-              ></RecruitInput>
+              />
             </RecruitContents>
             <RecruitContents>
               <Redstar>*</Redstar>
@@ -373,7 +391,7 @@ function ProgUpdate() {
                 onChange={handleProgramDate}
                 required
                 defaultValue={prev && prev?.programDate}
-              ></RecruitInput>
+              />
             </RecruitContents>
             <RecruitContents>
               <Redstar>*</Redstar>
@@ -411,7 +429,7 @@ function ProgUpdate() {
                   required
                   key={prev && prev?.minKind}
                   defaultValue={prev && prev?.minKind}
-                ></KindInput>
+                />
                 <KindValue>{minkind}%</KindValue>
               </KindInputWrap>
             </RecruitContents>
@@ -436,8 +454,8 @@ function ProgUpdate() {
               name="avatar"
               accept="image/*"
               onChange={handleImage}
-            ></ImageInput>
-            <CreateBtn type="submit">등록하기</CreateBtn>
+            />
+            <CreateBtn type="submit">수정하기</CreateBtn>
           </RecruitInfo>
         </CreateForm>
       </CreateContainer>
