@@ -12,6 +12,7 @@ import NoticeList from 'pages/NoticeList';
 import NoticeDetail from 'pages/NoticeDetail';
 import NoticeCreate from 'pages/NoticeCreate';
 import ProgDetail from 'pages/ProgDetail';
+import ProgUpdate from 'pages/ProgUpdate';
 
 const App: React.FC = () => {
   return (
@@ -31,6 +32,10 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/programs/create" element={<ProgCreate />} />
             <Route path="/programs/:programId" element={<ProgDetail />} />
+            <Route
+              path="/programs/:programId/update"
+              element={<ProgUpdate />}
+            />
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/notice" element={<NoticeList />} />
             <Route path="/notice/:noticeId" element={<NoticeDetail />} />

@@ -9,6 +9,7 @@ import Logo from '../images/Logo.svg';
 import Pen from '../images/Pen.svg';
 import Message from '../images/Message.svg';
 import Search from '../images/Search.svg';
+import Profile from '../images/Profile.svg';
 
 const HeaderContainer = styled.div`
   position: fixed;
@@ -251,7 +252,11 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
                 </Icon>
                 <Icon>
                   <ProfileBtn onClick={() => setIsOpened(!isopened)}>
-                    <FontAwesomeIcon icon={faCircleUser} size="2xl" />
+                    <img
+                      src={Profile}
+                      alt="profile"
+                      style={{ height: 25, width: 25 }}
+                    />
                   </ProfileBtn>
                 </Icon>
               </>

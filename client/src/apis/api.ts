@@ -13,8 +13,8 @@ const authInstance = axios.create({
 });
 authInstance.interceptors.request.use(
   (config: AxiosRequestConfig): AxiosRequestConfig => {
-    if (config.headers!.Authorization === undefined || null) {
-      const token = getLocalStorage('jwt_token');
+    if (!config.headers!.Authorization === undefined || null) {
+      const token = getLocalStorage('access_token');
       if (token) config.headers!.Authorization = `Bearer ${token}`;
     }
     return config;
