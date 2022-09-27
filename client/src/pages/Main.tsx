@@ -164,7 +164,7 @@ export default function Main() {
   const [rangeValue, setRangeValue] = useState('');
   const [dateSelected, setDateSelected] = useState('');
   const [programs, setPrograms] = useState<Array<Object>>([]);
-  console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
+  // console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
 
   /** 필터 조회api - 키워드,지역,날짜,친절도*/
   // .get(

@@ -7,6 +7,7 @@ import QuestionMark from '../images/QuestionMark.svg';
 import BookMarkTab from 'components/BookMarkTab';
 import MessageTab from 'components/Tab/MessageTab';
 import { Link } from 'react-router-dom';
+import ProfileSvg from '../images/Profile.svg';
 
 const MyPageContainer = styled.div`
   display: flex;
@@ -33,8 +34,8 @@ const ProfileWrap = styled.div`
 `;
 
 const ProfileImage = styled.div`
-  width: 7rem;
-  height: 7rem;
+  /* width: 7rem;
+  height: 7rem; */
   margin: 1rem;
   background-color: #e2e6e8;
   border-radius: 50%;
@@ -356,7 +357,13 @@ function MyPage() {
               </>
             ) : (
               <>
-                <ProfileImage></ProfileImage>
+                <ProfileImage>
+                  <img
+                    src={ProfileSvg}
+                    alt="profile"
+                    style={{ height: 100, width: 100 }}
+                  />
+                </ProfileImage>
                 <ProfileNickname>{userProps.nickname}</ProfileNickname>
                 <ProfileIntro>{userProps.introduction}</ProfileIntro>
                 <ProfileUpdateBtn onClick={handleUpdateMode}>

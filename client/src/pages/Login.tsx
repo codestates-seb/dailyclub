@@ -52,18 +52,24 @@ export default function Login() {
     // API.login(data); // test해봐야 함
     axios.defaults.withCredentials = true; // withCredentials 전역 설정
     axios
-      .post(`${URL}/login`, data, {
-        headers: { 'Content-Type': 'application/json' },
-      })
+      .post(`${URL}/login`, data)
       .then((res) => {
         if (res.status === 200) {
-          let jwtToken = res.headers.Authorization; // 응답헤더에서 토큰 받기
-          console.log('받은 토큰 :', jwtToken);
-          setLocalStorage('jwt_token', jwtToken); // 토큰 localStorage에 저장
-          axios.defaults.headers.common['Authorization'] = `Bearer ${jwtToken}`;
+          // 모든 헤더 이름은 소문자
+          let accessToken = res.headers.authorization; // 응답헤더에서 토큰 받기
+          let refreshToken = res.headers.refresh; // 응답헤더에서 토큰 받기
+          console.log('access 토큰 :', accessToken);
+          console.log('refresh 토큰 :', refreshToken);
+          setLocalStorage('access_token', accessToken); // 토큰 localStorage에 저장
+          axios.defaults.headers.common[
+            'Authorization'
+          ] = `Bearer ${accessToken}`;
           navigate('/');
         }
       })
+      // .then(() => {
+      //   axios.get(`${URL}/api/users/`);
+      // })
       .catch((error) => console.log(error));
     // localStorage.setItem('Authorization', jwtToken);
     // const accessToken = JSON.parse(localStorage.getItem('accessToken') as string);

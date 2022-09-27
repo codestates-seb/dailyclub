@@ -1,8 +1,7 @@
-import React from 'react';
 import axios from 'axios';
 import Layout from 'components/Layout';
-import { useEffect } from 'react';
-import { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
 const CreateContainer = styled.div`
@@ -195,6 +194,29 @@ const AreaOption = styled.option`
   margin-left: 5px;
 `;
 
+interface PrevProgramProps {
+  id: number;
+  writer?: {
+    id: number;
+    loginId: string;
+    nickname: string;
+    picture: string;
+    introduction: string;
+    kind: number;
+    role: string;
+  };
+  title: string;
+  text: string;
+  numOfRecruits: number;
+  location: string;
+  programDate: string;
+  minKind: number;
+  programStatus: string;
+  bookmarkId: number;
+  createdDate: string;
+  programImages?: null;
+}
+
 function ProgUpdate() {
   const [title, setTitle] = useState<string>('');
   const [text, setText] = useState<string>('');
@@ -203,15 +225,30 @@ function ProgUpdate() {
   const [programDate, setProgramDate] = useState<string>('');
   const [picture, setPicture] = useState<string | Blob>('');
   const [minkind, setMinKind] = useState<string>('50');
+  const [imagePreview, setImagePreview] = useState('');
+  const [prev, setPrev] = useState<any>({});
 
   const URL = process.env.REACT_APP_DEV_URL;
+  const { programId } = useParams();
 
   const firstRef = useRef<any>(null);
   const secondRef = useRef<any>(null); //focus 처리시 에러
 
+  const getProgram = async () => {
+    await axios
+      .get(`${URL}/api/programs/${programId}`)
+      .then(({ data }) => {
+        setPrev(data);
+        // console.log(data); // 조회로 이전값 가져오는데 느림
+      })
+      .catch((err) => console.log(err));
+  };
+  // console.log(prev && prev?.title);
+
   //처음 렌더링 될 때 제목인풋에 포커즈
   useEffect(() => {
     firstRef.current.focus();
+    getProgram();
   }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -223,6 +260,7 @@ function ProgUpdate() {
     formData.append('numOfRecruits', numOfRecruits);
     formData.append('location', location);
     formData.append('programDate', programDate);
+    formData.append('minKind', minkind);
     formData.append('picture', picture);
 
     for (let values of formData.values()) {
@@ -230,8 +268,8 @@ function ProgUpdate() {
     }
 
     // axios({
-    //   method: 'post',
-    //   url: URL,
+    //   method: 'patch',
+    //   url: `${URL}/api/programs/${programId}`,
     //   headers: {"Content-Type": "multipart/form-data"},
     //   data: formData
     // });
@@ -242,8 +280,6 @@ function ProgUpdate() {
     if (event.key === 'Enter') {
       if (event.target === firstRef.current) {
         secondRef.current.focus();
-      } else {
-        return;
       }
     }
   };
@@ -275,6 +311,7 @@ function ProgUpdate() {
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setPicture((e.target as any).files[0]);
+    // setImagePreview(URL.createObjectURL((e.target as any).files[0]));
   };
 
   return (
@@ -289,7 +326,7 @@ function ProgUpdate() {
             {/* 제목 인풋입니다 */}
             <TitleInput
               type="text"
-              placeholder="제목을 입력해주세요."
+              defaultValue={prev && prev?.title}
               name="title"
               ref={firstRef}
               onKeyUp={handleInput}
@@ -303,8 +340,7 @@ function ProgUpdate() {
             {/* 프로그램 설명 인풋입니다 */}
             <ContentsInput
               name="contents"
-              placeholder="프로그램 설명을 입력해주세요.
-              ex) 모이는 장소, 진행시간, 회비, 오픈 카카오톡 링크 등"
+              defaultValue={prev && prev?.text}
               ref={secondRef}
               onChange={handleText}
               required
@@ -325,6 +361,7 @@ function ProgUpdate() {
                 name="people"
                 onChange={handleNumofRecruits}
                 required
+                defaultValue={prev && prev?.numOfRecruits}
               ></RecruitInput>
             </RecruitContents>
             <RecruitContents>
@@ -336,12 +373,18 @@ function ProgUpdate() {
                 name="date"
                 onChange={handleProgramDate}
                 required
+                defaultValue={prev && prev?.programDate}
               ></RecruitInput>
             </RecruitContents>
             <RecruitContents>
               <Redstar>*</Redstar>
               <RecruitName>모집지역</RecruitName>
-              <AreaSelect name="area" onChange={handleLocation}>
+              <AreaSelect
+                name="area"
+                onChange={handleLocation}
+                key={prev && prev?.location}
+                defaultValue={prev && prev?.location}
+              >
                 <option value="지역">지역</option>
                 <option value="서울">서울</option>
                 <option value="경기">경기</option>
@@ -367,6 +410,8 @@ function ProgUpdate() {
                   name="kind"
                   onChange={handleMinKindValue}
                   required
+                  key={prev && prev?.minKind}
+                  defaultValue={prev && prev?.minKind}
                 ></KindInput>
                 <KindValue>{minkind}%</KindValue>
               </KindInputWrap>
@@ -377,9 +422,15 @@ function ProgUpdate() {
                 저작권에 위배되지 않는 파일을 업로드 해주세요.
               </ImageRule>
             </RecruitContents>
-            <ImageLabel htmlFor="file">
-              우리 모임을 소개할 이미지를 첨부해주세요.
-            </ImageLabel>
+            {!picture ? (
+              <ImageLabel htmlFor="file">
+                우리 모임을 소개할 이미지를 첨부해주세요.
+              </ImageLabel>
+            ) : (
+              <ImageLabel htmlFor="file">
+                <img width="100%" height="100%" src={imagePreview}></img>
+              </ImageLabel>
+            )}
             <ImageInput
               id="file"
               type="file"
