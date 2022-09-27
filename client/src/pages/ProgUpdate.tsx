@@ -224,9 +224,9 @@ function ProgUpdate() {
   const [location, setLocation] = useState<string>('');
   const [programDate, setProgramDate] = useState<string>('');
   const [picture, setPicture] = useState<string | Blob>('');
-  const [minkind, setMinKind] = useState<string>('50');
-  const [imagePreview, setImagePreview] = useState('');
   const [prev, setPrev] = useState<any>({});
+  const [imagePreview, setImagePreview] = useState('');
+  const [minkind, setMinKind] = useState<string>(`${prev && prev?.minKind}`);
 
   const URL = process.env.REACT_APP_DEV_URL;
   const { programId } = useParams();
@@ -239,11 +239,10 @@ function ProgUpdate() {
       .get(`${URL}/api/programs/${programId}`)
       .then(({ data }) => {
         setPrev(data);
-        // console.log(data); // 조회로 이전값 가져오는데 느림
+        setMinKind(data?.minKind);
       })
       .catch((err) => console.log(err));
   };
-  // console.log(prev && prev?.title);
 
   //처음 렌더링 될 때 제목인풋에 포커즈
   useEffect(() => {

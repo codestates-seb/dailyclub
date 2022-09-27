@@ -61,6 +61,7 @@ export default function Login() {
           console.log('access 토큰 :', accessToken);
           console.log('refresh 토큰 :', refreshToken);
           setLocalStorage('access_token', accessToken); // 토큰 localStorage에 저장
+          // API 요청마다 헤더에 access토큰 담아서 요청보내는 설정
           axios.defaults.headers.common[
             'Authorization'
           ] = `Bearer ${accessToken}`;
