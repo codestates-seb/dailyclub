@@ -275,9 +275,9 @@ function ProgUpdate() {
     formData.append('imageFile', picture);
     formData.append('programImageId', prevImgId);
 
-    for (let values of formData.values()) {
-      console.log(values); // formData 객체의 정보 확인하는 법
-    }
+    // for (let values of formData.values()) {
+    //   console.log(values); // formData 객체의 정보 확인하는 법
+    // }
 
     axios({
       method: 'patch',
@@ -285,7 +285,8 @@ function ProgUpdate() {
       headers: { 'Content-Type': 'multipart/form-data' },
       data: formData,
     })
-      .then(() => {
+      .then((res) => {
+        console.log(res);
         navigate(`/programs/${programId}`);
       })
       .catch((err) => console.log(err));
