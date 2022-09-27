@@ -243,23 +243,43 @@ function ProgUpdate() {
         setPrev(data);
         setMinKind(data?.minKind);
         setPrevImgId(data?.programImages && data?.programImages[0].id); // 이전 img Id
-        /** 이미지 받아오기 */
-        setPicture(
-          `data:${data.programImages[0].contentType};base64,${data?.programImages[0].bytes}`
-        );
-        setImagePreview(
-          `data:${data.programImages[0].contentType};base64,${data?.programImages[0].bytes}`
-        );
+
+        /** 이전이미지 있으면, 이미지 받아오기 */
+        if (data?.programImages[0].imageFile !== null || undefined) {
+          setPicture(
+            `data:${data.programImages[0].contentType};base64,${data?.programImages[0].bytes}`
+          );
+          setImagePreview(
+            `data:${data.programImages[0].contentType};base64,${data?.programImages[0].bytes}`
+          );
+        } else {
+          /** 이전이미지 없으면 이미지 추가 */
+        }
       })
       .catch((err) => console.log(err));
   };
-  // console.log(prevImgId);
+  // console.log(prev);
 
   //처음 렌더링 될 때 제목인풋에 포커즈
   useEffect(() => {
     firstRef.current.focus();
     getProgram();
   }, []);
+
+  const handleBaseForm = async (picture: string) => {
+    const byteString = window.atob(picture.split(',')[1]);
+    // Blob를 구성하기 위한 준비, 이 내용은 저도 잘 이해가 안가서 기술하지 않았습니다.
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([ia], {
+      type: 'image/png',
+    });
+    const file = new File([blob], 'image.png');
+    return file;
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -272,8 +292,25 @@ function ProgUpdate() {
     formData.append('location', location);
     formData.append('programDate', programDate);
     formData.append('minKind', minkind);
-    formData.append('imageFile', picture);
     formData.append('programImageId', prevImgId);
+
+    /** 이전이미지가 있어서 base64로 인코딩된 경우 */
+    if (typeof picture === 'string') {
+      /** 미리보기때문에 img base64인코딩 문자열을 다시 => Blob 형식으로 변환 후 전달 */
+      const byteString = window.atob((picture as string).split(',')[1]);
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([ia], {
+        type: 'image/png',
+      });
+      // const file = new File([blob], 'image.png'); //이걸로 넣으면 안되서 일단 주석
+      formData.append('imageFile', blob);
+    } else {
+      formData.append('imageFile', picture);
+    }
 
     // for (let values of formData.values()) {
     //   console.log(values); // formData 객체의 정보 확인하는 법
