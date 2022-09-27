@@ -1,6 +1,5 @@
 import Layout from 'components/Layout';
 import LevelPercent from 'components/LevelPercent';
-import ProgressBar from 'components/ProgressBar';
 import styled from 'styled-components';
 import User from '../images/User.svg';
 import Bookmark from '../images/BookmarkBtn.svg';
@@ -12,7 +11,8 @@ import QuestionMark from '../images/QuestionMark.svg';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { ProgramDetailVal } from 'types/programs';
+import { ApplyListVal, ProgramDetailVal } from 'types/programs';
+import BasicImg from '../images/BasicImg.jpg';
 
 const ProgPageDetail = styled.div`
   max-width: 1200px;
@@ -37,10 +37,9 @@ const ProgDetailInfo = styled.div`
   box-sizing: border-box;
 `;
 
-const ProgDetailImg = styled.div`
+const ProgDetailImg = styled.img`
   width: 100%;
   height: 250px;
-  background-color: #ddd;
 `;
 
 const ProgTitleSection = styled.div`
@@ -215,78 +214,52 @@ const KindWrap = styled.div`
   margin-bottom: 0.5rem;
 `;
 
-interface MemersProps {
-  id: number;
-  nickname: string;
-  percent: number;
-  intro: string;
-  date: string;
-}
-
-const userProps: {
-  id: number;
-  nickname: string;
-  introduction: string;
-  kind: number;
-  role: string;
-} = {
-  id: 1,
-  nickname: '일리더',
-  introduction: '자기소개 입니다.',
-  kind: 50,
-  role: 'USER',
-};
-
 export default function ProgDetail() {
   const DEV_URL = process.env.REACT_APP_DEV_URL;
   const params = useParams();
 
   const [data, setData] = useState<ProgramDetailVal>();
   const [progImg, setProgImg] = useState<string>('');
+  const [applyList, setApplyList] = useState<Array<ApplyListVal>>([]);
 
   useEffect(() => {
+    //프로그램 상세조회 api
     axios.get(`${DEV_URL}/api/programs/${params.programId}`).then((res) => {
       setData(res.data);
+      if (res.data.programImages.length === 0) {
+        setProgImg(BasicImg);
+      } else {
+        setProgImg(
+          `data:${res.data.programImages[0].contentType};base64,${res.data.programImages[0].bytes}`
+        );
+      }
     });
+    //신청한 멤버 조회
+    axios
+      .get(`${DEV_URL}/api/applies?page=1&size=4&programId=${params.programId}`)
+      .then((res) => {
+        setApplyList(res.data.data);
+      });
   }, []);
 
-  const memberList: MemersProps[] = [
-    {
-      id: 1,
-      nickname: '이멤버',
-      percent: 100,
-      intro: '한줄소개',
-      date: '4',
-    },
-    {
-      id: 2,
-      nickname: '삼멤버',
-      percent: 75,
-      intro: '한줄소개',
-      date: '3',
-    },
-    {
-      id: 3,
-      nickname: '사멤버',
-      percent: 50,
-      intro: '한줄소개',
-      date: '2',
-    },
-    {
-      id: 4,
-      nickname: '오멤버',
-      percent: 25,
-      intro: '한줄소개',
-      date: '1',
-    },
-  ];
+  //신청하기
+  const handleApply = () => {
+    axios.post(
+      `${DEV_URL}/api/applies`,
+      { programId: params.programId },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+  };
+
   return (
     <Layout>
       <ProgPageDetail>
         <ProgDetailWrap>
-          <ProgDetailImg>
-            <img src={progImg}></img>
-          </ProgDetailImg>
+          <ProgDetailImg src={progImg}></ProgDetailImg>
           <ProgTitleSection>
             [{data?.location}]{data?.title}
           </ProgTitleSection>
@@ -296,11 +269,11 @@ export default function ProgDetail() {
           <ProgMemberContent>
             <H2>함께하는 멤버(신청자)</H2>
             <MemberSection>
-              {memberList?.map((el: MemersProps) => (
+              {applyList?.map((el) => (
                 <MemItem key={el.id}>
                   <MemItemWrap1>
-                    <MemName>{el.nickname}</MemName>
-                    <MemIntro>{el.intro}</MemIntro>
+                    <MemName>{el.user.nickname}</MemName>
+                    <MemIntro>{el.user.introduction}</MemIntro>
                   </MemItemWrap1>
                   <MemItemWrap2>
                     <KindWrap>
@@ -308,13 +281,9 @@ export default function ProgDetail() {
                         친절도 &nbsp;
                         <img src={QuestionMark} alt="question mark" />
                       </div>
-                      <LevelPercent percent={el.percent}></LevelPercent>
+                      <LevelPercent percent={el.user.kind}></LevelPercent>
                     </KindWrap>
-                    <ProgressBar
-                      currentPerson={el.percent}
-                      totalPerson={100}
-                    ></ProgressBar>
-                    <ApplyDate>{el.date}시간 전 신청</ApplyDate>
+                    <ApplyDate>{el.createdTime} 신청</ApplyDate>
                   </MemItemWrap2>
                 </MemItem>
               ))}
@@ -330,7 +299,9 @@ export default function ProgDetail() {
 
                 <H3>모집인원</H3>
               </Icon>
-              <ProgInfoText>2 / {data?.numOfRecruits}</ProgInfoText>
+              <ProgInfoText>
+                {applyList.length} / {data?.numOfRecruits}
+              </ProgInfoText>
             </ProgPeople>
             <ProgDate>
               <Icon>
@@ -369,7 +340,7 @@ export default function ProgDetail() {
                 </Icon>
               </BookmarkBtn>
 
-              <ProgApply>신청하기</ProgApply>
+              <ProgApply onClick={handleApply}>신청하기</ProgApply>
             </BtnWrap>
           </ProglInfoWrap>
           <H2>모임장 정보</H2>
@@ -390,11 +361,6 @@ export default function ProgDetail() {
                 percent={data?.writer.kind}
               ></LevelPercent>
             </KindWrap>
-            <ProgressBar
-              //@ts-ignore
-              currentPerson={data?.writer.kind}
-              totalPerson={100}
-            ></ProgressBar>
             <SendMsgBtn>
               <SendMsg>
                 <img src={Msg} alt="logo" style={{ height: 20, width: 20 }} />{' '}

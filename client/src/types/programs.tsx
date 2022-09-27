@@ -20,3 +20,18 @@ export interface ProgramDetailVal {
     role: string;
   };
 }
+
+export interface ApplyListVal {
+  id: number;
+  programId: number;
+  user: {
+    id: number;
+    introduction: string | null;
+    kind: number;
+    loginId: string;
+    nickname: string;
+    picture: null | Blob;
+    role: string;
+  };
+  createdTime: string;
+}
