@@ -145,18 +145,17 @@ interface ProgProps {
   programStatus: string;
   title: string;
   text: string;
-  // programImages?: string; // 추가예정
+  programImages?: any; // 추가예정
   minKind: number;
   currentPerson: number; // api엔 없음
   numOfRecruits: number;
   location: string;
   programDate: string;
-  bookmarkId?: number;
+  bookmarkId?: number | null;
   writer: string; // 수정
 }
 export default function Main() {
-  // const URL = process.env.REACT_APP_DEV_URL;
-  const URL = `http://localhost:3001`; // json-server
+  const URL = process.env.REACT_APP_DEV_URL;
 
   const searchKeyword = useAppSelector((state) => state.search.keyword);
   const [levelOpened, setLevelOpened] = useState(false);
@@ -174,20 +173,20 @@ export default function Main() {
   const isLoggedId = useAppSelector(getisLoggedId); // 로그인여부
   const userData = useAppSelector(getUserData); // 유저정보
   const userError = useAppSelector(getUserError); // 에러내용
-  console.log('유저 전역상태: ', isLoggedId, userData, userError); // 확인 후 주석해제하면 됩니다
+  // console.log('유저 전역상태: ', isLoggedId, userData, userError); // 확인 후 주석해제하면 됩니다
 
   /** 필터 조회api - 키워드,지역,날짜,친절도*/
-  // .get(
-  //   `${URL}/api/programs?page=1&size=10
-  // &keyword=${searchKeyword}&location=${areaSelected}&programDate=${dateSelected}&programStatus=POSSIBLE`
-  // )
-
   useEffect(() => {
     const getProgramList = async () => {
       await axios
-        .get(`${URL}/programs`)
+        .get(`${URL}/api/programs?page=1&size=10`)
+        // .get(
+        //   `${URL}/api/programs?page=1&size=10
+        // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${rangeValue}&programDate=${dateSelected}&programStatus=POSSIBLE`
+        // )
         .then(({ data }) => {
-          setPrograms(data);
+          // console.log(data);
+          setPrograms(data?.data);
         })
         .catch((err) => console.log(err.message));
     };
@@ -261,7 +260,7 @@ export default function Main() {
                           }`,
                         }}
                       >
-                        {el.programStatus}
+                        {el?.programStatus}
                       </ProgRecruitment>
                       <ProgImg>사진</ProgImg>
                       <ProgBookmark>
@@ -274,13 +273,13 @@ export default function Main() {
                     <LevelPercent percent={el.minKind} />
                     <ProgProgressBar>
                       <ProgressBar
-                        currentPerson={el.currentPerson}
+                        currentPerson={el.numOfRecruits}
                         totalPerson={el.numOfRecruits}
                       />
                     </ProgProgressBar>
                     <ProgWrapper>
                       <ProgPerson>
-                        모집인원 {el.currentPerson} / {el.numOfRecruits}
+                        모집인원 {el.numOfRecruits} / {el.numOfRecruits}
                       </ProgPerson>
                       <ProgDate>
                         {Math.floor(
