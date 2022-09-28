@@ -66,17 +66,17 @@ export default function Login() {
           setLocalStorage('access_token', accessToken); // 토큰 localStorage에 저장
           setLocalStorage('refresh_token', refreshToken); // 토큰 localStorage에 저장
           // API 요청마다 헤더에 access토큰 담아서 요청보내는 설정
-          axios.defaults.headers.common[
-            'Authorization'
-          ] = `Bearer ${accessToken}`;
+          axios.defaults.headers.common['Authorization'] = `${accessToken}`;
           navigate('/');
         }
       })
-      .then(() => {
-        // console.log('로그인 응답 :', res);
+      .then((res) => {
+        console.log('로그인 응답 :', res);
         // const userId = res.data.userId // res로 받으면 주석해제
-
-        dispatch(fetchUserInfo(4)); //유저정보 전역상태에 저장 - 안됨
+        // axios
+        //   .get(`${URL}/api/users/mypage`)
+        //   .then((res) => console.log(res.data));
+        dispatch(fetchUserInfo()); //유저정보 전역상태에 저장 - 안됨
       })
       .catch((error) => console.log(error));
 

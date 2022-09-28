@@ -3,17 +3,16 @@ import axios from 'axios';
 
 const URL = process.env.REACT_APP_DEV_URL;
 
-export const fetchUserInfo = createAsyncThunk(
-  `GET/USERINFO`,
-  async (id: number, thunkApi) => {
-    try {
-      const response = await axios.get(`${URL}/api/users/${id}`);
-      return response.data;
-    } catch (err) {
-      return thunkApi.rejectWithValue(err);
-    }
+export const fetchUserInfo = createAsyncThunk(`GET/USERINFO`, async () => {
+  try {
+    const response = await axios.get(`${URL}/api/users/mypage`);
+    console.log('회원정보조회다!!', response.data);
+    return response.data;
+  } catch (err) {
+    return console.log(err);
+    //   return thunkApi.rejectWithValue(err);
   }
-);
+});
 
 /* interface UserInfo {
   id: number;

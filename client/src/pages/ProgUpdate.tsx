@@ -253,37 +253,15 @@ function ProgUpdate() {
           );
           setPrevImgId(data.programImages[0].id); // 이전 img Id
         }
-        // else {
-        //   /** 이전이미지 없으면 이미지 추가 */
-        // }
       })
       .catch((err) => console.log(err));
   };
-
-  // if (prevImgId!) {
-  //   console.log('아이디', prevImgId ?? prevImgId!);
-  // }
 
   //처음 렌더링 될 때 제목인풋에 포커즈
   useEffect(() => {
     firstRef.current.focus();
     getProgram();
   }, []);
-
-  /*  const handleBaseForm = async (picture: string) => {
-    const byteString = window.atob(picture.split(',')[1]);
-    // Blob를 구성하기 위한 준비, 이 내용은 저도 잘 이해가 안가서 기술하지 않았습니다.
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-    const blob = new Blob([ia], {
-      type: 'image/png',
-    });
-    const file = new File([blob], 'image.png');
-    return file;
-  }; */
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -311,10 +289,13 @@ function ProgUpdate() {
       });
       // const file = new File([blob], 'image.png'); //이걸로 넣으면 안되서 일단 주석
       formData.append('imageFile', blob);
-      if (prevImgId!) {
+      formData.append('programImageId', prevImgId);
+    } else {
+      /** 이전이미지 O 이미지 수정할때 - id전송 */
+      if (prevImgId !== null) {
         formData.append('programImageId', prevImgId);
       }
-    } else {
+      /** 이전이미지 X 이미지 추가할때 - 파일전송*/
       formData.append('imageFile', picture);
     }
 
@@ -329,7 +310,7 @@ function ProgUpdate() {
       data: formData,
     })
       .then((res) => {
-        console.log(res);
+        console.log(res.data);
         navigate(`/programs/${programId}`);
       })
       .catch((err) => console.log(err));
