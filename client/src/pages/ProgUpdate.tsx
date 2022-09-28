@@ -3,6 +3,7 @@ import Layout from 'components/Layout';
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import ImgDeleteBtnSvg from '../images/ImgDeleteBtn.svg';
 
 const CreateContainer = styled.div`
   width: 100%;
@@ -153,6 +154,7 @@ const ImageInput = styled.input`
 `;
 
 const ImageLabel = styled.label`
+  position: relative;
   height: 200px;
   width: 100%;
   border: 1px solid #e2e6e8;
@@ -189,9 +191,13 @@ const AreaSelect = styled.select`
   display: flex;
   align-items: center;
 `;
-
-const AreaOption = styled.option`
-  margin-left: 5px;
+const ImgDeleteBtn = styled.button`
+  position: absolute;
+  z-index: 10;
+  top: -1rem;
+  right: -1rem;
+  border: none;
+  background-color: transparent;
 `;
 
 interface PrevProgramProps {
@@ -302,7 +308,6 @@ function ProgUpdate() {
     // for (let values of formData.values()) {
     //   console.log(values); // formData 객체의 정보 확인하는 법
     // }
-
     axios({
       method: 'patch',
       url: `${URL}/api/programs/${programId}`,
@@ -354,6 +359,11 @@ function ProgUpdate() {
     setPicture((e.target as any).files[0]);
     // @ts-ignore
     setImagePreview(window.URL.createObjectURL((e.target as any).files[0]));
+  };
+  const handelImgDeleteBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setPicture('');
+    setImagePreview('');
   };
 
   return (
@@ -469,9 +479,14 @@ function ProgUpdate() {
                 우리 모임을 소개할 이미지를 첨부해주세요.
               </ImageLabel>
             ) : (
-              <ImageLabel htmlFor="file">
-                <img width="100%" height="100%" src={imagePreview}></img>
-              </ImageLabel>
+              <>
+                <ImageLabel htmlFor="file">
+                  <img width="100%" height="100%" src={imagePreview}></img>
+                  <ImgDeleteBtn type="button" onClick={handelImgDeleteBtn}>
+                    <img src={ImgDeleteBtnSvg} alt="delete" />
+                  </ImgDeleteBtn>
+                </ImageLabel>
+              </>
             )}
             <ImageInput
               id="file"
