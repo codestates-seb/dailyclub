@@ -10,7 +10,7 @@ import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from 'stores/hooks';
-import { searchActions } from 'stores/searchReducer';
+import { searchActions } from 'stores/searchSlice';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
