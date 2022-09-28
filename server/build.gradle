@@ -36,6 +36,10 @@ dependencies {
 	//swagger
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.11'
 
+	//mapstruct + lombok
+	implementation 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+	annotationProcessor "org.projectlombok:lombok-mapstruct-binding:0.2.0"
+
 	//mapstruct
 	implementation 'org.mapstruct:mapstruct:1.5.2.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.2.Final'
