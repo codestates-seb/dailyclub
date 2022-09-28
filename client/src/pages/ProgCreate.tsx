@@ -200,6 +200,14 @@ function ProgCreate() {
   const [minkind, setMinKind] = useState<string>('50');
   const [imagePreview, setImagePreview] = useState('');
 
+  const year = new Date().getFullYear();
+  const month = new Date().getMonth() + 1;
+  const date = new Date().getDate();
+
+  const today = `${year}-${month >= 10 ? month : '0' + month}-${
+    date >= 10 ? date : '0' + date
+  }`;
+
   const DEV_URL = process.env.REACT_APP_DEV_URL;
   const firstRef = useRef<any>(null);
   const secondRef = useRef<any>(null); //focus 처리시 에러
@@ -209,6 +217,7 @@ function ProgCreate() {
   //처음 렌더링 될 때 제목인풋에 포커즈
   useEffect(() => {
     firstRef.current.focus();
+    console.log(today);
   }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -330,6 +339,7 @@ function ProgCreate() {
               <RecruitInput
                 type="date"
                 name="date"
+                min={today}
                 onChange={handleProgramDate}
                 required
               />

@@ -10,9 +10,11 @@ import Msg from '../images/Message.svg';
 import QuestionMark from '../images/QuestionMark.svg';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
-import { ApplyListVal, ProgramDetailVal } from 'types/programs';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ApplyListVal, PaginationVal, ProgramDetailVal } from 'types/programs';
 import BasicImg from '../images/BasicImg.jpg';
+import Profile from '../images/Profile.svg';
+import Pagination from 'pagination/Pagination';
 
 const ProgPageDetail = styled.div`
   max-width: 1200px;
@@ -105,12 +107,29 @@ const ProgRegion = styled.div`
 const ProgApply = styled.button`
   background-color: #ff5100;
   color: white;
-  box-sizing: border-box;
-  max-width: 100%;
-  width: 70%;
-  margin-top: 15px;
-  margin-left: 0 !important;
-  margin-bottom: 20px;
+  width: 80%;
+  padding: 10px 0;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  text-align: center;
+`;
+
+const ProgUpdateBtn = styled.button`
+  background-color: #ff5100;
+  color: white;
+  width: 48%;
+  padding: 10px 0;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  text-align: center;
+`;
+
+const ProgDeleteBtn = styled.button`
+  background-color: black;
+  color: white;
+  width: 48%;
   padding: 10px 0;
   border: none;
   border-radius: 5px;
@@ -165,6 +184,7 @@ const H3 = styled.h3`
 `;
 const ProfileIntro = styled.div`
   font-weight: lighter;
+  font-size: 15px;
   margin-bottom: 1rem;
 `;
 
@@ -175,7 +195,8 @@ const MemItem = styled.div`
   padding: 15px;
 `;
 const MemItemWrap1 = styled.div`
-  flex-direction: row;
+  margin-bottom: 10px;
+  display: flex;
 `;
 
 const MemItemWrap2 = styled.div`
@@ -183,12 +204,19 @@ const MemItemWrap2 = styled.div`
 `;
 
 const MemName = styled.div`
-  font-size: 16px;
+  font-size: 18px;
+  font-weight: bold;
   margin-bottom: 10px;
+  display: flex;
 `;
 
 const MemIntro = styled.div`
-  margin-bottom: 5px;
+  font-size: 15px;
+  font-weight: lighter;
+`;
+
+const MemInfo = styled.div`
+  margin-left: 10px;
 `;
 
 const ApplyDate = styled.div`
@@ -201,17 +229,23 @@ const Icon = styled.div`
   margin-right: 10px;
 `;
 
-const BtnWrap = styled.div``;
+const BtnWrap = styled.div`
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
 
 const BookmarkBtn = styled.button`
-  max-width: 100%;
+  width: 15%;
   border: none;
 `;
 const KindWrap = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
+  margin-bottom: 10px;
 `;
 
 export default function ProgDetail() {
@@ -222,37 +256,87 @@ export default function ProgDetail() {
   const [progImg, setProgImg] = useState<string>('');
   const [applyList, setApplyList] = useState<Array<ApplyListVal>>([]);
 
+  const [pageList, setPageList] = useState<PaginationVal>();
+  const [page, setPage] = useState<number>(1);
+
+  const loginUserId = 1;
+
+  const navigate = useNavigate();
+
+  const applyMemberfilter = applyList.filter((el) => {
+    return el.user.id === loginUserId;
+  });
+
   useEffect(() => {
     //프로그램 상세조회 api
-    axios.get(`${DEV_URL}/api/programs/${params.programId}`).then((res) => {
-      setData(res.data);
-      if (res.data.programImages.length === 0) {
-        setProgImg(BasicImg);
-      } else {
-        setProgImg(
-          `data:${res.data.programImages[0].contentType};base64,${res.data.programImages[0].bytes}`
-        );
-      }
-    });
+    const getProgramDetail = async () => {
+      await axios
+        .get(`${DEV_URL}/api/programs/${params.programId}`)
+        .then((res) => {
+          setData(res.data);
+          if (res.data.programImages.length === 0) {
+            setProgImg(BasicImg);
+          } else {
+            setProgImg(
+              `data:${res.data.programImages[0].contentType};base64,${res.data.programImages[0].bytes}`
+            );
+          }
+        });
+    };
     //신청한 멤버 조회
-    axios
-      .get(`${DEV_URL}/api/applies?page=1&size=4&programId=${params.programId}`)
-      .then((res) => {
-        setApplyList(res.data.data);
-      });
-  }, []);
+    const getApplyList = async () => {
+      await axios
+        .get(
+          `${DEV_URL}/api/applies?page=${page}&size=4&programId=${params.programId}`
+        )
+        .then((res) => {
+          setApplyList(res.data.data);
+          setPageList(res.data.pageInfo);
+        });
+    };
+
+    getProgramDetail();
+    getApplyList();
+  }, [page]);
 
   //신청하기
-  const handleApply = () => {
-    axios.post(
-      `${DEV_URL}/api/applies`,
-      { programId: params.programId },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+  const postApply = () => {
+    axios
+      .post(
+        `${DEV_URL}/api/applies`,
+        { programId: params.programId },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      )
+      .then((res) => {
+        location.reload();
+      });
+  };
+
+  //취소하기
+  const cancelApply = () => {
+    axios.delete(`${DEV_URL}/api/applies/${applyMemberfilter[0].id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  };
+
+  //업데이트 페이지 이동
+  const navigateUpdatePage = () => {
+    navigate(`/programs/${params.programId}/update`);
+  };
+
+  //프로그램 삭제
+  const deleteProgram = () => {
+    axios.delete(`${DEV_URL}/api/programs/${params.progrmaId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   };
 
   return (
@@ -272,8 +356,28 @@ export default function ProgDetail() {
               {applyList?.map((el) => (
                 <MemItem key={el.id}>
                   <MemItemWrap1>
-                    <MemName>{el.user.nickname}</MemName>
-                    <MemIntro>{el.user.introduction}</MemIntro>
+                    {el.user.picture ? (
+                      <img
+                        src={
+                          'data:' +
+                          el.user.picture +
+                          ';base64,' +
+                          el.user.picture
+                        }
+                        alt="profile"
+                        style={{ height: 40, width: 40 }}
+                      />
+                    ) : (
+                      <img
+                        src={Profile}
+                        alt="profile"
+                        style={{ height: 40, width: 40 }}
+                      />
+                    )}
+                    <MemInfo>
+                      <MemName>{el.user.nickname}</MemName>
+                      <MemIntro>{el.user.introduction}</MemIntro>
+                    </MemInfo>
                   </MemItemWrap1>
                   <MemItemWrap2>
                     <KindWrap>
@@ -288,6 +392,9 @@ export default function ProgDetail() {
                 </MemItem>
               ))}
             </MemberSection>
+            {applyList ? (
+              <Pagination list={pageList} page={page} setPage={setPage} />
+            ) : null}
           </ProgMemberContent>
         </ProgDetailWrap>
         <ProgDetailInfo>
@@ -300,7 +407,7 @@ export default function ProgDetail() {
                 <H3>모집인원</H3>
               </Icon>
               <ProgInfoText>
-                {applyList.length} / {data?.numOfRecruits}
+                {pageList?.totalElements} / {data?.numOfRecruits}
               </ProgInfoText>
             </ProgPeople>
             <ProgDate>
@@ -330,27 +437,63 @@ export default function ProgDetail() {
               <ProgInfoText>{data?.minKind}% 이상</ProgInfoText>
             </ProgMessage>
             <BtnWrap>
-              <BookmarkBtn>
-                <Icon>
-                  <img
-                    src={Bookmark}
-                    alt="logo"
-                    style={{ height: 25, width: 25 }}
-                  />
-                </Icon>
-              </BookmarkBtn>
+              {loginUserId === data?.writer.id ? (
+                <>
+                  <ProgUpdateBtn onClick={navigateUpdatePage}>
+                    수정하기
+                  </ProgUpdateBtn>
+                  <ProgDeleteBtn onClick={deleteProgram}>
+                    삭제하기
+                  </ProgDeleteBtn>
+                </>
+              ) : applyMemberfilter.length !== 0 ? (
+                <>
+                  <BookmarkBtn>
+                    <Icon>
+                      <img
+                        src={Bookmark}
+                        alt="logo"
+                        style={{ height: 25, width: 25 }}
+                      />
+                    </Icon>
+                  </BookmarkBtn>
 
-              <ProgApply onClick={handleApply}>신청하기</ProgApply>
+                  <ProgApply onClick={cancelApply}>취소하기</ProgApply>
+                </>
+              ) : (
+                <>
+                  <BookmarkBtn>
+                    <Icon>
+                      <img
+                        src={Bookmark}
+                        alt="logo"
+                        style={{ height: 25, width: 25 }}
+                      />
+                    </Icon>
+                  </BookmarkBtn>
+
+                  <ProgApply onClick={postApply}>신청하기</ProgApply>
+                </>
+              )}
             </BtnWrap>
           </ProglInfoWrap>
           <H2>모임장 정보</H2>
           <LeaderInfo>
             <MemName>
-              <ProfileNickname>{data?.writer.nickname}</ProfileNickname>
+              {data?.writer.picture ? (
+                <img src="" alt="profile" style={{ height: 40, width: 40 }} />
+              ) : (
+                <img
+                  src={Profile}
+                  alt="profile"
+                  style={{ height: 40, width: 40 }}
+                />
+              )}
+              <MemInfo>
+                <ProfileNickname>{data?.writer.nickname}</ProfileNickname>
+                <ProfileIntro>{data?.writer.introduction}</ProfileIntro>
+              </MemInfo>
             </MemName>
-            <MemIntro>
-              <ProfileIntro>{data?.writer.introduction}</ProfileIntro>
-            </MemIntro>
             <KindWrap>
               <div>
                 친절도 &nbsp;

@@ -41,7 +41,7 @@ const FormError = styled.div`
 `;
 
 export default function Login() {
-  const URL = process.env.REACT_APP_DEV_URL;
+  const URL = process.env.REACT_APP_DEV_URL; //민정님주소
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const {
