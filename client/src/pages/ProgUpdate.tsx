@@ -228,7 +228,7 @@ function ProgUpdate() {
   const [prev, setPrev] = useState<any>({});
   const [imagePreview, setImagePreview] = useState('');
   const [minkind, setMinKind] = useState<string>(`${prev && prev?.minKind}`);
-  const [prevImgId, setPrevImgId] = useState<any>();
+  const [prevImgId, setPrevImgId] = useState<any>(null);
 
   const { programId } = useParams();
   const navigate = useNavigate();
@@ -251,7 +251,7 @@ function ProgUpdate() {
           setImagePreview(
             `data:${data.programImages[0].contentType};base64,${data?.programImages[0].bytes}`
           );
-          setPrevImgId(data?.programImages ?? data?.programImages[0].id); // 이전 img Id
+          setPrevImgId(data.programImages[0].id); // 이전 img Id
         }
         // else {
         //   /** 이전이미지 없으면 이미지 추가 */
@@ -259,8 +259,10 @@ function ProgUpdate() {
       })
       .catch((err) => console.log(err));
   };
-  // console.log(prev ?? prev?.programImages.length);
-  // console.log('아이디', prevImgId);
+
+  // if (prevImgId!) {
+  //   console.log('아이디', prevImgId ?? prevImgId!);
+  // }
 
   //처음 렌더링 될 때 제목인풋에 포커즈
   useEffect(() => {
@@ -309,7 +311,9 @@ function ProgUpdate() {
       });
       // const file = new File([blob], 'image.png'); //이걸로 넣으면 안되서 일단 주석
       formData.append('imageFile', blob);
-      formData.append('programImageId', prevImgId);
+      if (prevImgId!) {
+        formData.append('programImageId', prevImgId);
+      }
     } else {
       formData.append('imageFile', picture);
     }
