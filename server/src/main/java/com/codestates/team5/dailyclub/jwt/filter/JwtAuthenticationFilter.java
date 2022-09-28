@@ -56,6 +56,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.renewalRefreshToken(authentication);
         response.addHeader("Authorization", "Bearer" + accessToken);
-        response.addHeader("refresh", "Bearer" + refreshToken);
+        response.addHeader("Refresh", "Bearer" + refreshToken);
     }
 }
