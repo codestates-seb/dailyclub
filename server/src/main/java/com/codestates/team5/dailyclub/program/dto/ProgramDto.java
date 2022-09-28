@@ -61,7 +61,7 @@ public class ProgramDto {
         @Schema(description = "지역명", example = "서울", allowableValues = {"서울", "경기", "부산/울산/경남"})
         private String location;
 
-        @Schema(description = "프로그램 시작 날짜", name = "program-date", pattern = "yyyy-MM-dd", example = "2022-09-18")
+        @Schema(description = "프로그램 시작 날짜", pattern = "yyyy-MM-dd", example = "2022-09-18")
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         private LocalDate programDate;
 

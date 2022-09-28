@@ -1,8 +1,6 @@
 package com.codestates.team5.dailyclub.program.controller;
 
 import com.codestates.team5.dailyclub.common.dto.MultiResponseDto;
-import com.codestates.team5.dailyclub.image.entity.ProgramImage;
-import com.codestates.team5.dailyclub.image.util.ImageUtils;
 import com.codestates.team5.dailyclub.program.dto.ProgramDto;
 import com.codestates.team5.dailyclub.program.dto.SearchFilterDto;
 import com.codestates.team5.dailyclub.program.entity.Program;
