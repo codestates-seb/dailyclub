@@ -242,23 +242,25 @@ function ProgUpdate() {
       .then(({ data }) => {
         setPrev(data);
         setMinKind(data?.minKind);
-        setPrevImgId(data?.programImages && data?.programImages[0].id); // 이전 img Id
 
         /** 이전이미지 있으면, 이미지 받아오기 */
-        if (data?.programImages[0].imageFile !== null || undefined) {
+        if (data?.programImages.length !== 0) {
           setPicture(
             `data:${data.programImages[0].contentType};base64,${data?.programImages[0].bytes}`
           );
           setImagePreview(
             `data:${data.programImages[0].contentType};base64,${data?.programImages[0].bytes}`
           );
-        } else {
-          /** 이전이미지 없으면 이미지 추가 */
+          setPrevImgId(data?.programImages ?? data?.programImages[0].id); // 이전 img Id
         }
+        // else {
+        //   /** 이전이미지 없으면 이미지 추가 */
+        // }
       })
       .catch((err) => console.log(err));
   };
-  // console.log(prev);
+  // console.log(prev ?? prev?.programImages.length);
+  // console.log('아이디', prevImgId);
 
   //처음 렌더링 될 때 제목인풋에 포커즈
   useEffect(() => {
@@ -292,10 +294,9 @@ function ProgUpdate() {
     formData.append('location', location);
     formData.append('programDate', programDate);
     formData.append('minKind', minkind);
-    formData.append('programImageId', prevImgId);
 
-    /** 이전이미지가 있어서 base64로 인코딩된 경우 */
-    if (typeof picture === 'string') {
+    /** 이전이미지가 있어서 base64로 인코딩된 경우 - 이미지파일, 이미지id 추가*/
+    if (typeof picture === 'string' && picture.length > 0) {
       /** 미리보기때문에 img base64인코딩 문자열을 다시 => Blob 형식으로 변환 후 전달 */
       const byteString = window.atob((picture as string).split(',')[1]);
       const ab = new ArrayBuffer(byteString.length);
@@ -308,6 +309,7 @@ function ProgUpdate() {
       });
       // const file = new File([blob], 'image.png'); //이걸로 넣으면 안되서 일단 주석
       formData.append('imageFile', blob);
+      formData.append('programImageId', prevImgId);
     } else {
       formData.append('imageFile', picture);
     }
