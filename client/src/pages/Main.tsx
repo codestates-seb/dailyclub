@@ -165,6 +165,8 @@ export default function Main() {
   const [dateSelected, setDateSelected] = useState('');
   const [programs, setPrograms] = useState<Array<Object>>([]);
   // console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
+  const loginUserInfo = useAppSelector((state) => state.userInfo.user); //추가
+  // console.log(loginUserInfo); // 유저정보 전역상태에서 가져온거 확인용 추가
 
   /** 필터 조회api - 키워드,지역,날짜,친절도*/
   // .get(

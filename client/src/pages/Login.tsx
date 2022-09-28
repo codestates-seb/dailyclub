@@ -10,6 +10,8 @@ import OauthBtn from 'components/OAuth/OauthBtn';
 import OauthGoogleBtn from 'components/OAuth/OauthGoogleBtn';
 import OauthNaverBtn from 'components/OAuth/OauthNaverBtn';
 import OauthTitle from 'components/OAuth/OauthTitle';
+import { useAppDispatch } from 'stores/hooks';
+import { fetchUserInfo } from 'stores/userInfoSlice';
 
 const LoginContainer = styled.div`
   margin: 0 auto;
@@ -39,8 +41,9 @@ const FormError = styled.div`
 `;
 
 export default function Login() {
-  const URL = process.env.REACT_APP_DEV_TWO_URL; //민정님주소
+  const URL = process.env.REACT_APP_DEV_URL; //민정님주소
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
@@ -61,6 +64,7 @@ export default function Login() {
           console.log('access 토큰 :', accessToken);
           console.log('refresh 토큰 :', refreshToken);
           setLocalStorage('access_token', accessToken); // 토큰 localStorage에 저장
+          setLocalStorage('refresh_token', refreshToken); // 토큰 localStorage에 저장
           // API 요청마다 헤더에 access토큰 담아서 요청보내는 설정
           axios.defaults.headers.common[
             'Authorization'
@@ -68,10 +72,16 @@ export default function Login() {
           navigate('/');
         }
       })
-      // .then(() => {
-      //   axios.get(`${URL}/api/users/`);
-      // })
+      .then((res) => {
+        console.log('로그인 응답 :', res);
+        // const userId = res.data.userId
+        // dispatch(fetchUserInfo(1)); //유저정보 전역상태에 저장
+
+        // dispatch(getUserInfos()); //유저정보 전역상태에 저장
+        // axios.get(`${URL}/api/users/${userId}`);
+      })
       .catch((error) => console.log(error));
+
     // localStorage.setItem('Authorization', jwtToken);
     // const accessToken = JSON.parse(localStorage.getItem('accessToken') as string);
     // if (accessToken) {

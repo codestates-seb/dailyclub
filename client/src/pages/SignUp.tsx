@@ -37,7 +37,7 @@ const LoginText = styled.div`
 `;
 
 export default function SignUp() {
-  const URL = process.env.REACT_APP_DEV_TWO_URL; //민정님주소
+  const URL = process.env.REACT_APP_DEV_URL; //민정님주소
   const navigate = useNavigate();
   const {
     register,
