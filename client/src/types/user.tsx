@@ -9,3 +9,11 @@ export interface SignUpVal extends LoginVal {
   email: string;
   nickname: string;
 }
+
+export interface UserVal {
+  id: number;
+  loginId: string;
+  nickname: string;
+  introduction: string;
+  kind: any;
+}
