@@ -10,7 +10,7 @@ import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from 'stores/hooks';
-import { searchActions } from 'stores/searchReducer';
+import { getisLoggedId, getUserData, getUserError } from 'stores/userInfoSlice';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -148,7 +148,7 @@ interface ProgProps {
   // programImages?: string; // 추가예정
   minKind: number;
   currentPerson: number; // api엔 없음
-  numOfRecruits: number; // numOfRecruits 수정
+  numOfRecruits: number;
   location: string;
   programDate: string;
   bookmarkId?: number;
@@ -166,6 +166,16 @@ export default function Main() {
   const [programs, setPrograms] = useState<Array<Object>>([]);
   // console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
 
+  /** 유저 전역상태 전체 - users, isLoggedId, loading, error  */
+  const loginUserInfo = useAppSelector((state) => state.userInfo);
+  // console.log('유저 전역정보: ', loginUserInfo ?? loginUserInfo);  // 확인용
+
+  /** 유저 전역상태 1개씩 - isLoggedId, users, error */
+  const isLoggedId = useAppSelector(getisLoggedId); // 로그인여부
+  const userData = useAppSelector(getUserData); // 유저정보
+  const userError = useAppSelector(getUserError); // 에러내용
+  console.log('유저 전역상태: ', isLoggedId, userData, userError); // 확인 후 주석해제하면 됩니다
+
   /** 필터 조회api - 키워드,지역,날짜,친절도*/
   // .get(
   //   `${URL}/api/programs?page=1&size=10
@@ -178,10 +188,6 @@ export default function Main() {
         .get(`${URL}/programs`)
         .then(({ data }) => {
           setPrograms(data);
-          // const accessToken = JSON.parse(localStorage.getItem('key') as string);
-          // if (accessToken) {
-          //   axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
-          // }
         })
         .catch((err) => console.log(err.message));
     };

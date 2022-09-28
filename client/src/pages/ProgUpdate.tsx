@@ -266,7 +266,7 @@ function ProgUpdate() {
     getProgram();
   }, []);
 
-  const handleBaseForm = async (picture: string) => {
+  /*  const handleBaseForm = async (picture: string) => {
     const byteString = window.atob(picture.split(',')[1]);
     // Blob를 구성하기 위한 준비, 이 내용은 저도 잘 이해가 안가서 기술하지 않았습니다.
     const ab = new ArrayBuffer(byteString.length);
@@ -279,7 +279,7 @@ function ProgUpdate() {
     });
     const file = new File([blob], 'image.png');
     return file;
-  };
+  }; */
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -304,7 +304,7 @@ function ProgUpdate() {
         ia[i] = byteString.charCodeAt(i);
       }
       const blob = new Blob([ia], {
-        type: 'image/png',
+        type: `${prev && prev?.programImages[0].contentType}`,
       });
       // const file = new File([blob], 'image.png'); //이걸로 넣으면 안되서 일단 주석
       formData.append('imageFile', blob);

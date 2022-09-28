@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useAppDispatch } from 'stores/hooks';
-import { searchActions } from 'stores/searchReducer';
+import { searchActions } from 'stores/searchSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
 import Logo from '../images/Logo.svg';
