@@ -12,7 +12,8 @@ import java.util.stream.Collectors;
 
 public interface CommonMapper {
 
-    UserDto.Response userToUserResponseDto (User User);
+    //User -> UserResponseDto
+    UserDto.Response userToUserResponseDto(User user);
 
     //Program -> ProgramResponseDTO
     default ProgramDto.Response programToProgramResponseDto(Program program) {

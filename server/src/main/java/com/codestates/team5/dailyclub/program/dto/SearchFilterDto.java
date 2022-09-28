@@ -19,6 +19,9 @@ public class SearchFilterDto {
     @Schema(description = "지역", allowableValues = {"서울", "경기", "강원", "인천", "대전/충청", "대구/경북", "부산/울산/경남", "광주/전라", "제주"})
     private String location;
 
+    @Schema(description = "최소 신청 가능 친절 %")
+    private Integer minKind;
+
     @Schema(description = "프로그램 시작 날짜", pattern = "yyyy-MM-dd", example = "2022-09-18")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate programDate;

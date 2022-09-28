@@ -1,15 +1,19 @@
 package com.codestates.team5.dailyclub.image.util;
 
 import com.codestates.team5.dailyclub.image.entity.ProgramImage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@Slf4j
 public class ImageUtils {
 
     //MultipartFile -> ProgramImage
     public static ProgramImage parseToProgramImage(MultipartFile imageFile) throws IOException {
         String contentType = imageFile.getContentType();
+
+        log.info("contentType : {}", contentType);
 
         if (!contentType.startsWith("image/")) {
             throw new RuntimeException("이미지 파일만 업로드 가능합니다.");
