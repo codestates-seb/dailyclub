@@ -41,7 +41,7 @@ const FormError = styled.div`
 `;
 
 export default function Login() {
-  const URL = process.env.REACT_APP_DEV_URL; //민정님주소
+  const URL = process.env.REACT_APP_DEV_URL;
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const {
@@ -72,13 +72,11 @@ export default function Login() {
           navigate('/');
         }
       })
-      .then((res) => {
-        console.log('로그인 응답 :', res);
-        // const userId = res.data.userId
-        // dispatch(fetchUserInfo(1)); //유저정보 전역상태에 저장
+      .then(() => {
+        // console.log('로그인 응답 :', res);
+        // const userId = res.data.userId // res로 받으면 주석해제
 
-        // dispatch(getUserInfos()); //유저정보 전역상태에 저장
-        // axios.get(`${URL}/api/users/${userId}`);
+        dispatch(fetchUserInfo(4)); //유저정보 전역상태에 저장 - 안됨
       })
       .catch((error) => console.log(error));
 

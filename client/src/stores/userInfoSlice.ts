@@ -1,77 +1,85 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const URL = process.env.REACT_APP_DEV_TWO_URL; // 민정님 주소
+const URL = process.env.REACT_APP_DEV_URL;
 
 export const fetchUserInfo = createAsyncThunk(
   `GET/USERINFO`,
-  async (id: number) => {
+  async (id: number, thunkApi) => {
     try {
-      const res = await axios.get(`${URL}api/users/${id}`);
-      console.log('회원정보 조회 :', res.data); // 나중에 주석 해제
-      return await res.data;
+      const response = await axios.get(`${URL}/api/users/${id}`);
+      return response.data;
     } catch (err) {
-      return err;
+      return thunkApi.rejectWithValue(err);
     }
   }
 );
 
-// interface UserInfo {
-//   userId: number;
-//   loginId: string;
-//   nickname: string;
-//   picture: string;
-//   introduction: string;
-//   kind: number;
-// }
+/* interface UserInfo {
+  id: number;
+  introduction?: string | null;
+  kind: number;
+  loginId: string;
+  nickname: string;
+  picture?: string | null;
+  role?: string;
+} */
 
 interface UsersState {
-  user: [];
+  // user: UserInfo; // 타입 에러남
+  users: any;
   isLoggedId: boolean;
   loading: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: any;
 }
 
 const initialState = {
-  user: [],
+  users: {},
   isLoggedId: false,
   loading: 'idle',
   error: null,
 } as UsersState;
 
 export const userInfoSlice = createSlice({
-  name: 'user',
+  name: 'userInfo',
   initialState,
   reducers: {
     getUserInfos(state, action: PayloadAction<any>) {
-      state.user = action.payload;
+      state.users = action.payload;
     },
     loginUser(state, action) {
       state.isLoggedId = true;
-      state.user = action.payload;
+      state.users = action.payload;
     },
     logoutUser(state) {
       state.isLoggedId = false;
-      state.user = [];
+      state.users = {};
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchUserInfo.pending, (state) => {
         state.loading = 'loading';
+        state.isLoggedId = false;
       })
       .addCase(fetchUserInfo.fulfilled, (state, action) => {
         state.loading = 'succeeded';
-        state.user = action.payload;
+        state.isLoggedId = true;
+        state.users = action.payload;
         state.error = '';
       })
       .addCase(fetchUserInfo.rejected, (state, action) => {
         state.loading = 'failed';
-        state.user = [];
+        state.isLoggedId = false;
+        state.users = {};
         state.error = action.error.message;
       });
   },
 });
+
+export const getisLoggedId = (state: any) => state.userInfo.isLoggedId;
+export const getUserData = (state: any) => state.userInfo.users;
+export const getUserError = (state: any) => state.userInfo.error;
 
 export const { getUserInfos, loginUser, logoutUser } = userInfoSlice.actions;
 export default userInfoSlice.reducer;

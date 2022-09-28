@@ -37,7 +37,7 @@ const LoginText = styled.div`
 `;
 
 export default function SignUp() {
-  const URL = process.env.REACT_APP_DEV_URL; //민정님주소
+  const URL = process.env.REACT_APP_DEV_URL;
   const navigate = useNavigate();
   const {
     register,
@@ -46,7 +46,6 @@ export default function SignUp() {
   } = useForm<SignUpVal>();
 
   const handleLoginSubmit: SubmitHandler<SignUpVal> = (data) => {
-    // console.log(data); // {loginId: '입력값', email: '입력값', password: '입력값', nickname: '입력값'}
     /** 회원가입 API */
     axios
       .post(`${URL}/api/users`, data, {
