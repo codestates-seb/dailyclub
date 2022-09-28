@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from 'components/Layout';
 import styled from 'styled-components';
 import ProgressBar from 'components/ProgressBar';
@@ -6,8 +6,10 @@ import LevelPercent from 'components/LevelPercent';
 import QuestionMark from '../images/QuestionMark.svg';
 import BookMarkTab from 'components/BookMarkTab';
 import MessageTab from 'components/Tab/MessageTab';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import ProfileSvg from '../images/Profile.svg';
+import axios from 'axios';
+import { UserVal } from 'types/user';
 
 const MyPageContainer = styled.div`
   display: flex;
@@ -252,6 +254,26 @@ const userProps: {
 };
 
 function MyPage() {
+  
+  // 회원정보조회
+  const DEV_URL = process.env.REACT_APP_DEV_URL;
+  const params = useParams();
+  const [data, setData] = useState<UserVal>();
+ 
+  useEffect(() => {
+    axios
+      .get(`${DEV_URL}/api/users/${params.userId}`,
+      {
+        headers: {
+          'Content-type': 'application/json',
+        },
+      }
+      )
+      .then((res) => {
+        setData(res.data);
+      });
+  }, []);
+
   const [currentTab, setCurrentTab] = useState<number>(0);
   const menuArr = [
     {
@@ -364,8 +386,8 @@ function MyPage() {
                     style={{ height: 100, width: 100 }}
                   />
                 </ProfileImage>
-                <ProfileNickname>{userProps.nickname}</ProfileNickname>
-                <ProfileIntro>{userProps.introduction}</ProfileIntro>
+                <ProfileNickname>{data?.nickname}</ProfileNickname>
+                <ProfileIntro>{data?.introduction}</ProfileIntro>
                 <ProfileUpdateBtn onClick={handleUpdateMode}>
                   프로필 수정
                 </ProfileUpdateBtn>
@@ -376,10 +398,10 @@ function MyPage() {
                 친절도 &nbsp;
                 <img src={QuestionMark} alt="question mark" />
               </div>
-              <LevelPercent percent={userProps.kind}></LevelPercent>
+              <LevelPercent percent={data?.kind}></LevelPercent>
             </KindWrap>
             <ProgressBar
-              currentPerson={userProps.kind}
+              currentPerson={data?.kind}
               totalPerson={100}
             ></ProgressBar>
             <UserWrapBtn>
