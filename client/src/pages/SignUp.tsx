@@ -37,7 +37,7 @@ const LoginText = styled.div`
 `;
 
 export default function SignUp() {
-  const URL = process.env.REACT_APP_DEV_TWO_URL;
+  const URL = process.env.REACT_APP_DEV_URL;
   const navigate = useNavigate();
   const {
     register,

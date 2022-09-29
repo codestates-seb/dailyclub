@@ -42,7 +42,7 @@ const FormError = styled.div`
 `;
 
 export default function Login() {
-  const URL = process.env.REACT_APP_DEV_TWO_URL;
+  const URL = process.env.REACT_APP_DEV_URL;
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const {
@@ -65,8 +65,8 @@ export default function Login() {
           setLocalStorage('access_token', accessToken);
           setLocalStorage('refresh_token', refreshToken);
           // API 요청마다 헤더에 access토큰 담아서 요청보내는 설정
-          axios.defaults.headers.common['Authorization'] = `${accessToken}`;
-          axios.defaults.headers.common['Refresh'] = `${refreshToken}`;
+          // axios.defaults.headers.common['Authorization'] = `${accessToken}`;
+          // axios.defaults.headers.common['Refresh'] = `${refreshToken}`;
           navigate('/');
 
           //JWT디코딩해서 userId, loginId 등 전역상태

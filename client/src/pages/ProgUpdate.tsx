@@ -247,6 +247,11 @@ function ProgUpdate() {
       .get(`${URL}/api/programs/${programId}`)
       .then(({ data }) => {
         setPrev(data);
+        setTitle(data?.title);
+        setText(data?.text);
+        setNumOfRecruits(data?.numOfRecruits);
+        setLocation(data?.location);
+        setProgramDate(data?.programDate);
         setMinKind(data?.minKind);
 
         /** 이전이미지 있으면, 이미지 받아오기 */
@@ -378,11 +383,10 @@ function ProgUpdate() {
             {/* 제목 인풋입니다 */}
             <TitleInput
               type="text"
-              defaultValue={prev && prev?.title}
+              defaultValue={title}
               name="title"
               ref={firstRef}
               onKeyUp={handleInput}
-              required
               onChange={handleTitle}
             />
             <ProgramInfoTitle>
@@ -392,10 +396,9 @@ function ProgUpdate() {
             {/* 프로그램 설명 인풋입니다 */}
             <ContentsInput
               name="contents"
-              defaultValue={prev && prev?.text}
+              defaultValue={text}
               ref={secondRef}
               onChange={handleText}
-              required
             />
           </ProgramInfo>
           <RecruitInfo>
@@ -412,8 +415,7 @@ function ProgUpdate() {
                 min="2"
                 name="people"
                 onChange={handleNumofRecruits}
-                required
-                defaultValue={prev && prev?.numOfRecruits}
+                defaultValue={numOfRecruits}
               />
             </RecruitContents>
             <RecruitContents>
@@ -424,8 +426,7 @@ function ProgUpdate() {
                 type="date"
                 name="date"
                 onChange={handleProgramDate}
-                required
-                defaultValue={prev && prev?.programDate}
+                defaultValue={programDate}
               />
             </RecruitContents>
             <RecruitContents>
@@ -434,8 +435,8 @@ function ProgUpdate() {
               <AreaSelect
                 name="area"
                 onChange={handleLocation}
-                key={prev && prev?.location}
-                defaultValue={prev && prev?.location}
+                key={location}
+                defaultValue={location}
               >
                 <option value="지역">지역</option>
                 <option value="서울">서울</option>
@@ -461,9 +462,8 @@ function ProgUpdate() {
                   step="1"
                   name="kind"
                   onChange={handleMinKindValue}
-                  required
                   key={prev && prev?.minKind}
-                  defaultValue={prev && prev?.minKind}
+                  defaultValue={minkind}
                 />
                 <KindValue>{minkind}%</KindValue>
               </KindInputWrap>
