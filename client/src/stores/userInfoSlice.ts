@@ -36,7 +36,7 @@ export const fetchUserInfo = createAsyncThunk(`GET/USERINFO`, async () => {
 interface UsersState {
   // user: UserInfo; // 타입 에러남
   users: any;
-  userId: number;
+  userId: number | undefined;
   loginId: string;
   isLoggedIn: boolean;
   loading: 'idle' | 'loading' | 'succeeded' | 'failed';
@@ -45,7 +45,7 @@ interface UsersState {
 
 const initialState = {
   users: {},
-  userId: 0,
+  userId: undefined,
   loginId: '',
   isLoggedIn: false,
   loading: 'idle',
@@ -67,6 +67,8 @@ export const userInfoSlice = createSlice({
     },
     logoutUser(state) {
       state.isLoggedIn = false;
+      state.userId = undefined;
+      state.loginId = '';
       state.users = {};
     },
   },

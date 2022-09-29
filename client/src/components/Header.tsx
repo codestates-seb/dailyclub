@@ -8,6 +8,8 @@ import Pen from '../images/Pen.svg';
 import Message from '../images/Message.svg';
 import Search from '../images/Search.svg';
 import Profile from '../images/Profile.svg';
+import { logoutUser } from 'stores/userInfoSlice';
+import { removeLocalStorage } from 'apis/localStorage';
 
 const HeaderContainer = styled.div`
   position: fixed;
@@ -202,6 +204,11 @@ export default function Header() {
       // setInputValue(''); // input창만 비우고 싶은데 전달할 전역상태까지 비워져버림
     }
   };
+  const handleLogoutBtn = () => {
+    dispatch(logoutUser());
+    removeLocalStorage('access_token');
+    removeLocalStorage('refresh_token');
+  };
 
   return (
     <>
@@ -305,7 +312,7 @@ export default function Header() {
                     </Notification>
                   ))}
                 </Notifications>
-                <LogoutBtn>로그아웃</LogoutBtn>
+                <LogoutBtn onClick={handleLogoutBtn}>로그아웃</LogoutBtn>
               </NotificationContainer>
             </WrapChild>
           </WrapParent>
