@@ -12,6 +12,8 @@ import { Link } from 'react-router-dom';
 import { useAppSelector } from 'stores/hooks';
 import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
+import Pagination from 'pagination/Pagination';
+import { ProgramDetailVal } from 'types/programs';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -90,6 +92,7 @@ const WrapLevelText = styled.div`
 const ProgContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+  margin-bottom: 3rem;
 `;
 const ProgItem = styled.div`
   margin: 0.7rem 0.7rem 0.7rem 0;
@@ -131,25 +134,10 @@ const ProgWrapper = styled.div`
 `;
 const ProgPerson = styled.div``;
 const ProgDate = styled.div``;
-
 const DoneContainer = styled.div`
   padding: 7rem 0;
 `;
 
-interface ProgProps {
-  id: number;
-  programStatus: string;
-  title: string;
-  text: string;
-  programImages?: any; // 추가예정
-  minKind: number;
-  currentPerson: number; // api엔 없음
-  numOfRecruits: number;
-  location: string;
-  programDate: string;
-  bookmarkId?: number | null;
-  writer: string; // 수정
-}
 export default function Main() {
   const URL = process.env.REACT_APP_DEV_URL;
 
@@ -158,7 +146,10 @@ export default function Main() {
   const [areaSelected, setAreaSelected] = useState('');
   const [rangeValue, setRangeValue] = useState('');
   const [dateSelected, setDateSelected] = useState('');
-  const [programs, setPrograms] = useState<Array<Object>>([]);
+  const [programs, setPrograms] = useState<Array<ProgramDetailVal>>([]);
+  const [pageList, setPageList] = useState();
+  const [page, setPage] = useState<number>(1);
+
   // console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
 
   /** 유저 전역상태 전체 - users, isLoggedId, loading, error  */
@@ -175,26 +166,19 @@ export default function Main() {
   useEffect(() => {
     const getProgramList = async () => {
       await axios
-        .get(`${URL}/api/programs?page=1&size=10`)
+        .get(`${URL}/api/programs?page=${page}&size=10`)
         // .get(
         //   `${URL}/api/programs?page=1&size=10
         // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${rangeValue}&programDate=${dateSelected}&programStatus=POSSIBLE`
         // )
         .then(({ data }) => {
           setPrograms(data?.data);
+          setPageList(data?.pageInfo);
         })
         .catch((err) => console.log(err.message));
     };
     getProgramList();
   }, []);
-
-  const progFilterProps = {
-    keyword: '',
-    location: areaSelected,
-    programDate: dateSelected,
-    levelRange: rangeValue, // api문서엔 없음
-  };
-  // console.log(progFilterProps); // 필터조회api 보낼때 객체
 
   return (
     <Layout>
@@ -264,7 +248,7 @@ export default function Main() {
                             : `data:${el.programImages[0].contentType};base64,${el?.programImages[0].bytes}`
                         }
                         style={{
-                          height: '130px',
+                          height: '180px',
                           width: '100%',
                           borderRadius: '5px',
                         }}
@@ -300,6 +284,7 @@ export default function Main() {
                 </Link>
               ))}
           </ProgContainer>
+          <Pagination list={pageList} page={page} setPage={setPage} />
         </IngContainer>
         <DoneContainer>
           <RecruitText>모집 마감된 모임</RecruitText>
@@ -316,7 +301,7 @@ export default function Main() {
                           : `data:${el.programImages[0].contentType};base64,${el?.programImages[0].bytes}`
                       }
                       style={{
-                        height: '130px',
+                        height: '180px',
                         width: '100%',
                         borderRadius: '5px',
                       }}
