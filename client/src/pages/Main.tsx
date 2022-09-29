@@ -154,7 +154,7 @@ export default function Main() {
 
   /** 유저 전역상태 전체 - users, isLoggedId, loading, error  */
   const loginUserInfo = useAppSelector((state) => state.userInfo);
-  console.log('유저 전역정보: ', loginUserInfo ?? loginUserInfo); // 확인용
+  // console.log('유저 전역정보: ', loginUserInfo ?? loginUserInfo); // 확인용
 
   /** 유저 전역상태 1개씩 - isLoggedId, users, error */
   const isLoggedId = useAppSelector(getisLoggedIn); // 로그인여부
