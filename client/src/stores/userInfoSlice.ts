@@ -68,6 +68,7 @@ export const userInfoSlice = createSlice({
     logoutUser(state) {
       state.isLoggedIn = false;
       state.userId = undefined;
+      state.loading = 'idle';
       state.loginId = '';
       state.users = {};
     },

@@ -208,6 +208,7 @@ export default function Header() {
     dispatch(logoutUser());
     removeLocalStorage('access_token');
     removeLocalStorage('refresh_token');
+    setIsOpened(false);
   };
 
   return (
