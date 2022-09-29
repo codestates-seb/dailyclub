@@ -35,3 +35,10 @@ export interface ApplyListVal {
   };
   createdTime: string;
 }
+
+export interface PaginationVal {
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
