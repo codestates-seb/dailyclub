@@ -66,7 +66,7 @@ export default function Login() {
           setLocalStorage('refresh_token', refreshToken);
           // API 요청마다 헤더에 access토큰 담아서 요청보내는 설정
           axios.defaults.headers.common['Authorization'] = `${accessToken}`;
-          axios.defaults.headers.common['Refresh'] = `${refreshToken}`;
+          // axios.defaults.headers.common['Refresh'] = `${refreshToken}`;
           navigate('/');
 
           //JWT디코딩해서 userId, loginId 등 전역상태
@@ -76,6 +76,7 @@ export default function Login() {
         }
       })
       .then(() => {
+        dispatch(fetchUserInfo()); // 로그인 후, 로그인한 유저정보조회
         // dispatch(fetchUserInfo(decodedAccess.id));//유저조회 thunk 전역상태에 저장
       })
       .catch((error) => console.log(error));
