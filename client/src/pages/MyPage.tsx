@@ -6,10 +6,10 @@ import LevelPercent from 'components/LevelPercent';
 import QuestionMark from '../images/QuestionMark.svg';
 import BookMarkTab from 'components/BookMarkTab';
 import MessageTab from 'components/Tab/MessageTab';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import ProfileSvg from '../images/Profile.svg';
 import axios from 'axios';
-import { UserVal } from 'types/user';
+import { UserVal, SignUpVal } from 'types/user';
 
 const MyPageContainer = styled.div`
   display: flex;
@@ -254,10 +254,12 @@ const userProps: {
 };
 
 function MyPage() {
-  
-  // 회원정보조회
+
   const DEV_URL = process.env.REACT_APP_DEV_URL;
   const params = useParams();
+  const navigate = useNavigate();
+
+  // 회원정보조회
   const [data, setData] = useState<UserVal>();
  
   useEffect(() => {
@@ -273,6 +275,22 @@ function MyPage() {
         setData(res.data);
       });
   }, []);
+
+  // 회원탈퇴
+  const handleUserDelete = () => {
+    if (window.confirm('확인을 누르면 회원 정보가 삭제됩니다.')) {
+      axios
+        .delete(`${DEV_URL}/api/users/${params.userId}`)
+        .then(() => {
+          localStorage.clear();
+          alert('그동안 이용해주셔서 감사합니다.');
+          navigate('/');
+        })
+        .catch((err) => alert(err.res.data.message));
+    } else {
+      return;
+    }
+  };
 
   const [currentTab, setCurrentTab] = useState<number>(0);
   const menuArr = [
@@ -405,7 +423,7 @@ function MyPage() {
               totalPerson={100}
             ></ProgressBar>
             <UserWrapBtn>
-              <WithdrawalBtn>회원탈퇴</WithdrawalBtn>
+              <WithdrawalBtn onClick={handleUserDelete}>회원탈퇴</WithdrawalBtn>
               <LogoutBtn>로그아웃</LogoutBtn>
             </UserWrapBtn>
           </ProfileWrap>
