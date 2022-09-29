@@ -10,7 +10,7 @@ import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from 'stores/hooks';
-import { getisLoggedId, getUserData, getUserError } from 'stores/userInfoSlice';
+import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -170,7 +170,7 @@ export default function Main() {
   // console.log('유저 전역정보: ', loginUserInfo ?? loginUserInfo);  // 확인용
 
   /** 유저 전역상태 1개씩 - isLoggedId, users, error */
-  const isLoggedId = useAppSelector(getisLoggedId); // 로그인여부
+  const isLoggedId = useAppSelector(getisLoggedIn); // 로그인여부
   const userData = useAppSelector(getUserData); // 유저정보
   const userError = useAppSelector(getUserError); // 에러내용
   // console.log('유저 전역상태: ', isLoggedId, userData, userError); // 확인 후 주석해제하면 됩니다
@@ -185,7 +185,6 @@ export default function Main() {
         // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${rangeValue}&programDate=${dateSelected}&programStatus=POSSIBLE`
         // )
         .then(({ data }) => {
-          // console.log(data);
           setPrograms(data?.data);
         })
         .catch((err) => console.log(err.message));

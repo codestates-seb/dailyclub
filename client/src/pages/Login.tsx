@@ -11,7 +11,8 @@ import OauthGoogleBtn from 'components/OAuth/OauthGoogleBtn';
 import OauthNaverBtn from 'components/OAuth/OauthNaverBtn';
 import OauthTitle from 'components/OAuth/OauthTitle';
 import { useAppDispatch } from 'stores/hooks';
-import { fetchUserInfo } from 'stores/userInfoSlice';
+import { fetchUserInfo, getUserId } from 'stores/userInfoSlice';
+import { parseJwt } from 'utils/parseJwt';
 
 const LoginContainer = styled.div`
   margin: 0 auto;
@@ -41,7 +42,7 @@ const FormError = styled.div`
 `;
 
 export default function Login() {
-  const URL = process.env.REACT_APP_DEV_URL; //민정님주소
+  const URL = process.env.REACT_APP_DEV_TWO_URL;
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const {
@@ -51,32 +52,31 @@ export default function Login() {
   } = useForm<LoginVal>();
 
   const handleLoginSubmit: SubmitHandler<LoginVal> = (data) => {
-    // console.log(data); // {loginId: '입력값', password: '입력값'}
     // API.login(data); // test해봐야 함
     axios.defaults.withCredentials = true; // withCredentials 전역 설정
     axios
       .post(`${URL}/login`, data)
       .then((res) => {
         if (res.status === 200) {
-          // 모든 헤더 이름은 소문자
-          let accessToken = res.headers.authorization; // 응답헤더에서 토큰 받기
-          let refreshToken = res.headers.refresh; // 응답헤더에서 토큰 받기
+          let accessToken = res.headers.authorization;
+          let refreshToken = res.headers.refresh;
           console.log('access 토큰 :', accessToken);
           console.log('refresh 토큰 :', refreshToken);
-          setLocalStorage('access_token', accessToken); // 토큰 localStorage에 저장
-          setLocalStorage('refresh_token', refreshToken); // 토큰 localStorage에 저장
+          setLocalStorage('access_token', accessToken);
+          setLocalStorage('refresh_token', refreshToken);
           // API 요청마다 헤더에 access토큰 담아서 요청보내는 설정
           axios.defaults.headers.common['Authorization'] = `${accessToken}`;
+          axios.defaults.headers.common['Refresh'] = `${refreshToken}`;
           navigate('/');
+
+          //JWT디코딩해서 userId, loginId 등 전역상태
+          const decodedAccess = parseJwt(accessToken);
+          dispatch(getUserId(decodedAccess)); //JWT 내용 전역상태
+          // console.log('토큰해부', decodedAccess);
         }
       })
-      .then((res) => {
-        console.log('로그인 응답 :', res);
-        // const userId = res.data.userId // res로 받으면 주석해제
-        // axios
-        //   .get(`${URL}/api/users/mypage`)
-        //   .then((res) => console.log(res.data));
-        dispatch(fetchUserInfo()); //유저정보 전역상태에 저장 - 안됨
+      .then(() => {
+        // dispatch(fetchUserInfo(decodedAccess.id));//유저조회 thunk 전역상태에 저장
       })
       .catch((error) => console.log(error));
 

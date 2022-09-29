@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { useAppDispatch } from 'stores/hooks';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { searchActions } from 'stores/searchSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
@@ -10,6 +10,7 @@ import Pen from '../images/Pen.svg';
 import Message from '../images/Message.svg';
 import Search from '../images/Search.svg';
 import Profile from '../images/Profile.svg';
+import { fetchUserInfo } from 'stores/userInfoSlice';
 
 const HeaderContainer = styled.div`
   position: fixed;
@@ -160,8 +161,7 @@ const LogoutBtn = styled.button`
     background-color: #a8ddcb;
   }
 `;
-
-export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
+export default function Header() {
   interface NotifyList {
     id: number;
     confirmed: boolean;
@@ -191,8 +191,11 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
 
   const [isopened, setIsOpened] = useState<boolean>(false);
   const [InputValue, setInputValue] = useState('');
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { isLoggedIn, loading, loginId, userId } = useAppSelector(
+    (state) => state.userInfo
+  );
 
   const handelSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -203,6 +206,11 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
       navigate('/'); // 엔터 시 질문목록 메인페이지로 이동
       // setInputValue(''); // input창만 비우고 싶은데 전달할 전역상태까지 비워져버림
     }
+  };
+  const handelProfileClick = () => {
+    setIsOpened(!isopened);
+    dispatch(fetchUserInfo()); //유저정보조회 thunk실행 전역상태에 저장 -안됨
+    // dispatch(fetchUserInfo(userId));//api 만약 userId로 변경시
   };
 
   return (
@@ -251,7 +259,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
                   </Link>
                 </Icon>
                 <Icon>
-                  <ProfileBtn onClick={() => setIsOpened(!isopened)}>
+                  <ProfileBtn onClick={handelProfileClick}>
                     <img
                       src={Profile}
                       alt="profile"

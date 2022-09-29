@@ -27,14 +27,18 @@ export const fetchUserInfo = createAsyncThunk(`GET/USERINFO`, async () => {
 interface UsersState {
   // user: UserInfo; // 타입 에러남
   users: any;
-  isLoggedId: boolean;
+  userId: number;
+  loginId: string;
+  isLoggedIn: boolean;
   loading: 'idle' | 'loading' | 'succeeded' | 'failed';
   error: any;
 }
 
 const initialState = {
   users: {},
-  isLoggedId: false,
+  userId: 0,
+  loginId: '',
+  isLoggedIn: false,
   loading: 'idle',
   error: null,
 } as UsersState;
@@ -43,15 +47,17 @@ export const userInfoSlice = createSlice({
   name: 'userInfo',
   initialState,
   reducers: {
-    getUserInfos(state, action: PayloadAction<any>) {
-      state.users = action.payload;
+    getUserId(state, action: PayloadAction<any>) {
+      state.userId = action.payload.id;
+      state.loginId = action.payload.loginId;
+      state.isLoggedIn = true;
     },
     loginUser(state, action) {
-      state.isLoggedId = true;
+      state.isLoggedIn = true;
       state.users = action.payload;
     },
     logoutUser(state) {
-      state.isLoggedId = false;
+      state.isLoggedIn = false;
       state.users = {};
     },
   },
@@ -59,26 +65,26 @@ export const userInfoSlice = createSlice({
     builder
       .addCase(fetchUserInfo.pending, (state) => {
         state.loading = 'loading';
-        state.isLoggedId = false;
+        state.isLoggedIn = false;
       })
       .addCase(fetchUserInfo.fulfilled, (state, action) => {
         state.loading = 'succeeded';
-        state.isLoggedId = true;
+        state.isLoggedIn = true;
         state.users = action.payload;
         state.error = '';
       })
       .addCase(fetchUserInfo.rejected, (state, action) => {
         state.loading = 'failed';
-        state.isLoggedId = false;
+        state.isLoggedIn = false;
         state.users = {};
         state.error = action.error.message;
       });
   },
 });
 
-export const getisLoggedId = (state: any) => state.userInfo.isLoggedId;
+export const getisLoggedIn = (state: any) => state.userInfo.isLoggedIn;
 export const getUserData = (state: any) => state.userInfo.users;
 export const getUserError = (state: any) => state.userInfo.error;
 
-export const { getUserInfos, loginUser, logoutUser } = userInfoSlice.actions;
+export const { getUserId, loginUser, logoutUser } = userInfoSlice.actions;
 export default userInfoSlice.reducer;
