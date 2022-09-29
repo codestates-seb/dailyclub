@@ -10,7 +10,7 @@ export interface SignUpVal extends LoginVal {
   nickname: string;
 }
 
-export interface UserVal {
+export interface UserVal extends SignUpVal {
   id: number;
   loginId: string;
   nickname: string;
