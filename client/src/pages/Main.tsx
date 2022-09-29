@@ -11,6 +11,7 @@ import ProgressBar from 'components/ProgressBar';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from 'stores/hooks';
 import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
+import BasicImg from '../images/BasicImg.jpg';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -92,11 +93,6 @@ const ProgContainer = styled.div`
 `;
 const ProgItem = styled.div`
   margin: 0.7rem 0.7rem 0.7rem 0;
-`;
-const ProgImg = styled.div`
-  background-color: gray;
-  height: 130px;
-  border-radius: 5px;
 `;
 const ProgBanner = styled.div`
   position: relative;
@@ -261,7 +257,19 @@ export default function Main() {
                       >
                         {el?.programStatus}
                       </ProgRecruitment>
-                      <ProgImg>사진</ProgImg>
+                      <img
+                        src={
+                          el?.programImages.length === 0
+                            ? BasicImg
+                            : `data:${el.programImages[0].contentType};base64,${el?.programImages[0].bytes}`
+                        }
+                        style={{
+                          height: '130px',
+                          width: '100%',
+                          borderRadius: '5px',
+                        }}
+                        alt="program Image"
+                      />
                       <ProgBookmark>
                         <img src={Bookmark} alt="bookmark" />
                       </ProgBookmark>
@@ -301,7 +309,19 @@ export default function Main() {
                 <ProgItem key={el.id}>
                   <ProgBanner>
                     <ProgRecruitment>모집종료</ProgRecruitment>
-                    <ProgImg>사진</ProgImg>
+                    <img
+                      src={
+                        el?.programImages.length === 0
+                          ? BasicImg
+                          : `data:${el.programImages[0].contentType};base64,${el?.programImages[0].bytes}`
+                      }
+                      style={{
+                        height: '130px',
+                        width: '100%',
+                        borderRadius: '5px',
+                      }}
+                      alt="program Image"
+                    />
                     <ProgBookmark>
                       <img src={Bookmark} alt="bookmark" />
                     </ProgBookmark>

@@ -320,7 +320,6 @@ function ProgUpdate() {
       data: formData,
     })
       .then((res) => {
-        console.log(res.data);
         navigate(`/programs/${programId}`);
       })
       .catch((err) => console.log(err));
