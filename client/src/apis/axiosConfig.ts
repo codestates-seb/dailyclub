@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { ACCESS_EXP_MESSAGE, CheckJWTExp } from 'utils/parseJwt';
+import { ACCESS_EXP_MESSAGE, CheckJWTExp } from 'utils/CheckJwtExp';
 import { getLocalStorage } from './localStorage';
 
 axios.defaults.withCredentials = true;
