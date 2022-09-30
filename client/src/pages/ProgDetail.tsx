@@ -8,7 +8,7 @@ import Loc from '../images/Location.svg';
 import Info from '../images/Info.svg';
 import Msg from '../images/Message.svg';
 import QuestionMark from '../images/QuestionMark.svg';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ApplyListVal, PaginationVal, ProgramDetailVal } from 'types/programs';
@@ -17,6 +17,10 @@ import Profile from '../images/Profile.svg';
 import Pagination from 'pagination/Pagination';
 import { useAppSelector } from 'stores/hooks';
 import { getUserData } from 'stores/userInfoSlice';
+import ApplyModal from 'components/ApplyModal';
+import MessageModal from 'components/MessageModal';
+import DeleteModal from 'components/DeleteModal';
+import CancelModal from 'components/CancelModal';
 
 const ProgPageDetail = styled.div`
   max-width: 1200px;
@@ -250,19 +254,7 @@ const KindWrap = styled.div`
   margin-bottom: 10px;
 `;
 
-interface ModalProps {
-  setIsMessageOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsApplyOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsCancelOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setIsDeleteOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}
-
-export default function ProgDetail({
-  setIsMessageOpen,
-  setIsApplyOpen,
-  setIsCancelOpen,
-  setIsDeleteOpen,
-}: ModalProps) {
+export default function ProgDetail() {
   const DEV_URL = process.env.REACT_APP_DEV_URL;
   const params = useParams();
 
@@ -273,8 +265,15 @@ export default function ProgDetail({
   const [pageList, setPageList] = useState<PaginationVal>();
   const [page, setPage] = useState<number>(1);
 
-  const userData = useAppSelector(getUserData);
-  const loginUserId = 1;
+  //각 모달 Open 상태
+  const [isMessageOpen, setIsMessageOpen] = useState(false);
+  const [isApplyOpen, setIsApplyOpen] = useState(false);
+  const [isCancelOpen, setIsCancelOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+
+  // const userData = useAppSelector(getUserData);
+
+  const loginUserId = 2;
 
   const navigate = useNavigate();
 
@@ -312,223 +311,229 @@ export default function ProgDetail({
 
     getProgramDetail();
     getApplyList();
-    // console.log(userData);
   }, [page]);
 
-  //신청하기
-  const postApply = () => {
-    axios
-      .post(
-        `${DEV_URL}/api/applies`,
-        { programId: params.programId },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      )
-      .then((res) => {
-        location.reload();
-      });
-  };
-
-  //취소하기
-  const cancelApply = () => {
-    axios.delete(`${DEV_URL}/api/applies/${applyMemberfilter[0].id}`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  };
-
-  //업데이트 페이지 이동
-  const navigateUpdatePage = () => {
-    navigate(`/programs/${params.programId}/update`);
-  };
-
-  //프로그램 삭제
-  const deleteProgram = () => {
-    axios.delete(`${DEV_URL}/api/programs/${params.progrmaId}`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  };
-
   return (
-    <Layout>
-      <ProgPageDetail>
-        <ProgDetailWrap>
-          <ProgDetailImg src={progImg}></ProgDetailImg>
-          <ProgTitleSection>
-            [{data?.location}]{data?.title}
-          </ProgTitleSection>
-          <ProgTxtSection>
-            <ProgText>{data?.text}</ProgText>
-          </ProgTxtSection>
-          <ProgMemberContent>
-            <H2>함께하는 멤버(신청자)</H2>
-            <MemberSection>
-              {applyList?.map((el) => (
-                <MemItem key={el.id}>
-                  <MemItemWrap1>
-                    {el.user.picture ? (
-                      <img
-                        src={
-                          'data:' +
-                          el.user.picture +
-                          ';base64,' +
-                          el.user.picture
-                        }
-                        alt="profile"
-                        style={{ height: 40, width: 40 }}
-                      />
-                    ) : (
-                      <img
-                        src={Profile}
-                        alt="profile"
-                        style={{ height: 40, width: 40 }}
-                      />
-                    )}
-                    <MemInfo>
-                      <MemName>{el.user.nickname}</MemName>
-                      <MemIntro>{el.user.introduction}</MemIntro>
-                    </MemInfo>
-                  </MemItemWrap1>
-                  <MemItemWrap2>
-                    <KindWrap>
-                      <div>
-                        친절도 &nbsp;
-                        <img src={QuestionMark} alt="question mark" />
-                      </div>
-                      <LevelPercent percent={el.user.kind}></LevelPercent>
-                    </KindWrap>
-                    <ApplyDate>{el.createdTime} 신청</ApplyDate>
-                  </MemItemWrap2>
-                </MemItem>
-              ))}
-            </MemberSection>
-            {applyList ? (
-              <Pagination list={pageList} page={page} setPage={setPage} />
-            ) : null}
-          </ProgMemberContent>
-        </ProgDetailWrap>
-        <ProgDetailInfo>
-          <H2>모집정보</H2>
-          <ProglInfoWrap>
-            <ProgPeople>
-              <Icon>
-                <img src={User} alt="logo" style={{ height: 25, width: 25 }} />
+    <>
+      <Layout>
+        <ProgPageDetail>
+          <ProgDetailWrap>
+            <ProgDetailImg src={progImg}></ProgDetailImg>
+            <ProgTitleSection>
+              [{data?.location}]{data?.title}
+            </ProgTitleSection>
+            <ProgTxtSection>
+              <ProgText>{data?.text}</ProgText>
+            </ProgTxtSection>
+            <ProgMemberContent>
+              <H2>함께하는 멤버(신청자)</H2>
+              <MemberSection>
+                {applyList?.map((el) => (
+                  <MemItem key={el.id}>
+                    <MemItemWrap1>
+                      {el.user.picture ? (
+                        <img
+                          src={
+                            'data:' +
+                            el.user.picture +
+                            ';base64,' +
+                            el.user.picture
+                          }
+                          alt="profile"
+                          style={{ height: 40, width: 40 }}
+                        />
+                      ) : (
+                        <img
+                          src={Profile}
+                          alt="profile"
+                          style={{ height: 40, width: 40 }}
+                        />
+                      )}
+                      <MemInfo>
+                        <MemName>{el.user.nickname}</MemName>
+                        <MemIntro>{el.user.introduction}</MemIntro>
+                      </MemInfo>
+                    </MemItemWrap1>
+                    <MemItemWrap2>
+                      <KindWrap>
+                        <div>
+                          친절도 &nbsp;
+                          <img src={QuestionMark} alt="question mark" />
+                        </div>
+                        <LevelPercent percent={el.user.kind}></LevelPercent>
+                      </KindWrap>
+                      <ApplyDate>{el.createdTime} 신청</ApplyDate>
+                    </MemItemWrap2>
+                  </MemItem>
+                ))}
+              </MemberSection>
+              {applyList ? (
+                <Pagination list={pageList} page={page} setPage={setPage} />
+              ) : null}
+            </ProgMemberContent>
+          </ProgDetailWrap>
+          <ProgDetailInfo>
+            <H2>모집정보</H2>
+            <ProglInfoWrap>
+              <ProgPeople>
+                <Icon>
+                  <img
+                    src={User}
+                    alt="logo"
+                    style={{ height: 25, width: 25 }}
+                  />
 
-                <H3>모집인원</H3>
-              </Icon>
-              <ProgInfoText>
-                {pageList?.totalElements} / {data?.numOfRecruits}
-              </ProgInfoText>
-            </ProgPeople>
-            <ProgDate>
-              <Icon>
-                <img
-                  src={Calendar}
-                  alt="logo"
-                  style={{ height: 25, width: 25 }}
-                />
+                  <H3>모집인원</H3>
+                </Icon>
+                <ProgInfoText>
+                  {pageList?.totalElements} / {data?.numOfRecruits}
+                </ProgInfoText>
+              </ProgPeople>
+              <ProgDate>
+                <Icon>
+                  <img
+                    src={Calendar}
+                    alt="logo"
+                    style={{ height: 25, width: 25 }}
+                  />
 
-                <H3>진행날짜</H3>
-              </Icon>
-              <ProgInfoText>{data?.programDate}</ProgInfoText>
-            </ProgDate>
-            <ProgRegion>
-              <Icon>
-                <img src={Loc} alt="logo" style={{ height: 25, width: 25 }} />
-                <H3>모집지역</H3>
-              </Icon>
-              <ProgInfoText>{data?.location}</ProgInfoText>
-            </ProgRegion>
-            <ProgMessage>
-              <Icon>
-                <img src={Info} alt="logo" style={{ height: 25, width: 25 }} />
-                <H3>최소 친절도</H3>
-              </Icon>
-              <ProgInfoText>{data?.minKind}% 이상</ProgInfoText>
-            </ProgMessage>
-            <BtnWrap>
-              {loginUserId === data?.writer.id ? (
-                <>
-                  <ProgUpdateBtn onClick={navigateUpdatePage}>
-                    수정하기
-                  </ProgUpdateBtn>
-                  <ProgDeleteBtn onClick={deleteProgram}>
-                    삭제하기
-                  </ProgDeleteBtn>
-                </>
-              ) : applyMemberfilter.length !== 0 ? (
-                <>
-                  <BookmarkBtn>
-                    <Icon>
-                      <img
-                        src={Bookmark}
-                        alt="logo"
-                        style={{ height: 25, width: 25 }}
-                      />
-                    </Icon>
-                  </BookmarkBtn>
+                  <H3>진행날짜</H3>
+                </Icon>
+                <ProgInfoText>{data?.programDate}</ProgInfoText>
+              </ProgDate>
+              <ProgRegion>
+                <Icon>
+                  <img src={Loc} alt="logo" style={{ height: 25, width: 25 }} />
+                  <H3>모집지역</H3>
+                </Icon>
+                <ProgInfoText>{data?.location}</ProgInfoText>
+              </ProgRegion>
+              <ProgMessage>
+                <Icon>
+                  <img
+                    src={Info}
+                    alt="logo"
+                    style={{ height: 25, width: 25 }}
+                  />
+                  <H3>최소 친절도</H3>
+                </Icon>
+                <ProgInfoText>{data?.minKind}% 이상</ProgInfoText>
+              </ProgMessage>
+              <BtnWrap>
+                {loginUserId === data?.writer.id ? (
+                  <>
+                    <ProgUpdateBtn
+                      onClick={() => {
+                        navigate(`/programs/${params.programId}/update`);
+                      }}
+                    >
+                      수정하기
+                    </ProgUpdateBtn>
+                    <ProgDeleteBtn
+                      onClick={() => {
+                        setIsDeleteOpen(true);
+                      }}
+                    >
+                      삭제하기
+                    </ProgDeleteBtn>
+                  </>
+                ) : applyMemberfilter.length !== 0 ? (
+                  <>
+                    <BookmarkBtn>
+                      <Icon>
+                        <img
+                          src={Bookmark}
+                          alt="logo"
+                          style={{ height: 25, width: 25 }}
+                        />
+                      </Icon>
+                    </BookmarkBtn>
 
-                  <ProgApply onClick={cancelApply}>취소하기</ProgApply>
-                </>
-              ) : (
-                <>
-                  <BookmarkBtn>
-                    <Icon>
-                      <img
-                        src={Bookmark}
-                        alt="logo"
-                        style={{ height: 25, width: 25 }}
-                      />
-                    </Icon>
-                  </BookmarkBtn>
+                    <ProgApply
+                      onClick={() => {
+                        setIsCancelOpen(true);
+                      }}
+                    >
+                      취소하기
+                    </ProgApply>
+                  </>
+                ) : (
+                  <>
+                    <BookmarkBtn>
+                      <Icon>
+                        <img
+                          src={Bookmark}
+                          alt="logo"
+                          style={{ height: 25, width: 25 }}
+                        />
+                      </Icon>
+                    </BookmarkBtn>
 
-                  <ProgApply onClick={postApply}>신청하기</ProgApply>
-                </>
-              )}
-            </BtnWrap>
-          </ProglInfoWrap>
-          <H2>모임장 정보</H2>
-          <LeaderInfo>
-            <MemName>
-              {data?.writer.picture ? (
-                <img src="" alt="profile" style={{ height: 40, width: 40 }} />
-              ) : (
-                <img
-                  src={Profile}
-                  alt="profile"
-                  style={{ height: 40, width: 40 }}
-                />
-              )}
-              <MemInfo>
-                <ProfileNickname>{data?.writer.nickname}</ProfileNickname>
-                <ProfileIntro>{data?.writer.introduction}</ProfileIntro>
-              </MemInfo>
-            </MemName>
-            <KindWrap>
-              <div>
-                친절도 &nbsp;
-                <img src={QuestionMark} alt="question mark" />
-              </div>
-              <LevelPercent
-                //@ts-ignore
-                percent={data?.writer.kind}
-              ></LevelPercent>
-            </KindWrap>
-            <SendMsgBtn>
-              <SendMsg>
-                <img src={Msg} alt="logo" style={{ height: 20, width: 20 }} />{' '}
-                메시지 보내기
-              </SendMsg>
-            </SendMsgBtn>
-          </LeaderInfo>
-        </ProgDetailInfo>
-      </ProgPageDetail>
-    </Layout>
+                    <ProgApply
+                      onClick={() => {
+                        setIsApplyOpen(true);
+                      }}
+                    >
+                      신청하기
+                    </ProgApply>
+                  </>
+                )}
+              </BtnWrap>
+            </ProglInfoWrap>
+            <H2>모임장 정보</H2>
+            <LeaderInfo>
+              <MemName>
+                {data?.writer.picture ? (
+                  <img src="" alt="profile" style={{ height: 40, width: 40 }} />
+                ) : (
+                  <img
+                    src={Profile}
+                    alt="profile"
+                    style={{ height: 40, width: 40 }}
+                  />
+                )}
+                <MemInfo>
+                  <ProfileNickname>{data?.writer.nickname}</ProfileNickname>
+                  <ProfileIntro>{data?.writer.introduction}</ProfileIntro>
+                </MemInfo>
+              </MemName>
+              <KindWrap>
+                <div>
+                  친절도 &nbsp;
+                  <img src={QuestionMark} alt="question mark" />
+                </div>
+                <LevelPercent
+                  //@ts-ignore
+                  percent={data?.writer.kind}
+                ></LevelPercent>
+              </KindWrap>
+              <SendMsgBtn
+                onClick={() => {
+                  setIsMessageOpen(true);
+                }}
+              >
+                <SendMsg>
+                  <img src={Msg} alt="logo" style={{ height: 20, width: 20 }} />{' '}
+                  메시지 보내기
+                </SendMsg>
+              </SendMsgBtn>
+            </LeaderInfo>
+          </ProgDetailInfo>
+        </ProgPageDetail>
+      </Layout>
+      {isApplyOpen ? (
+        <ApplyModal setIsApplyOpen={setIsApplyOpen} programId={data?.id} />
+      ) : null}
+      {isMessageOpen ? <MessageModal /> : null}
+      {isCancelOpen ? (
+        <CancelModal
+          setIsCancelOpen={setIsCancelOpen}
+          applyMemberfilter={applyMemberfilter}
+        />
+      ) : null}
+      {isDeleteOpen ? (
+        <DeleteModal setIsDeleteOpen={setIsDeleteOpen} programId={data?.id} />
+      ) : null}
+    </>
   );
 }

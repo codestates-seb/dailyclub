@@ -13,18 +13,8 @@ import NoticeDetail from 'pages/NoticeDetail';
 import NoticeCreate from 'pages/NoticeCreate';
 import ProgDetail from 'pages/ProgDetail';
 import ProgUpdate from 'pages/ProgUpdate';
-import MessageModal from 'components/MessageModal';
-import { useState } from 'react';
-import ApplyModal from 'components/ApplyModal';
-import CancelModal from 'components/CancelModal';
-import DeleteModal from 'components/DeleteModal';
 
 const App: React.FC = () => {
-  const [isMessageOpen, setIsMessageOpen] = useState(false);
-  const [isApplyOpen, setIsApplyOpen] = useState(false);
-  const [isCancelOpen, setIsCancelOpen] = useState(false);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
-
   return (
     <div className="wrap">
       <ThemeProvider
@@ -35,23 +25,13 @@ const App: React.FC = () => {
       >
         <GlobalStyles />
         <BrowserRouter>
-          <Header />
+          <Header isLoggedIn={true} />
           <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
             <Route path="/programs/create" element={<ProgCreate />} />
-            <Route
-              path="/programs/:programId"
-              element={
-                <ProgDetail
-                  setIsMessageOpen={setIsMessageOpen}
-                  setIsApplyOpen={setIsApplyOpen}
-                  setIsCancelOpen={setIsCancelOpen}
-                  setIsDeleteOpen={setIsDeleteOpen}
-                />
-              }
-            />
+            <Route path="/programs/:programId" element={<ProgDetail />} />
             <Route
               path="/programs/:programId/update"
               element={<ProgUpdate />}
