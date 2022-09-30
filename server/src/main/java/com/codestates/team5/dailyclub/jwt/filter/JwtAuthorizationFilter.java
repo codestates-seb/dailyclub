@@ -48,23 +48,29 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 // 액세스 토큰이 만료되었다면
             } else if (accValidResult == TokenProvider.JwtCode.EXPIRED) {
                 // 리프레시 토큰을 헤더에서 불러온다.
-                String refreshToken = resolveToken(request, "refresh");
+                String refreshToken = resolveToken(request, "Refresh");
                 // refresh Token이 요청헤더에 있다면
                 if(refreshToken != null) {
                     // refresh Token을 검증
-                    TokenProvider.JwtCode refValidResult = tokenProvider.validateToken(refreshToken, "refresh");
+                    TokenProvider.JwtCode refValidResult = tokenProvider.validateToken(refreshToken, "Refresh");
                     // 검증이 통과하면
                     if(refValidResult != TokenProvider.JwtCode.DENIED) {
                         // refresh Token 재발급
+//                        String newRefreshToken = tokenProvider.updateRefreshToken(refreshToken);
+//                        if(newRefreshToken != null) {
+//                            response.addHeader("Refresh", "Bearer " + refreshToken);
+                        // Access Token 재발급
+                        Authentication authentication = tokenProvider.getAuthentication(refreshToken);
+                        response.addHeader("Authorization", "Bearer " + tokenProvider.createAccessToken(authentication));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        logger.info("액세스 토큰 최신화 완료");
+                        filterChain.doFilter(request, response);
+//                        }
+                    }else if(refValidResult == TokenProvider.JwtCode.EXPIRED) {
                         String newRefreshToken = tokenProvider.updateRefreshToken(refreshToken);
-                        if(newRefreshToken != null) {
-                            response.addHeader("refresh", "Bearer " + newRefreshToken);
-                            // Access Token 재발급
-                            Authentication authentication = tokenProvider.getAuthentication(refreshToken);
-                            response.addHeader("Authorization", "Bearer " + tokenProvider.createAccessToken(authentication));
-                            SecurityContextHolder.getContext().setAuthentication(authentication);
-                            logger.info("리프레시 토큰 & 액세스 토큰 최신화 완료");
-                        }
+                        response.addHeader("Refresh", "Bearer " + refreshToken);
+                        logger.info("리프레시토큰 최신화 완료");
+                        filterChain.doFilter(request, response);
                     }
                 } else
                     // refresh Token이 요청헤더에 없다면
@@ -74,15 +80,17 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             }
         } else {
             logger.info("유효한 토큰을 찾지 못하였습니다, uri : {}", request.getRequestURI());
+
+            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request, response);
     }
+
 
     // 토큰을 헤더에서 불러오는 메서드
     private String resolveToken(HttpServletRequest request, String header) {
         String jwtHeader = request.getHeader(header);
 
-        if(jwtHeader != null && jwtHeader.startsWith("Bearer")) {
+        if(jwtHeader != null && jwtHeader.startsWith("Bearer ")) {
             return jwtHeader.replace("Bearer ", "");
         }
         return null;

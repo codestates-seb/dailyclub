@@ -8,6 +8,7 @@ import com.codestates.team5.dailyclub.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -64,7 +65,9 @@ public class SecurityConfig {
                 .accessDeniedHandler(jwtAccessDeniedHandler)
                 .and()
                 .authorizeRequests()
-//                .antMatchers("/api/mypages/**").access("hasRole('ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/programs/**").access("hasRole('USER')")
+                .antMatchers(HttpMethod.PATCH,"/api/programs/**").access("hasRole('USER')")
+                .antMatchers(HttpMethod.DELETE,"/api/programs/**").access("hasRole('USER')")
                 .anyRequest().permitAll()
                 .and()
                 .logout()

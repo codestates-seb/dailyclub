@@ -55,7 +55,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         logger.info(("로그인 성공 유저 처리"));
         String accessToken = tokenProvider.createAccessToken(authentication);
         String refreshToken = tokenProvider.renewalRefreshToken(authentication);
-        response.addHeader("Authorization", "Bearer" + accessToken);
-        response.addHeader("Refresh", "Bearer" + refreshToken);
+        response.addHeader("Authorization", "Bearer " + accessToken);
+        response.addHeader("Refresh", "Bearer " + refreshToken);
     }
 }
