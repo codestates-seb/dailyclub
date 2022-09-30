@@ -259,7 +259,7 @@ export default function Header() {
                 <Icon>
                   <ProfileBtn onClick={() => setIsOpened(!isopened)}>
                     <img
-                      src={users ? null : Profile}
+                      src={users?.picture ? null : Profile}
                       alt="profile"
                       style={{ height: 25, width: 25 }}
                     />
@@ -280,7 +280,7 @@ export default function Header() {
                 <Link to="/mypage">
                   <UserProfileImg>
                     <img
-                      src={users ? null : Profile}
+                      src={users?.picture ? null : Profile}
                       alt="userImg"
                       style={{
                         height: 70,

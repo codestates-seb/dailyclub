@@ -4,24 +4,27 @@ import axios from 'axios';
 
 const URL = process.env.REACT_APP_DEV_URL;
 
-export const fetchUserInfo = createAsyncThunk(`GET/USERINFO`, async () => {
-  try {
-    const response = await axios.get(`${URL}/api/users/mypage`);
-    console.log('회원정보조회다!!', response.data);
+export const fetchUserInfo = createAsyncThunk(
+  `GET/USERINFO`,
+  async (id: number, thunkApi) => {
+    try {
+      const response = await axios.get(`${URL}/api/users/${id}`);
+      console.log('회원정보조회다!!', response.data);
 
-    /** access token 만료시 헤더에 refresh토큰 담아서 get 요청 -백엔드작업중 */
-    if (response.data === 'Access Token Expired') {
-      removeLocalStorage('access_token'); // 만료된 access토큰 삭제
-      const refreshToken = getLocalStorage('refresh_token');
-      axios.defaults.headers.common['Refresh'] = `${refreshToken}`;
-      // 새로 발급받은 access토큰으로 교체
+      /** access token 만료시 헤더에 refresh토큰 담아서 get 요청 -백엔드작업중 */
+      if (response.data === 'Access Token Expired') {
+        removeLocalStorage('access_token'); // 만료된 access토큰 삭제
+        const refreshToken = getLocalStorage('refresh_token');
+        axios.defaults.headers.common['Refresh'] = `${refreshToken}`;
+        // 새로 발급받은 access토큰으로 교체
+      }
+      return response.data;
+    } catch (err) {
+      // return console.log(err);
+      return thunkApi.rejectWithValue(err);
     }
-    return response.data;
-  } catch (err) {
-    return console.log(err);
-    //   return thunkApi.rejectWithValue(err);
   }
-});
+);
 
 /* interface UserInfo {
   id: number;

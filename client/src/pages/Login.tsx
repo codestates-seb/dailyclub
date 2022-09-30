@@ -72,11 +72,11 @@ export default function Login() {
           //JWT디코딩해서 userId, loginId 등 전역상태
           const decodedAccess = parseJwt(accessToken);
           dispatch(getUserId(decodedAccess)); //JWT 내용 전역상태
+          dispatch(fetchUserInfo(decodedAccess.id)); // 로그인 후, 로그인한 유저정보조회
           // console.log('토큰해부', decodedAccess);
         }
       })
       .then(() => {
-        dispatch(fetchUserInfo()); // 로그인 후, 로그인한 유저정보조회
         // dispatch(fetchUserInfo(decodedAccess.id));//유저조회 thunk 전역상태에 저장
       })
       .catch((error) => console.log(error));

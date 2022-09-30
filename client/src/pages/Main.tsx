@@ -10,7 +10,12 @@ import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from 'stores/hooks';
-import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
+import {
+  getisLoggedIn,
+  getUserData,
+  getUserError,
+  getUserId,
+} from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { ProgramDetailVal } from 'types/programs';
@@ -152,15 +157,19 @@ export default function Main() {
 
   // console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
 
-  /** 유저 전역상태 전체 - users, isLoggedId, loading, error  */
+  /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const loginUserInfo = useAppSelector((state) => state.userInfo);
-  // console.log('유저 전역정보: ', loginUserInfo ?? loginUserInfo); // 확인용
+  console.log('유저 전역정보: ', loginUserInfo ?? loginUserInfo); // 확인용
 
-  /** 유저 전역상태 1개씩 - isLoggedId, users, error */
-  const isLoggedId = useAppSelector(getisLoggedIn); // 로그인여부
+  const { users, loading, loginId, userId } = useAppSelector(
+    (state) => state.userInfo
+  );
+
+  /** 유저 전역상태 1개씩 - isLoggedIn, users, error */
+  const isLoggedIn = useAppSelector(getisLoggedIn); // 로그인여부
   const userData = useAppSelector(getUserData); // 유저정보
   const userError = useAppSelector(getUserError); // 에러내용
-  // console.log('유저 전역상태: ', isLoggedId, userData, userError); // 확인 후 주석해제하면 됩니다
+  // console.log('유저 전역상태: ', isLoggedIn, userData, userError); // 확인 후 주석해제하면 됩니다
 
   /** 필터 조회api - 키워드,지역,날짜,친절도*/
   useEffect(() => {
