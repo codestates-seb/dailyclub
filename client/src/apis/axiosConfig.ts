@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ACCESS_EXP_MESSAGE, CheckJWTExp } from 'utils/CheckJwtExp';
 import {
   getLocalStorage,
@@ -46,16 +46,20 @@ axios.interceptors.request.use(
 
 /** 응답으로 access토큰받으면 갈아끼기 */
 axios.interceptors.response.use(
-  (response) => {
+  async (response: AxiosResponse) => {
     // 응답 200이면 성공 직전 호출 .then()으로 이어짐
     // console.log('서버응답헤더! :', response.headers);    ////
     // if (response.headers.access) {
     //   const newAccessToken = response.data.access
     //   removeLocalStorage('access_token'); // 만료된 access토큰 삭제
     //   setLocalStorage('access_token', newAccessToken); // 새걸로 교체
-    //   config.headers!.Authorization = `${newAccessToken}`;
+    //   config.headers!.Authorization = `${newAccessToken}`; // 택1
+    // response.config.headers = {
+    //   authorization: `${newAccessToken}`, //택2
+    // };
     // }
-    return response;
+    // return response; // 택1
+    // return await axios(response.config); //택2
   },
   (error) => {
     //응답 200 아닌 경우 - 디버깅

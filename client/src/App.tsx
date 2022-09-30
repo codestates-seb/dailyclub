@@ -13,16 +13,12 @@ import NoticeDetail from 'pages/NoticeDetail';
 import NoticeCreate from 'pages/NoticeCreate';
 import ProgDetail from 'pages/ProgDetail';
 import ProgUpdate from 'pages/ProgUpdate';
+import { theme } from 'theme';
 
 const App: React.FC = () => {
   return (
     <div className="wrap">
-      <ThemeProvider
-        theme={{
-          lightGrey: '#e2e6e8',
-          accent: '#38d9a9',
-        }}
-      >
+      <ThemeProvider theme={theme}>
         <GlobalStyles />
         <BrowserRouter>
           <Header />
