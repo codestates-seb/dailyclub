@@ -8,7 +8,8 @@ export const ModalBackDrop = styled.div`
   right: 0;
   bottom: 0;
   width: 100%;
-  height: 90%;
+  height: 100vh;
+  z-index: 9000;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -18,13 +19,14 @@ export const ModalView = styled.div`
   position: fixed;
   top: 20%;
   background-color: white;
-  width: 90%;
-  height: 40%;
+  width: 40%;
+  height: 30%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   border-radius: 5px;
+  z-index: 9999;
 `;
 
 const MessageInput = styled.textarea`
@@ -44,28 +46,30 @@ const MessageForm = styled.form`
   justify-content: center;
 `;
 
-const BtnGroup = styled.div`
+export const BtnGroup = styled.div`
   display: flex;
 `;
 
-const SendBtn = styled.button`
+export const SendBtn = styled.button`
   padding: 5px;
   margin: 2px;
   width: 60px;
   height: 30px;
   border: none;
   color: white;
+  border-radius: 5px;
   background-color: #ff5924;
 `;
 
-const SendCancelBtn = styled.button`
+export const SendCancelBtn = styled.button`
   padding: 5px;
   margin: 2px;
   width: 60px;
   height: 30px;
-  border: none;
-  color: white;
-  background-color: black;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+  color: #949393;
+  background-color: white;
 `;
 
 const ModalTitle = styled.h2`

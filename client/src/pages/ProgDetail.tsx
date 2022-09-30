@@ -8,13 +8,15 @@ import Loc from '../images/Location.svg';
 import Info from '../images/Info.svg';
 import Msg from '../images/Message.svg';
 import QuestionMark from '../images/QuestionMark.svg';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ApplyListVal, PaginationVal, ProgramDetailVal } from 'types/programs';
 import BasicImg from '../images/BasicImg.jpg';
 import Profile from '../images/Profile.svg';
 import Pagination from 'pagination/Pagination';
+import { useAppSelector } from 'stores/hooks';
+import { getUserData } from 'stores/userInfoSlice';
 
 const ProgPageDetail = styled.div`
   max-width: 1200px;
@@ -248,7 +250,19 @@ const KindWrap = styled.div`
   margin-bottom: 10px;
 `;
 
-export default function ProgDetail() {
+interface ModalProps {
+  setIsMessageOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsApplyOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsCancelOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsDeleteOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export default function ProgDetail({
+  setIsMessageOpen,
+  setIsApplyOpen,
+  setIsCancelOpen,
+  setIsDeleteOpen,
+}: ModalProps) {
   const DEV_URL = process.env.REACT_APP_DEV_URL;
   const params = useParams();
 
@@ -259,6 +273,7 @@ export default function ProgDetail() {
   const [pageList, setPageList] = useState<PaginationVal>();
   const [page, setPage] = useState<number>(1);
 
+  const userData = useAppSelector(getUserData);
   const loginUserId = 1;
 
   const navigate = useNavigate();
@@ -297,6 +312,7 @@ export default function ProgDetail() {
 
     getProgramDetail();
     getApplyList();
+    // console.log(userData);
   }, [page]);
 
   //신청하기
