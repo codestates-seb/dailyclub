@@ -1,6 +1,8 @@
 package com.codestates.team5.dailyclub.image.util;
 
 import com.codestates.team5.dailyclub.image.entity.ProgramImage;
+import com.codestates.team5.dailyclub.throwable.entity.BusinessLogicException;
+import com.codestates.team5.dailyclub.throwable.entity.ExceptionCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,10 +16,6 @@ public class ImageUtils {
         String contentType = imageFile.getContentType();
 
         log.info("contentType : {}", contentType);
-
-        if (!contentType.startsWith("image/")) {
-            throw new RuntimeException("이미지 파일만 업로드 가능합니다.");
-        }
 
         long size = imageFile.getSize();
         String originalName = imageFile.getOriginalFilename();

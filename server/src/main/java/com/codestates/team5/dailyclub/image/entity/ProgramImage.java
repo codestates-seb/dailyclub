@@ -1,6 +1,7 @@
 package com.codestates.team5.dailyclub.image.entity;
 
 import com.codestates.team5.dailyclub.program.entity.Program;
+import com.codestates.team5.dailyclub.validator.annotation.Image;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class ProgramImage {
 
     private Long size;
 
+    @Image
     private String contentType;
 
     private String originalName;
