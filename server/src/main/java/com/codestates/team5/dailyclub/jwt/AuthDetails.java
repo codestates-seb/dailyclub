@@ -12,11 +12,12 @@ import java.util.Collection;
 public class AuthDetails implements UserDetails {
     private final User user;
 
+    public long getUserId() { return  user.getId(); }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(() -> String.valueOf(user.getRole()));
+        authorities.add(() -> String.valueOf(user.getRole().getRole()));
         return authorities;
     }
 
