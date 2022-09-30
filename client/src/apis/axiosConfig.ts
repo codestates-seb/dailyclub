@@ -1,6 +1,10 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import { ACCESS_EXP_MESSAGE, CheckJWTExp } from 'utils/CheckJwtExp';
-import { getLocalStorage } from './localStorage';
+import {
+  getLocalStorage,
+  removeLocalStorage,
+  setLocalStorage,
+} from './localStorage';
 
 axios.defaults.withCredentials = true;
 
@@ -48,7 +52,8 @@ axios.interceptors.response.use(
     // if (response.headers.access) {
     //   const newAccessToken = response.data.access
     //   removeLocalStorage('access_token'); // 만료된 access토큰 삭제
-    //   config.headers!.Authorization = `${accessToken}`;
+    //   setLocalStorage('access_token', newAccessToken); // 새걸로 교체
+    //   config.headers!.Authorization = `${newAccessToken}`;
     // }
     return response;
   },
