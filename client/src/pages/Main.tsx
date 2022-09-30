@@ -10,7 +10,10 @@ import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from 'stores/hooks';
-import { getisLoggedId, getUserData, getUserError } from 'stores/userInfoSlice';
+import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
+import BasicImg from '../images/BasicImg.jpg';
+import Pagination from 'pagination/Pagination';
+import { ProgramDetailVal } from 'types/programs';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -89,14 +92,10 @@ const WrapLevelText = styled.div`
 const ProgContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+  margin-bottom: 3rem;
 `;
 const ProgItem = styled.div`
   margin: 0.7rem 0.7rem 0.7rem 0;
-`;
-const ProgImg = styled.div`
-  background-color: gray;
-  height: 130px;
-  border-radius: 5px;
 `;
 const ProgBanner = styled.div`
   position: relative;
@@ -135,72 +134,51 @@ const ProgWrapper = styled.div`
 `;
 const ProgPerson = styled.div``;
 const ProgDate = styled.div``;
-
 const DoneContainer = styled.div`
   padding: 7rem 0;
 `;
 
-interface ProgProps {
-  id: number;
-  programStatus: string;
-  title: string;
-  text: string;
-  // programImages?: string; // 추가예정
-  minKind: number;
-  currentPerson: number; // api엔 없음
-  numOfRecruits: number;
-  location: string;
-  programDate: string;
-  bookmarkId?: number;
-  writer: string; // 수정
-}
 export default function Main() {
-  // const URL = process.env.REACT_APP_DEV_URL;
-  const URL = `http://localhost:3001`; // json-server
+  const URL = process.env.REACT_APP_DEV_URL;
 
   const searchKeyword = useAppSelector((state) => state.search.keyword);
   const [levelOpened, setLevelOpened] = useState(false);
   const [areaSelected, setAreaSelected] = useState('');
   const [rangeValue, setRangeValue] = useState('');
   const [dateSelected, setDateSelected] = useState('');
-  const [programs, setPrograms] = useState<Array<Object>>([]);
+  const [programs, setPrograms] = useState<Array<ProgramDetailVal>>([]);
+  const [pageList, setPageList] = useState();
+  const [page, setPage] = useState<number>(1);
+
   // console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
 
   /** 유저 전역상태 전체 - users, isLoggedId, loading, error  */
   const loginUserInfo = useAppSelector((state) => state.userInfo);
-  // console.log('유저 전역정보: ', loginUserInfo ?? loginUserInfo);  // 확인용
+  // console.log('유저 전역정보: ', loginUserInfo ?? loginUserInfo); // 확인용
 
   /** 유저 전역상태 1개씩 - isLoggedId, users, error */
-  const isLoggedId = useAppSelector(getisLoggedId); // 로그인여부
+  const isLoggedId = useAppSelector(getisLoggedIn); // 로그인여부
   const userData = useAppSelector(getUserData); // 유저정보
   const userError = useAppSelector(getUserError); // 에러내용
-  console.log('유저 전역상태: ', isLoggedId, userData, userError); // 확인 후 주석해제하면 됩니다
+  // console.log('유저 전역상태: ', isLoggedId, userData, userError); // 확인 후 주석해제하면 됩니다
 
   /** 필터 조회api - 키워드,지역,날짜,친절도*/
-  // .get(
-  //   `${URL}/api/programs?page=1&size=10
-  // &keyword=${searchKeyword}&location=${areaSelected}&programDate=${dateSelected}&programStatus=POSSIBLE`
-  // )
-
   useEffect(() => {
     const getProgramList = async () => {
       await axios
-        .get(`${URL}/programs`)
+        .get(`${URL}/api/programs?page=${page}&size=10`)
+        // .get(
+        //   `${URL}/api/programs?page=1&size=10
+        // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${rangeValue}&programDate=${dateSelected}&programStatus=POSSIBLE`
+        // )
         .then(({ data }) => {
-          setPrograms(data);
+          setPrograms(data?.data);
+          setPageList(data?.pageInfo);
         })
         .catch((err) => console.log(err.message));
     };
     getProgramList();
   }, []);
-
-  const progFilterProps = {
-    keyword: '',
-    location: areaSelected,
-    programDate: dateSelected,
-    levelRange: rangeValue, // api문서엔 없음
-  };
-  // console.log(progFilterProps); // 필터조회api 보낼때 객체
 
   return (
     <Layout>
@@ -261,9 +239,21 @@ export default function Main() {
                           }`,
                         }}
                       >
-                        {el.programStatus}
+                        {el?.programStatus}
                       </ProgRecruitment>
-                      <ProgImg>사진</ProgImg>
+                      <img
+                        src={
+                          el?.programImages.length === 0
+                            ? BasicImg
+                            : `data:${el.programImages[0].contentType};base64,${el?.programImages[0].bytes}`
+                        }
+                        style={{
+                          height: '180px',
+                          width: '100%',
+                          borderRadius: '5px',
+                        }}
+                        alt="program Image"
+                      />
                       <ProgBookmark>
                         <img src={Bookmark} alt="bookmark" />
                       </ProgBookmark>
@@ -274,13 +264,13 @@ export default function Main() {
                     <LevelPercent percent={el.minKind} />
                     <ProgProgressBar>
                       <ProgressBar
-                        currentPerson={el.currentPerson}
+                        currentPerson={el.numOfRecruits}
                         totalPerson={el.numOfRecruits}
                       />
                     </ProgProgressBar>
                     <ProgWrapper>
                       <ProgPerson>
-                        모집인원 {el.currentPerson} / {el.numOfRecruits}
+                        모집인원 {el.numOfRecruits} / {el.numOfRecruits}
                       </ProgPerson>
                       <ProgDate>
                         {Math.floor(
@@ -294,6 +284,7 @@ export default function Main() {
                 </Link>
               ))}
           </ProgContainer>
+          <Pagination list={pageList} page={page} setPage={setPage} />
         </IngContainer>
         <DoneContainer>
           <RecruitText>모집 마감된 모임</RecruitText>
@@ -303,7 +294,19 @@ export default function Main() {
                 <ProgItem key={el.id}>
                   <ProgBanner>
                     <ProgRecruitment>모집종료</ProgRecruitment>
-                    <ProgImg>사진</ProgImg>
+                    <img
+                      src={
+                        el?.programImages.length === 0
+                          ? BasicImg
+                          : `data:${el.programImages[0].contentType};base64,${el?.programImages[0].bytes}`
+                      }
+                      style={{
+                        height: '180px',
+                        width: '100%',
+                        borderRadius: '5px',
+                      }}
+                      alt="program Image"
+                    />
                     <ProgBookmark>
                       <img src={Bookmark} alt="bookmark" />
                     </ProgBookmark>

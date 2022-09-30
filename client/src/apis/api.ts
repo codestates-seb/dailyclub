@@ -3,8 +3,8 @@ import { getLocalStorage } from './localStorage';
 
 /** 기본 api 인스턴스 */
 const BaseInstance = axios.create({
-  baseURL: process.env.REACT_APP_DEV_TWO_URL,
-  // baseURL: process.env.REACT_APP_DEV_URL,
+  // baseURL: process.env.REACT_APP_DEV_TWO_URL,
+  baseURL: process.env.REACT_APP_DEV_URL,
 });
 
 /** 인증 필요한 api = 인스턴스 생성 후, interceptor에서 사용자인증(헤더담는) 작업 */
@@ -39,8 +39,8 @@ export const API = {
   },
 
   // Program 임시
-  getProgram: () => {
-    return BaseInstance({ method: 'GET', url: `/api/programs` });
+  getProgram: (URL: string) => {
+    return BaseInstance({ method: 'GET', url: URL });
   },
   getAProgram: (programId: number) => {
     return BaseInstance({ method: 'GET', url: `/api/programs/${programId}` });

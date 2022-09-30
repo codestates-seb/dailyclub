@@ -3,6 +3,7 @@ import Layout from 'components/Layout';
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import ImgDeleteBtnSvg from '../images/ImgDeleteBtn.svg';
 
 const CreateContainer = styled.div`
   width: 100%;
@@ -153,6 +154,7 @@ const ImageInput = styled.input`
 `;
 
 const ImageLabel = styled.label`
+  position: relative;
   height: 200px;
   width: 100%;
   border: 1px solid #e2e6e8;
@@ -189,9 +191,13 @@ const AreaSelect = styled.select`
   display: flex;
   align-items: center;
 `;
-
-const AreaOption = styled.option`
-  margin-left: 5px;
+const ImgDeleteBtn = styled.button`
+  position: absolute;
+  z-index: 10;
+  top: -1rem;
+  right: -1rem;
+  border: none;
+  background-color: transparent;
 `;
 
 interface PrevProgramProps {
@@ -228,7 +234,7 @@ function ProgUpdate() {
   const [prev, setPrev] = useState<any>({});
   const [imagePreview, setImagePreview] = useState('');
   const [minkind, setMinKind] = useState<string>(`${prev && prev?.minKind}`);
-  const [prevImgId, setPrevImgId] = useState<any>();
+  const [prevImgId, setPrevImgId] = useState<any>(null);
 
   const { programId } = useParams();
   const navigate = useNavigate();
@@ -241,45 +247,32 @@ function ProgUpdate() {
       .get(`${URL}/api/programs/${programId}`)
       .then(({ data }) => {
         setPrev(data);
+        setTitle(data?.title);
+        setText(data?.text);
+        setNumOfRecruits(data?.numOfRecruits);
+        setLocation(data?.location);
+        setProgramDate(data?.programDate);
         setMinKind(data?.minKind);
-        setPrevImgId(data?.programImages && data?.programImages[0].id); // 이전 img Id
 
         /** 이전이미지 있으면, 이미지 받아오기 */
-        if (data?.programImages[0].imageFile !== null || undefined) {
+        if (data?.programImages.length !== 0) {
           setPicture(
             `data:${data.programImages[0].contentType};base64,${data?.programImages[0].bytes}`
           );
           setImagePreview(
             `data:${data.programImages[0].contentType};base64,${data?.programImages[0].bytes}`
           );
-        } else {
-          /** 이전이미지 없으면 이미지 추가 */
+          setPrevImgId(data.programImages[0].id); // 이전 img Id
         }
       })
       .catch((err) => console.log(err));
   };
-  // console.log(prev);
 
   //처음 렌더링 될 때 제목인풋에 포커즈
   useEffect(() => {
     firstRef.current.focus();
     getProgram();
   }, []);
-
-  /*  const handleBaseForm = async (picture: string) => {
-    const byteString = window.atob(picture.split(',')[1]);
-    // Blob를 구성하기 위한 준비, 이 내용은 저도 잘 이해가 안가서 기술하지 않았습니다.
-    const ab = new ArrayBuffer(byteString.length);
-    const ia = new Uint8Array(ab);
-    for (let i = 0; i < byteString.length; i++) {
-      ia[i] = byteString.charCodeAt(i);
-    }
-    const blob = new Blob([ia], {
-      type: 'image/png',
-    });
-    const file = new File([blob], 'image.png');
-    return file;
-  }; */
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -292,10 +285,9 @@ function ProgUpdate() {
     formData.append('location', location);
     formData.append('programDate', programDate);
     formData.append('minKind', minkind);
-    formData.append('programImageId', prevImgId);
 
-    /** 이전이미지가 있어서 base64로 인코딩된 경우 */
-    if (typeof picture === 'string') {
+    /** 이전이미지가 있어서 base64로 인코딩된 경우 - 이미지파일, 이미지id 추가*/
+    if (typeof picture === 'string' && picture.length > 0) {
       /** 미리보기때문에 img base64인코딩 문자열을 다시 => Blob 형식으로 변환 후 전달 */
       const byteString = window.atob((picture as string).split(',')[1]);
       const ab = new ArrayBuffer(byteString.length);
@@ -308,14 +300,19 @@ function ProgUpdate() {
       });
       // const file = new File([blob], 'image.png'); //이걸로 넣으면 안되서 일단 주석
       formData.append('imageFile', blob);
+      formData.append('programImageId', prevImgId);
     } else {
+      /** 이전이미지 O 이미지 수정할때 - id전송 */
+      if (prevImgId !== null) {
+        formData.append('programImageId', prevImgId);
+      }
+      /** 이전이미지 X 이미지 추가할때 - 파일전송*/
       formData.append('imageFile', picture);
     }
 
     // for (let values of formData.values()) {
     //   console.log(values); // formData 객체의 정보 확인하는 법
     // }
-
     axios({
       method: 'patch',
       url: `${URL}/api/programs/${programId}`,
@@ -323,7 +320,6 @@ function ProgUpdate() {
       data: formData,
     })
       .then((res) => {
-        console.log(res);
         navigate(`/programs/${programId}`);
       })
       .catch((err) => console.log(err));
@@ -368,6 +364,11 @@ function ProgUpdate() {
     // @ts-ignore
     setImagePreview(window.URL.createObjectURL((e.target as any).files[0]));
   };
+  const handelImgDeleteBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setPicture('');
+    setImagePreview('');
+  };
 
   return (
     <Layout>
@@ -381,11 +382,10 @@ function ProgUpdate() {
             {/* 제목 인풋입니다 */}
             <TitleInput
               type="text"
-              defaultValue={prev && prev?.title}
+              defaultValue={title}
               name="title"
               ref={firstRef}
               onKeyUp={handleInput}
-              required
               onChange={handleTitle}
             />
             <ProgramInfoTitle>
@@ -395,10 +395,9 @@ function ProgUpdate() {
             {/* 프로그램 설명 인풋입니다 */}
             <ContentsInput
               name="contents"
-              defaultValue={prev && prev?.text}
+              defaultValue={text}
               ref={secondRef}
               onChange={handleText}
-              required
             />
           </ProgramInfo>
           <RecruitInfo>
@@ -415,8 +414,7 @@ function ProgUpdate() {
                 min="2"
                 name="people"
                 onChange={handleNumofRecruits}
-                required
-                defaultValue={prev && prev?.numOfRecruits}
+                defaultValue={numOfRecruits}
               />
             </RecruitContents>
             <RecruitContents>
@@ -427,8 +425,7 @@ function ProgUpdate() {
                 type="date"
                 name="date"
                 onChange={handleProgramDate}
-                required
-                defaultValue={prev && prev?.programDate}
+                defaultValue={programDate}
               />
             </RecruitContents>
             <RecruitContents>
@@ -437,8 +434,8 @@ function ProgUpdate() {
               <AreaSelect
                 name="area"
                 onChange={handleLocation}
-                key={prev && prev?.location}
-                defaultValue={prev && prev?.location}
+                key={location}
+                defaultValue={location}
               >
                 <option value="지역">지역</option>
                 <option value="서울">서울</option>
@@ -464,9 +461,8 @@ function ProgUpdate() {
                   step="1"
                   name="kind"
                   onChange={handleMinKindValue}
-                  required
                   key={prev && prev?.minKind}
-                  defaultValue={prev && prev?.minKind}
+                  defaultValue={minkind}
                 />
                 <KindValue>{minkind}%</KindValue>
               </KindInputWrap>
@@ -482,9 +478,14 @@ function ProgUpdate() {
                 우리 모임을 소개할 이미지를 첨부해주세요.
               </ImageLabel>
             ) : (
-              <ImageLabel htmlFor="file">
-                <img width="100%" height="100%" src={imagePreview}></img>
-              </ImageLabel>
+              <>
+                <ImageLabel htmlFor="file">
+                  <img width="100%" height="100%" src={imagePreview}></img>
+                  <ImgDeleteBtn type="button" onClick={handelImgDeleteBtn}>
+                    <img src={ImgDeleteBtnSvg} alt="delete" />
+                  </ImgDeleteBtn>
+                </ImageLabel>
+              </>
             )}
             <ImageInput
               id="file"
