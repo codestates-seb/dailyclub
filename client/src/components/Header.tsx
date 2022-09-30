@@ -287,7 +287,7 @@ export default function Header() {
                     />
                   </UserProfileImg>
                 </Link>
-                <UserNickName>닉네임</UserNickName>
+                <UserNickName>{users?.nickname}</UserNickName>
                 <Link to="/mypage">
                   <MyPageBtn>마이페이지</MyPageBtn>
                 </Link>
