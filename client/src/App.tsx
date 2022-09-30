@@ -25,7 +25,7 @@ const App: React.FC = () => {
       >
         <GlobalStyles />
         <BrowserRouter>
-          <Header />
+          <Header isLoggedIn={true} />
           <Routes>
             <Route path="/" element={<Main />} />
             <Route path="/signup" element={<SignUp />} />
