@@ -8,6 +8,8 @@ import com.codestates.team5.dailyclub.image.util.ImageUtils;
 import com.codestates.team5.dailyclub.program.dto.SearchFilterDto;
 import com.codestates.team5.dailyclub.program.entity.Program;
 import com.codestates.team5.dailyclub.program.repository.ProgramRepository;
+import com.codestates.team5.dailyclub.throwable.entity.BusinessLogicException;
+import com.codestates.team5.dailyclub.throwable.entity.ExceptionCode;
 import com.codestates.team5.dailyclub.user.entity.User;
 import com.codestates.team5.dailyclub.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +45,7 @@ public class ProgramService {
         //User를 DB 조회 (영속성 컨텍스트에 저장)
         User user = userRepository.findById(loginUserId)
                         .orElseThrow(() ->
-                            new RuntimeException("존재하지 않는 회원입니다.")
+                            new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
                         );
 
         log.info("user(findById) : {}", user.getClass());
@@ -79,8 +81,14 @@ public class ProgramService {
         Program findProgram
             = programRepository.findById(programFromPatchDto.getId())
                     .orElseThrow(() ->
-                        new RuntimeException("존재하지 않는 프로그램입니다.")
+                        new BusinessLogicException(ExceptionCode.PROGRAM_NOT_FOUND)
                     );
+
+        if (!findProgram.getUser().getId().equals(loginUserId)) {
+            //로그인 유저가 작성자가 아니라면
+            throw new BusinessLogicException(ExceptionCode.CANNOT_UPDATE_OTHERS);
+        }
+
         //programStatus 체크
         Program.ProgramStatus programStatus
             = checkProgramStatus(findProgram.getId(), programFromPatchDto.getNumOfRecruits());
@@ -116,7 +124,7 @@ public class ProgramService {
             ProgramImage findProgramImage
                 = programImageRepository.findById(programImageId)
                             .orElseThrow(() ->
-                                new RuntimeException("존재하지 않는 프로그램 이미지입니다.")
+                                new BusinessLogicException(ExceptionCode.IMAGE_NOT_FOUND)
                             );
             ProgramImage programImage = ImageUtils.parseToProgramImage(imageFile);
 
@@ -127,14 +135,25 @@ public class ProgramService {
         return findProgram;
     }
 
-    public void deleteProgram(Long programId) {
+    public void deleteProgram(Long loginUserId, Long programId) {
+        Program findProgram
+            = programRepository.findById(programId)
+            .orElseThrow(() ->
+                new BusinessLogicException(ExceptionCode.PROGRAM_NOT_FOUND)
+            );
+
+        if (!findProgram.getUser().getId().equals(loginUserId)) {
+            //로그인 유저가 작성자가 아니라면
+            throw new BusinessLogicException(ExceptionCode.CANNOT_UPDATE_OTHERS);
+        }
+
         programRepository.deleteById(programId);
     }
 
     public Program findProgram(Long programId) {
         return programRepository.findById(programId)
             .orElseThrow(() ->
-                new RuntimeException("존재하지 않는 프로그램입니다.")
+                new BusinessLogicException(ExceptionCode.PROGRAM_NOT_FOUND)
             );
     }
 
@@ -149,7 +168,7 @@ public class ProgramService {
         int numOfApplicants = appliesByProgramId.size();
         long ratio = (long) numOfApplicants / numOfRecruits;
         if (ratio > 1) {
-            throw new RuntimeException("현재 신청인원보다 적은 모집인원으로 설정할 수 없습니다.");
+            throw new BusinessLogicException(ExceptionCode.FULL_OF_APPLY);
         } else if (ratio == 1) {
             return Program.ProgramStatus.IMPOSSIBLE;
         } else if (ratio >= 0.8 && ratio < 1) {

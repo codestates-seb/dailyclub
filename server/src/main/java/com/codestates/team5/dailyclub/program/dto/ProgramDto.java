@@ -2,14 +2,20 @@ package com.codestates.team5.dailyclub.program.dto;
 
 import com.codestates.team5.dailyclub.image.dto.ProgramImageDto;
 import com.codestates.team5.dailyclub.user.dto.UserDto;
+import com.codestates.team5.dailyclub.validator.annotation.Location;
+import com.codestates.team5.dailyclub.validator.annotation.TodayOrAfter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,22 +28,28 @@ public class ProgramDto {
     @Builder
     public static class Post {
         @Schema(description = "프로그램 제목", example = "제목")
+        @Length(min = 5, max = 30)
         private String title;
 
         @Schema(description = "프로그램 본문", example = "본문")
+        @Length(min = 1, max = 1000)
         private String text;
 
         @Schema(description = "모집 인원", example = "10")
+        @Range(min = 1, max = 100)
         private Integer numOfRecruits;
 
         @Schema(description = "지역명", example = "서울", allowableValues = {"서울", "경기", "강원", "인천", "대전/충청", "대구/경북", "부산/울산/경남", "광주/전라", "제주"})
+        @Location
         private String location;
 
         @Schema(description = "프로그램 시작 날짜", pattern = "yyyy-MM-dd", example = "2022-09-18")
         @DateTimeFormat(pattern = "yyyy-MM-dd")
+        @TodayOrAfter
         private LocalDate programDate;
 
         @Schema(description = "최소 신청 가능 친절 %", example = "65")
+        @Range(min = 0, max = 100)
         private Integer minKind;
     }
 
@@ -47,28 +59,36 @@ public class ProgramDto {
     @Builder
     public static class Patch {
         @Schema(description = "프로그램 ID", example = "4")
+        @Positive
         private Long id;
 
         @Schema(description = "프로그램 제목", example = "한강 달리기 하실 분??")
+        @Length(min = 5, max = 30)
         private String title;
 
         @Schema(description = "프로그램 본문", example = "10/18 여의도 한강공원에서 저녁 8시에 같이 달리실 분 모집합니다.")
+        @Length(min = 1, max = 1000)
         private String text;
 
         @Schema(description = "모집 인원", example = "7")
+        @Range(min = 1, max = 100)
         private Integer numOfRecruits;
 
-        @Schema(description = "지역명", example = "서울", allowableValues = {"서울", "경기", "부산/울산/경남"})
+        @Schema(description = "지역명", example = "서울", allowableValues = {"서울", "경기", "강원", "인천", "대전/충청", "대구/경북", "부산/울산/경남", "광주/전라", "제주"})
+        @Location
         private String location;
 
         @Schema(description = "프로그램 시작 날짜", pattern = "yyyy-MM-dd", example = "2022-09-18")
         @DateTimeFormat(pattern = "yyyy-MM-dd")
+        @TodayOrAfter
         private LocalDate programDate;
 
         @Schema(description = "최소 신청 가능 친절 %", example = "70")
+        @Range(min = 0, max = 100)
         private Integer minKind;
 
         @Schema(description = "프로그램 이미지 ID")
+        @Positive
         private Long programImageId;
     }
 
