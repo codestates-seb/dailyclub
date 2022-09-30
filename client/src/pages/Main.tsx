@@ -169,7 +169,7 @@ export default function Main() {
         .get(`${URL}/api/programs?page=${page}&size=10`)
         // .get(
         //   `${URL}/api/programs?page=1&size=10
-        // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${rangeValue}&programDate=${dateSelected}&programStatus=POSSIBLE`
+        // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${rangeValue}&programDate=${dateSelected}&programStatus='모집중'`
         // )
         .then(({ data }) => {
           setPrograms(data?.data);
@@ -253,6 +253,7 @@ export default function Main() {
                           borderRadius: '5px',
                         }}
                         alt="program Image"
+                        loading="lazy"
                       />
                       <ProgBookmark>
                         <img src={Bookmark} alt="bookmark" />
@@ -306,6 +307,7 @@ export default function Main() {
                         borderRadius: '5px',
                       }}
                       alt="program Image"
+                      loading="lazy"
                     />
                     <ProgBookmark>
                       <img src={Bookmark} alt="bookmark" />

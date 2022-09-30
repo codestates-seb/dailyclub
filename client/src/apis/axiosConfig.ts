@@ -58,7 +58,7 @@ axios.interceptors.response.use(
     //   authorization: `${newAccessToken}`, //택2
     // };
     // }
-    // return response; // 택1
+    return response; // 택1
     // return await axios(response.config); //택2
   },
   (error) => {
