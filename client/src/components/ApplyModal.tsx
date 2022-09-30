@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React from 'react';
 import styled from 'styled-components';
+import { ApplyListVal, PaginationVal } from 'types/programs';
 import {
   BtnGroup,
   ModalBackDrop,
@@ -16,10 +17,17 @@ export const CheckMessage = styled.div`
 
 interface ApplyModalProps {
   setIsApplyOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setPageList: React.Dispatch<React.SetStateAction<PaginationVal | undefined>>;
+  setApplyList: React.Dispatch<React.SetStateAction<ApplyListVal[]>>;
   programId: number | undefined;
 }
 
-function ApplyModal({ setIsApplyOpen, programId }: ApplyModalProps) {
+function ApplyModal({
+  setIsApplyOpen,
+  programId,
+  setApplyList,
+  setPageList,
+}: ApplyModalProps) {
   const DEV_URL = process.env.REACT_APP_DEV_URL;
 
   const postApply = async () => {
@@ -38,6 +46,13 @@ function ApplyModal({ setIsApplyOpen, programId }: ApplyModalProps) {
       })
       .catch((err) => {
         setIsApplyOpen(false);
+      });
+
+    await axios
+      .get(`${DEV_URL}/api/applies?page=1&size=4&programId=${programId}`)
+      .then((res) => {
+        setApplyList(res.data.data);
+        setPageList(res.data.pageInfo);
       });
   };
 

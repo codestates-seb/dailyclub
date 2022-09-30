@@ -16,7 +16,6 @@ import BasicImg from '../images/BasicImg.jpg';
 import Profile from '../images/Profile.svg';
 import Pagination from 'pagination/Pagination';
 import { useAppSelector } from 'stores/hooks';
-import { getUserData } from 'stores/userInfoSlice';
 import ApplyModal from 'components/ApplyModal';
 import MessageModal from 'components/MessageModal';
 import DeleteModal from 'components/DeleteModal';
@@ -25,7 +24,6 @@ import CancelModal from 'components/CancelModal';
 const ProgPageDetail = styled.div`
   max-width: 1200px;
   width: 100%;
-  height: 100vh;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -60,8 +58,7 @@ const ProgTitleSection = styled.div`
 
 const ProgTxtSection = styled.div`
   margin-top: 30px;
-  font-size: 18px;
-  font-weight: 600;
+  height: 20rem;
 `;
 
 const ProgText = styled.div`
@@ -271,14 +268,12 @@ export default function ProgDetail() {
   const [isCancelOpen, setIsCancelOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  // const userData = useAppSelector(getUserData);
-
-  const loginUserId = 2;
+  const { userId } = useAppSelector((state) => state.userInfo);
 
   const navigate = useNavigate();
 
   const applyMemberfilter = applyList.filter((el) => {
-    return el.user.id === loginUserId;
+    return el.user.id === userId;
   });
 
   useEffect(() => {
@@ -420,7 +415,7 @@ export default function ProgDetail() {
                 <ProgInfoText>{data?.minKind}% 이상</ProgInfoText>
               </ProgMessage>
               <BtnWrap>
-                {loginUserId === data?.writer.id ? (
+                {userId === data?.writer.id ? (
                   <>
                     <ProgUpdateBtn
                       onClick={() => {
@@ -522,7 +517,12 @@ export default function ProgDetail() {
         </ProgPageDetail>
       </Layout>
       {isApplyOpen ? (
-        <ApplyModal setIsApplyOpen={setIsApplyOpen} programId={data?.id} />
+        <ApplyModal
+          setIsApplyOpen={setIsApplyOpen}
+          programId={data?.id}
+          setApplyList={setApplyList}
+          setPageList={setPageList}
+        />
       ) : null}
       {isMessageOpen ? <MessageModal /> : null}
       {isCancelOpen ? (

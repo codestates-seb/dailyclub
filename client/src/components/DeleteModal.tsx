@@ -15,8 +15,10 @@ interface DeleteModalProps {
 }
 
 function DeleteModal({ setIsDeleteOpen, programId }: DeleteModalProps) {
-  const DEV_URL = process.env.REACT_DEV_URL;
+  const DEV_URL = process.env.REACT_APP_DEV_URL;
+
   const navigate = useNavigate();
+
   const deleteProgram = () => {
     axios
       .delete(`${DEV_URL}/api/programs/${programId}`, {

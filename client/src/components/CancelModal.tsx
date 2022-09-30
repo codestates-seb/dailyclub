@@ -16,7 +16,7 @@ interface CancelModalProps {
 }
 
 function CancelModal({ setIsCancelOpen, applyMemberfilter }: CancelModalProps) {
-  const DEV_URL = process.env.REACT_DEV_URL;
+  const DEV_URL = process.env.REACT_APP_DEV_URL;
 
   const cancelApply = () => {
     axios.delete(`${DEV_URL}/api/applies/${applyMemberfilter[0].id}`, {
