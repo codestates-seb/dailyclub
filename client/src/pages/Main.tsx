@@ -10,12 +10,7 @@ import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link } from 'react-router-dom';
 import { useAppSelector } from 'stores/hooks';
-import {
-  getisLoggedIn,
-  getUserData,
-  getUserError,
-  getUserId,
-} from 'stores/userInfoSlice';
+import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { ProgramDetailVal } from 'types/programs';
@@ -159,11 +154,7 @@ export default function Main() {
 
   /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const loginUserInfo = useAppSelector((state) => state.userInfo);
-  console.log('유저 전역정보: ', loginUserInfo ?? loginUserInfo); // 확인용
-
-  const { users, loading, loginId, userId } = useAppSelector(
-    (state) => state.userInfo
-  );
+  // console.log('유저 전역정보: ', loginUserInfo ?? loginUserInfo); // 확인용
 
   /** 유저 전역상태 1개씩 - isLoggedIn, users, error */
   const isLoggedIn = useAppSelector(getisLoggedIn); // 로그인여부

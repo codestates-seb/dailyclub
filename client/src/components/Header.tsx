@@ -197,18 +197,15 @@ export default function Header() {
   const handelSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(searchActions.getKeyword(InputValue)); //헤더 input값 전역상태에 저장
-  };
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      navigate('/'); // 엔터 시 질문목록 메인페이지로 이동
-      // setInputValue(''); // input창만 비우고 싶은데 전달할 전역상태까지 비워져버림
-    }
+    navigate('/'); // 엔터 시 질문목록 메인페이지로 이동
+    setInputValue(''); // input창 초기화
   };
   const handleLogoutBtn = () => {
     dispatch(logoutUser());
     removeLocalStorage('access_token');
     removeLocalStorage('refresh_token');
     setIsOpened(false);
+    navigate('/');
   };
 
   return (
@@ -231,7 +228,6 @@ export default function Header() {
               </SearchBtn>
               <SearchInput
                 onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={handleKeyPress}
                 value={InputValue}
                 placeholder="프로그램 / 모임을 검색해보세요"
               />
