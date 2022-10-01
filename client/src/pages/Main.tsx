@@ -14,6 +14,7 @@ import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { ProgramDetailVal } from 'types/programs';
+import qs from 'qs';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -149,6 +150,7 @@ export default function Main() {
   const [programs, setPrograms] = useState<Array<ProgramDetailVal>>([]);
   const [pageList, setPageList] = useState();
   const [page, setPage] = useState<number>(1);
+  const [programStatus, setProgramStatus] = useState('모집중');
 
   // console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
 
@@ -162,14 +164,25 @@ export default function Main() {
   const userError = useAppSelector(getUserError); // 에러내용
   // console.log('유저 전역상태: ', isLoggedIn, userData, userError); // 확인 후 주석해제하면 됩니다
 
+  const REQ_PARAMS = {
+    keyword: searchKeyword,
+    location: areaSelected,
+    minKind: rangeValue,
+    programDate: dateSelected,
+    programStatus: programStatus,
+  };
+
   /** 필터 조회api - 키워드,지역,날짜,친절도*/
   useEffect(() => {
     const getProgramList = async () => {
       await axios
+        // .get(`${URL}/api/programs?page=${page}&size=10`, {
+        //   params: REQ_PARAMS,
+        // })
         .get(`${URL}/api/programs?page=${page}&size=10`)
         // .get(
         //   `${URL}/api/programs?page=1&size=10
-        // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${rangeValue}&programDate=${dateSelected}&programStatus='모집중'`
+        // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${rangeValue}&programDate=${dateSelected}&programStatus=${programStatus}`
         // )
         .then(({ data }) => {
           setPrograms(data?.data);
