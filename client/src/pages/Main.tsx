@@ -14,7 +14,6 @@ import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { ProgramDetailVal } from 'types/programs';
-import qs from 'qs';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -65,11 +64,13 @@ const WrapLevel = styled.div`
   border: 1px solid lightGrey;
   border-radius: 5px;
   background-color: white;
+  cursor: default;
 `;
 const WrapLevelRangeInput = styled.input`
   width: 80%;
   height: 3px;
   background: #ff5924;
+  cursor: pointer;
 `;
 const RangeValue = styled.div`
   margin: 1rem;
@@ -151,6 +152,7 @@ export default function Main() {
   const [pageList, setPageList] = useState();
   const [page, setPage] = useState<number>(1);
   const [programStatus, setProgramStatus] = useState('모집중');
+  const [minKindVal, setMinKindVal] = useState('');
 
   // console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
 
@@ -167,7 +169,7 @@ export default function Main() {
   const REQ_PARAMS = {
     keyword: searchKeyword,
     location: areaSelected,
-    minKind: rangeValue,
+    minKind: minKindVal,
     programDate: dateSelected,
     programStatus: programStatus,
   };
@@ -182,7 +184,7 @@ export default function Main() {
         .get(`${URL}/api/programs?page=${page}&size=10`)
         // .get(
         //   `${URL}/api/programs?page=1&size=10
-        // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${rangeValue}&programDate=${dateSelected}&programStatus=${programStatus}`
+        // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${minKindVal}&programDate=${dateSelected}&programStatus=${programStatus}`
         // )
         .then(({ data }) => {
           setPrograms(data?.data);
@@ -209,8 +211,11 @@ export default function Main() {
               onChange={(e) => setDateSelected(e.target.value)}
               onFocus={(e) => (e.target.type = 'date')}
             />
-            <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
-              친절도 &nbsp;{rangeValue}%
+            <LevelRange
+              onClick={() => setLevelOpened(!levelOpened)}
+              onMouseUp={() => setMinKindVal(rangeValue)}
+            >
+              친절도 &nbsp;{minKindVal}%
               <img src={QuestionMark} alt="question mark" />
               <img src={DownArrow} alt="down arrow" />
               {levelOpened ? (
@@ -227,6 +232,7 @@ export default function Main() {
                     max={100}
                     step={1}
                     onChange={(e) => setRangeValue(e.target.value)}
+                    defaultValue={minKindVal}
                   />
                   <RangeValue>{rangeValue}%</RangeValue>
                 </WrapLevel>
