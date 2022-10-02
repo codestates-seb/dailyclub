@@ -9,11 +9,12 @@ import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link } from 'react-router-dom';
-import { useAppSelector } from 'stores/hooks';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { ProgramDetailVal } from 'types/programs';
+import { searchActions } from 'stores/searchSlice';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -153,6 +154,7 @@ export default function Main() {
   const [page, setPage] = useState<number>(1);
   const [programStatus, setProgramStatus] = useState('모집중');
   const [minKindVal, setMinKindVal] = useState('');
+  const dispatch = useAppDispatch();
 
   // console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
 
@@ -189,6 +191,7 @@ export default function Main() {
         .then(({ data }) => {
           setPrograms(data?.data);
           setPageList(data?.pageInfo);
+          dispatch(searchActions.getKeyword(''));
         })
         .catch((err) => console.log(err.message));
     };
