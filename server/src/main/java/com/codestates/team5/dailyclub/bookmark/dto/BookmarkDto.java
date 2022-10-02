@@ -28,6 +28,9 @@ public class BookmarkDto {
         @Schema(description = "북마크 ID", example = "1")
         private Long id;
 
+        @Schema(description = "유저 ID", example = "3")
+        private Long userId;
+
         @Schema(description = "프로그램 ID", example = "5")
         private Long programId;
     }
