@@ -191,7 +191,7 @@ const AreaSelect = styled.select`
   display: flex;
   align-items: center;
 `;
-const ImgDeleteBtn = styled.button`
+export const ImgDeleteBtn = styled.button`
   position: absolute;
   z-index: 10;
   top: -1rem;
