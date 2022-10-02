@@ -1,6 +1,8 @@
 package com.codestates.team5.dailyclub.user.entity;
 
 import com.codestates.team5.dailyclub.common.audit.Auditable;
+import com.codestates.team5.dailyclub.image.entity.ProgramImage;
+import com.codestates.team5.dailyclub.image.entity.UserImage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +11,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -38,7 +42,9 @@ public class User extends Auditable {
     private String password;
 
 //  수정 예정
-    private String picture;
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<UserImage> userImages = new ArrayList<>();
 
     private String introduction;
 
@@ -62,11 +68,11 @@ public class User extends Auditable {
         }
     }
 
-    public void update(String nickname, String introduction, String picture) {
+    public void update(String nickname, String introduction) {
         this.nickname = nickname;
         this.introduction = introduction;
-        this.picture = picture;
     }
+
 
 
 }
