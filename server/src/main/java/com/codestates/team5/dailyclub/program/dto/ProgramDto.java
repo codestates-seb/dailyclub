@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -94,6 +95,7 @@ public class ProgramDto {
 
     @Schema(name = "프로그램 응답 API 스펙", title = "프로그램 응답 API 스펙")
     @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder

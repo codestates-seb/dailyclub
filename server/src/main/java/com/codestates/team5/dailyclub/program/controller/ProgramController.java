@@ -1,6 +1,8 @@
 package com.codestates.team5.dailyclub.program.controller;
 
+import com.codestates.team5.dailyclub.bookmark.service.BookmarkService;
 import com.codestates.team5.dailyclub.common.dto.MultiResponseDto;
+import com.codestates.team5.dailyclub.jwt.AuthDetails;
 import com.codestates.team5.dailyclub.program.dto.ProgramDto;
 import com.codestates.team5.dailyclub.program.dto.SearchFilterDto;
 import com.codestates.team5.dailyclub.program.entity.Program;
@@ -44,6 +46,7 @@ import java.util.List;
 public class ProgramController {
 
     private final ProgramService programService;
+    private final BookmarkService bookmarkService;
     private final ProgramMapper programMapper;
 
     @Operation(summary = "프로그램 등록")
@@ -56,8 +59,10 @@ public class ProgramController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProgramDto.Response> postProgram(@ParameterObject @Validated @ModelAttribute ProgramDto.Post programPostDto,
                                                            @RequestPart(required = false) MultipartFile imageFile,
-                                                           @Parameter(hidden = true) @AuthenticationPrincipal AuthenticationPrincipal authenticationPrincipal) throws IOException {
-        Long loginUserId = 1L;
+                                                           @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) throws IOException {
+        Long loginUserId = authDetails.getUserId();
+        log.info("[postProgram] loginUserId={}", loginUserId);
+
         Program programFromPostDto = programMapper.programPostDtoToProgram(programPostDto);
 
         //ProgramService 호출 (Program 등록 후 ProgramImage 등록)
@@ -78,8 +83,9 @@ public class ProgramController {
     @PatchMapping(value = "/{programId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ProgramDto.Response> patchProgram(@ParameterObject @Validated @ModelAttribute ProgramDto.Patch programPatchDto,
                                                             @RequestPart(required = false) MultipartFile imageFile,
-                                                            @PathVariable("programId") @Positive Long programId) throws IOException {
-        Long loginUserId = 1L;
+                                                            @PathVariable("programId") @Positive Long programId,
+                                                            @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) throws IOException {
+        Long loginUserId = authDetails.getUserId();
         Program programFromPatchDto = programMapper.programPatchDtoToProgram(programPatchDto);
 
         Program updatedProgram = programService.updateProgram(
@@ -100,15 +106,20 @@ public class ProgramController {
         )
     )
     @GetMapping("/{programId}")
-    public ResponseEntity<ProgramDto.Response> getProgram(@PathVariable("programId") Long id) {
-        Program program = programService.findProgram(id);
+    public ResponseEntity<ProgramDto.Response> getProgram(@PathVariable("programId") Long programId,
+                                                          @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Long loginUserId = authDetails.getUserId();
+        Program program = programService.findProgram(programId);
 
         ProgramDto.Response response = programMapper.programToProgramResponseDto(program);
+
+        //현재 프로그램에 대한 북마크 여부
+        checkBookmark(loginUserId, programId, response);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(summary = "프로그램 리스트 조회")
+    @Operation(summary = "프로그램 리스트 조회 with 검색 & 필터")
     @ApiResponses(
         @ApiResponse(
             responseCode = "200",
@@ -118,10 +129,40 @@ public class ProgramController {
     @GetMapping
     public ResponseEntity<MultiResponseDto<ProgramDto.Response>> getPrograms(@Parameter(description = "페이지 번호") @RequestParam int page,
                                                                              @Parameter(description = "한 페이지당 프로그램 수") @RequestParam int size,
-                                                                             @ParameterObject @ModelAttribute SearchFilterDto searchFilterDto) {
+                                                                             @ParameterObject @ModelAttribute SearchFilterDto searchFilterDto,
+                                                                             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Long loginUserId = authDetails.getUserId();
+
         Page<Program> pagePrograms = programService.findPrograms(page-1, size, searchFilterDto);
         List<Program> programs = pagePrograms.getContent();
         List<ProgramDto.Response> responses = programMapper.programListToProgramResponseDtoList(programs);
+
+        //각 프로그램에 대해 로그인 유저가 북마크했는지 체크
+        responses.forEach(response -> checkBookmark(loginUserId, response.getId() , response));
+
+        return new ResponseEntity<>(new MultiResponseDto<>(responses, pagePrograms), HttpStatus.OK);
+    }
+
+    @Operation(summary = "프로그램 리스트 조회 by user id (마이 페이지)")
+    @ApiResponses(
+        @ApiResponse(
+            responseCode = "200",
+            description = "OK"
+        )
+    )
+    @GetMapping("/mypage")
+    public ResponseEntity<MultiResponseDto<ProgramDto.Response>> getProgramsByUserId(@Parameter(description = "페이지 번호") @RequestParam int page,
+                                                                                     @Parameter(description = "한 페이지당 프로그램 수") @RequestParam int size,
+                                                                                     @RequestParam("userId") Long userId,
+                                                                                     @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Long loginUserId = authDetails.getUserId();
+
+        Page<Program> pagePrograms = programService.findPrograms(page-1, size, userId);
+        List<Program> programs = pagePrograms.getContent();
+        List<ProgramDto.Response> responses = programMapper.programListToProgramResponseDtoList(programs);
+
+        //각 프로그램에 대해 로그인 유저가 북마크했는지 체크
+        responses.forEach(response -> checkBookmark(loginUserId, response.getId(), response));
 
         return new ResponseEntity<>(new MultiResponseDto<>(responses, pagePrograms), HttpStatus.OK);
     }
@@ -133,9 +174,16 @@ public class ProgramController {
             description = "NO CONTENT")
     )
     @DeleteMapping("/{programId}")
-    public void deleteProgram(@PathVariable("programId") Long programId) {
-        Long loginUserId = 1L;
+    public void deleteProgram(@PathVariable("programId") Long programId,
+                              @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Long loginUserId = authDetails.getUserId();
         programService.deleteProgram(loginUserId, programId);
+    }
+
+    //로그인 유저가 해당 프로그램 북마크 했는지 체크하고, bookmarkId setting하는 메소드
+    private void checkBookmark(Long loginUserId, Long programId, ProgramDto.Response response) {
+        Long bookmarkId = bookmarkService.findBookmark(loginUserId, programId);
+        response.setBookmarkId(bookmarkId);
     }
 
 }
