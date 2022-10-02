@@ -4,6 +4,7 @@ import AreaFilter from 'components/AreaFilter';
 import Layout from 'components/Layout';
 import styled from 'styled-components';
 import Bookmark from '../images/Bookmark.svg';
+import Bookmarked from '../images/Bookmarked.svg';
 import QuestionMark from '../images/QuestionMark.svg';
 import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
@@ -117,6 +118,7 @@ const ProgRecruitment = styled.button`
 `;
 const ProgBookmark = styled.button`
   position: absolute;
+  z-index: 1000000;
   right: 0.5rem;
   bottom: 0.5rem;
   border: none;
@@ -158,6 +160,7 @@ export default function Main() {
   const [programStatus, setProgramStatus] = useState('모집중');
   const [minKindVal, setMinKindVal] = useState('');
   const [donePrograms, setDonePrograms] = useState<Array<ProgramDetailVal>>([]);
+  const [bookmarked, setBookmarked] = useState<boolean>(false);
 
   /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const loginUserInfo = useAppSelector((state) => state.userInfo);
@@ -190,6 +193,7 @@ export default function Main() {
         // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${minKindVal}&programDate=${dateSelected}&programStatus=${programStatus}`
         // )
         .then(({ data }) => {
+          console.log(data);
           setPrograms(data?.data);
           setPageList(data?.pageInfo);
           const doneFilter = data?.data.map((el: ProgramDetailVal) => {
@@ -200,7 +204,33 @@ export default function Main() {
         .catch((err) => console.log(err.message));
     };
     getProgramList();
-  }, [searchKeyword, areaSelected, dateSelected, programStatus, minKindVal]);
+  }, [
+    searchKeyword,
+    areaSelected,
+    dateSelected,
+    programStatus,
+    minKindVal,
+    bookmarked,
+  ]);
+
+  const handleBookedToggle = (id: number, bookmarkId: number) => {
+    // setBookmarked(!bookmarked);
+    if (bookmarked === false && !bookmarkId) {
+      console.log('booked등록!!');
+      setBookmarked(true);
+      axios
+        .post(`${URL}/api/bookmarks`, { programId: id })
+        .then((res) => console.log(res));
+    }
+    if (bookmarked || bookmarkId) {
+      console.log('booked 삭제');
+      setBookmarked(false);
+      axios
+        .delete(`${URL}/api/bookmarks/${bookmarkId}`)
+        .then((res) => console.log(res.data));
+    }
+  };
+
   return (
     <Layout>
       <WrapContainer>
@@ -246,9 +276,9 @@ export default function Main() {
           <ProgContainer>
             {programs &&
               programs?.map((el: any) => (
-                <Link to={`/programs/${el.id}`} key={el.id}>
-                  <ProgItem>
-                    <ProgBanner>
+                <ProgItem key={el.id}>
+                  <ProgBanner>
+                    <Link to={`/programs/${el.id}`} key={el.id}>
                       <ProgRecruitment
                         style={{
                           backgroundColor: `${
@@ -278,10 +308,18 @@ export default function Main() {
                         alt="program Image"
                         loading="lazy"
                       />
-                      <ProgBookmark>
+                    </Link>
+                    <ProgBookmark
+                      onClick={() => handleBookedToggle(el.id, el.bookmarkId)}
+                    >
+                      {el.bookmarkId !== null ? (
+                        <img src={Bookmarked} alt="bookmarked" />
+                      ) : (
                         <img src={Bookmark} alt="bookmark" />
-                      </ProgBookmark>
-                    </ProgBanner>
+                      )}
+                    </ProgBookmark>
+                  </ProgBanner>
+                  <Link to={`/programs/${el.id}`} key={el.id}>
                     <ProgTitle>
                       [{el.location}] {el.title.slice(0, 16)}...
                     </ProgTitle>
@@ -304,8 +342,8 @@ export default function Main() {
                         일 남음
                       </ProgDate>
                     </ProgWrapper>
-                  </ProgItem>
-                </Link>
+                  </Link>
+                </ProgItem>
               ))}
           </ProgContainer>
           <Pagination list={pageList} page={page} setPage={setPage} />
