@@ -12,7 +12,7 @@ import java.util.Collection;
 public class AuthDetails implements UserDetails {
     private final User user;
 
-    public long getUserId() { return  user.getId(); }
+    public Long getUserId() { return  user.getId(); }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

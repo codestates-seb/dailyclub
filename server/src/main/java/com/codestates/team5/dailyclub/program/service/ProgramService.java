@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -77,6 +78,11 @@ public class ProgramService {
                                  MultipartFile imageFile) throws IOException {
         log.info("programId : {}", programFromPatchDto.getId());
 
+        //유저 존재 확인
+        User userById = userRepository.findById(loginUserId).orElseThrow(() ->
+            new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
+        );
+
         //program persistence context 등록
         Program findProgram
             = programRepository.findById(programFromPatchDto.getId())
@@ -84,20 +90,100 @@ public class ProgramService {
                         new BusinessLogicException(ExceptionCode.PROGRAM_NOT_FOUND)
                     );
 
+        //로그인 유저가 작성자인지 확인
         if (!findProgram.getUser().getId().equals(loginUserId)) {
-            //로그인 유저가 작성자가 아니라면
             throw new BusinessLogicException(ExceptionCode.CANNOT_UPDATE_OTHERS);
         }
 
-        //programStatus 체크
-        Program.ProgramStatus programStatus
-            = checkProgramStatus(findProgram.getId(), programFromPatchDto.getNumOfRecruits());
+        //신청 인원 있을 시 당일 변경 불가능
+        if (findProgram.getProgramDate().isEqual(LocalDate.now())
+            && applyRepository.existsByProgram(findProgram)) {
+            throw new BusinessLogicException(ExceptionCode.CANNOT_UPDATE_DDAY);
+        }
 
-        //program dirty checking
-        findProgram.updateProgramStatus(programStatus);
+        //programStatus 체크 (numOfRecruits 값이 변경되었을 때만)
+        if (!programFromPatchDto.getNumOfRecruits().equals(findProgram.getNumOfRecruits())) {
+            Program.ProgramStatus programStatus
+                = checkProgramStatus(findProgram.getId(), programFromPatchDto.getNumOfRecruits());
+
+            findProgram.updateProgramStatus(programStatus);
+        }
+
         findProgram.updateProgram(programFromPatchDto);
 
         //programImage 처리
+        log.info("[수정] imageFile is null : {}", imageFile == null);
+        processProgramImage(programImageId, imageFile, findProgram);
+
+        return findProgram;
+    }
+
+    public void deleteProgram(Long loginUserId, Long programId) {
+        Program findProgram
+            = programRepository.findById(programId)
+            .orElseThrow(() ->
+                new BusinessLogicException(ExceptionCode.PROGRAM_NOT_FOUND)
+            );
+
+        //유저 존재 확인
+        User userById = userRepository.findById(loginUserId).orElseThrow(() ->
+            new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
+        );
+
+        //본인이 삭제하는지 확인
+        if (!findProgram.getUser().getId().equals(loginUserId)) {
+            throw new BusinessLogicException(ExceptionCode.CANNOT_DELETE_OTHERS);
+        }
+
+        //신청 인원 있을 경우 당일 삭제 불가
+        if (findProgram.getProgramDate().isEqual(LocalDate.now())
+            && applyRepository.existsByProgram(findProgram)) {
+            throw new BusinessLogicException(ExceptionCode.CANNOT_DELETE_DDAY);
+        }
+
+        programRepository.deleteById(programId);
+    }
+
+    public Program findProgram(Long programId) {
+        return programRepository.findById(programId)
+            .orElseThrow(() ->
+                new BusinessLogicException(ExceptionCode.PROGRAM_NOT_FOUND)
+            );
+    }
+
+    //by search
+    public Page<Program> findPrograms(int page, int size, SearchFilterDto searchFilterDto) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return programRepository.searchAndFilter(pageable, searchFilterDto);
+    }
+
+    //by user id
+    public Page<Program> findPrograms(int page, int size, Long userId) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+        return programRepository.findByUserId(pageable, userId);
+    }
+
+
+
+    public Program.ProgramStatus checkProgramStatus(Long programId, int numOfRecruits) {
+        List<Apply> appliesByProgramId = applyRepository.findByProgramId(programId);
+
+        int numOfApplicants = appliesByProgramId.size();
+        long ratio = (long) numOfApplicants / numOfRecruits;
+
+        if (ratio > 1) {
+            throw new BusinessLogicException(ExceptionCode.FULL_OF_APPLY);
+        } else if (ratio == 1) {
+            return Program.ProgramStatus.IMPOSSIBLE;
+        } else if (ratio >= 0.8 && ratio < 1) {
+            return Program.ProgramStatus.IMMINENT;
+        } else {
+            return Program.ProgramStatus.POSSIBLE;
+        }
+    }
+
+    //programImage 처리
+    private void processProgramImage(Long programImageId, MultipartFile imageFile, Program findProgram) throws IOException {
         /**
          *   수정 / 등록 시 이미지 존재 여부 (imageFile null && isEmpty() / programImageId null 로 판단)
          * 1. x      x  -> 아무 작업 x
@@ -105,8 +191,6 @@ public class ProgramService {
          * 3. x      o  -> 기존 이미지 삭제
          * 4. o      o  -> 이미지 변경
          */
-        log.info("[수정] imageFile is null : {}", imageFile == null);
-
         if ((imageFile != null && !imageFile.isEmpty()) && programImageId == null) {
             //2번 : 이미지 새로 등록
             ProgramImage programImage = ImageUtils.parseToProgramImage(imageFile);
@@ -123,60 +207,13 @@ public class ProgramService {
             //4번 : 이미지 변경
             ProgramImage findProgramImage
                 = programImageRepository.findById(programImageId)
-                            .orElseThrow(() ->
-                                new BusinessLogicException(ExceptionCode.IMAGE_NOT_FOUND)
-                            );
+                .orElseThrow(() ->
+                    new BusinessLogicException(ExceptionCode.IMAGE_NOT_FOUND)
+                );
             ProgramImage programImage = ImageUtils.parseToProgramImage(imageFile);
 
             //programImage dirty checking
             findProgramImage.updateProgramImage(programImage);
         }
-
-        return findProgram;
     }
-
-    public void deleteProgram(Long loginUserId, Long programId) {
-        Program findProgram
-            = programRepository.findById(programId)
-            .orElseThrow(() ->
-                new BusinessLogicException(ExceptionCode.PROGRAM_NOT_FOUND)
-            );
-
-        if (!findProgram.getUser().getId().equals(loginUserId)) {
-            //로그인 유저가 작성자가 아니라면
-            throw new BusinessLogicException(ExceptionCode.CANNOT_UPDATE_OTHERS);
-        }
-
-        programRepository.deleteById(programId);
-    }
-
-    public Program findProgram(Long programId) {
-        return programRepository.findById(programId)
-            .orElseThrow(() ->
-                new BusinessLogicException(ExceptionCode.PROGRAM_NOT_FOUND)
-            );
-    }
-
-    public Page<Program> findPrograms(int page, int size, SearchFilterDto searchFilterDto) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
-        return programRepository.searchAndFilter(pageable, searchFilterDto);
-    }
-
-    //programStatus 체크
-    public Program.ProgramStatus checkProgramStatus(Long programId, int numOfRecruits) {
-        List<Apply> appliesByProgramId = applyRepository.findByProgramId(programId);
-        int numOfApplicants = appliesByProgramId.size();
-        long ratio = (long) numOfApplicants / numOfRecruits;
-        if (ratio > 1) {
-            throw new BusinessLogicException(ExceptionCode.FULL_OF_APPLY);
-        } else if (ratio == 1) {
-            return Program.ProgramStatus.IMPOSSIBLE;
-        } else if (ratio >= 0.8 && ratio < 1) {
-            return Program.ProgramStatus.IMMINENT;
-        } else {
-            return Program.ProgramStatus.POSSIBLE;
-        }
-    }
-
-
 }
