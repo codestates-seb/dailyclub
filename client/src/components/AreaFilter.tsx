@@ -69,7 +69,8 @@ function AreaFilter({ setAreaSelected }: AreaProps) {
   const areaList: string[] = [
     '지역',
     '서울',
-    '경기/강원',
+    '경기',
+    '강원',
     '인천',
     '대전/충청',
     '대구/경북',

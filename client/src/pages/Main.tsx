@@ -9,11 +9,12 @@ import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link } from 'react-router-dom';
-import { useAppSelector } from 'stores/hooks';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { ProgramDetailVal } from 'types/programs';
+import { searchActions } from 'stores/searchSlice';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -64,11 +65,13 @@ const WrapLevel = styled.div`
   border: 1px solid lightGrey;
   border-radius: 5px;
   background-color: white;
+  cursor: default;
 `;
 const WrapLevelRangeInput = styled.input`
   width: 80%;
   height: 3px;
   background: #ff5924;
+  cursor: pointer;
 `;
 const RangeValue = styled.div`
   margin: 1rem;
@@ -149,31 +152,46 @@ export default function Main() {
   const [programs, setPrograms] = useState<Array<ProgramDetailVal>>([]);
   const [pageList, setPageList] = useState();
   const [page, setPage] = useState<number>(1);
+  const [programStatus, setProgramStatus] = useState('모집중');
+  const [minKindVal, setMinKindVal] = useState('');
+  const dispatch = useAppDispatch();
 
   // console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
 
-  /** 유저 전역상태 전체 - users, isLoggedId, loading, error  */
+  /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const loginUserInfo = useAppSelector((state) => state.userInfo);
   // console.log('유저 전역정보: ', loginUserInfo ?? loginUserInfo); // 확인용
 
-  /** 유저 전역상태 1개씩 - isLoggedId, users, error */
-  const isLoggedId = useAppSelector(getisLoggedIn); // 로그인여부
+  /** 유저 전역상태 1개씩 - isLoggedIn, users, error */
+  const isLoggedIn = useAppSelector(getisLoggedIn); // 로그인여부
   const userData = useAppSelector(getUserData); // 유저정보
   const userError = useAppSelector(getUserError); // 에러내용
-  // console.log('유저 전역상태: ', isLoggedId, userData, userError); // 확인 후 주석해제하면 됩니다
+  // console.log('유저 전역상태: ', isLoggedIn, userData, userError); // 확인 후 주석해제하면 됩니다
+
+  const REQ_PARAMS = {
+    keyword: searchKeyword,
+    location: areaSelected,
+    minKind: minKindVal,
+    programDate: dateSelected,
+    programStatus: programStatus,
+  };
 
   /** 필터 조회api - 키워드,지역,날짜,친절도*/
   useEffect(() => {
     const getProgramList = async () => {
       await axios
+        // .get(`${URL}/api/programs?page=${page}&size=10`, {
+        //   params: REQ_PARAMS,
+        // })
         .get(`${URL}/api/programs?page=${page}&size=10`)
         // .get(
         //   `${URL}/api/programs?page=1&size=10
-        // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${rangeValue}&programDate=${dateSelected}&programStatus=POSSIBLE`
+        // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${minKindVal}&programDate=${dateSelected}&programStatus=${programStatus}`
         // )
         .then(({ data }) => {
           setPrograms(data?.data);
           setPageList(data?.pageInfo);
+          dispatch(searchActions.getKeyword(''));
         })
         .catch((err) => console.log(err.message));
     };
@@ -196,8 +214,11 @@ export default function Main() {
               onChange={(e) => setDateSelected(e.target.value)}
               onFocus={(e) => (e.target.type = 'date')}
             />
-            <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
-              친절도 &nbsp;{rangeValue}%
+            <LevelRange
+              onClick={() => setLevelOpened(!levelOpened)}
+              onMouseUp={() => setMinKindVal(rangeValue)}
+            >
+              친절도 &nbsp;{minKindVal}%
               <img src={QuestionMark} alt="question mark" />
               <img src={DownArrow} alt="down arrow" />
               {levelOpened ? (
@@ -214,6 +235,7 @@ export default function Main() {
                     max={100}
                     step={1}
                     onChange={(e) => setRangeValue(e.target.value)}
+                    defaultValue={minKindVal}
                   />
                   <RangeValue>{rangeValue}%</RangeValue>
                 </WrapLevel>
@@ -253,6 +275,7 @@ export default function Main() {
                           borderRadius: '5px',
                         }}
                         alt="program Image"
+                        loading="lazy"
                       />
                       <ProgBookmark>
                         <img src={Bookmark} alt="bookmark" />
@@ -306,6 +329,7 @@ export default function Main() {
                         borderRadius: '5px',
                       }}
                       alt="program Image"
+                      loading="lazy"
                     />
                     <ProgBookmark>
                       <img src={Bookmark} alt="bookmark" />

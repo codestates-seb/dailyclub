@@ -3,7 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { LoginVal } from 'types/user';
-// import { API } from 'apis/api';
+import { API } from 'apis/api';
 import { setLocalStorage } from 'apis/localStorage';
 import Layout from 'components/Layout';
 import OauthBtn from 'components/OAuth/OauthBtn';
@@ -52,42 +52,26 @@ export default function Login() {
   } = useForm<LoginVal>();
 
   const handleLoginSubmit: SubmitHandler<LoginVal> = (data) => {
-    // API.login(data); // test해봐야 함
-    axios.defaults.withCredentials = true; // withCredentials 전역 설정
-    axios
-      .post(`${URL}/login`, data)
+    API.login(data)
       .then((res) => {
-        if (res.status === 200) {
-          let accessToken = res.headers.authorization;
-          let refreshToken = res.headers.refresh;
-          console.log('access 토큰 :', accessToken);
-          console.log('refresh 토큰 :', refreshToken);
-          setLocalStorage('access_token', accessToken);
-          setLocalStorage('refresh_token', refreshToken);
-          // API 요청마다 헤더에 access토큰 담아서 요청보내는 설정
-          axios.defaults.headers.common['Authorization'] = `${accessToken}`;
-          // axios.defaults.headers.common['Refresh'] = `${refreshToken}`;
-          navigate('/');
+        let accessToken = res.headers.authorization;
+        let refreshToken = res.headers.refresh;
+        console.log('access 토큰 :', accessToken);
+        console.log('refresh 토큰 :', refreshToken);
+        setLocalStorage('access_token', accessToken);
+        setLocalStorage('refresh_token', refreshToken);
+        // API 요청마다 헤더에 access토큰 담아서 요청보내는 설정
+        axios.defaults.headers.common['Authorization'] = `${accessToken}`;
+        // axios.defaults.headers.common['Refresh'] = `${refreshToken}`;
+        navigate('/');
 
-          //JWT디코딩해서 userId, loginId 등 전역상태
-          const decodedAccess = parseJwt(accessToken);
-          dispatch(getUserId(decodedAccess)); //JWT 내용 전역상태
-          // console.log('토큰해부', decodedAccess);
-        }
-      })
-      .then(() => {
-        dispatch(fetchUserInfo()); // 로그인 후, 로그인한 유저정보조회
-        // dispatch(fetchUserInfo(decodedAccess.id));//유저조회 thunk 전역상태에 저장
+        //JWT디코딩해서 userId, loginId 등 전역상태
+        const decodedAccess = parseJwt(accessToken);
+        dispatch(getUserId(decodedAccess)); //JWT 내용 전역상태
+        dispatch(fetchUserInfo(decodedAccess.id)); // 로그인유저정보 전역상태에 저장
+        // console.log('토큰해부', decodedAccess);
       })
       .catch((error) => console.log(error));
-
-    // localStorage.setItem('Authorization', jwtToken);
-    // const accessToken = JSON.parse(localStorage.getItem('accessToken') as string);
-    // if (accessToken) {
-    //   axios.defaults.headers.common[
-    //     'Authorization'
-    //   ] = `Bearer ${accessToken}`;
-    // }
   };
 
   return (
