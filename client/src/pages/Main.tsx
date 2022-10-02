@@ -180,23 +180,23 @@ export default function Main() {
   useEffect(() => {
     const getProgramList = async () => {
       await axios
-        // .get(`${URL}/api/programs?page=${page}&size=10`, {
-        //   params: REQ_PARAMS,
-        // })
-        .get(`${URL}/api/programs?page=${page}&size=10`)
+        .get(`${URL}/api/programs?page=${page}&size=10`, {
+          params: REQ_PARAMS,
+        })
+        // .get(`${URL}/api/programs?page=${page}&size=10`)
         // .get(
-        //   `${URL}/api/programs?page=1&size=10
+        //   `${URL}/api/programs?page=${page}&size=10
         // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${minKindVal}&programDate=${dateSelected}&programStatus=${programStatus}`
         // )
         .then(({ data }) => {
           setPrograms(data?.data);
           setPageList(data?.pageInfo);
-          dispatch(searchActions.getKeyword(''));
+          // console.log(REQ_PARAMS);
         })
         .catch((err) => console.log(err.message));
     };
     getProgramList();
-  }, []);
+  }, [searchKeyword, areaSelected, dateSelected, programStatus, minKindVal]);
 
   return (
     <Layout>
@@ -214,10 +214,7 @@ export default function Main() {
               onChange={(e) => setDateSelected(e.target.value)}
               onFocus={(e) => (e.target.type = 'date')}
             />
-            <LevelRange
-              onClick={() => setLevelOpened(!levelOpened)}
-              onMouseUp={() => setMinKindVal(rangeValue)}
-            >
+            <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
               친절도 &nbsp;{minKindVal}%
               <img src={QuestionMark} alt="question mark" />
               <img src={DownArrow} alt="down arrow" />
@@ -236,6 +233,7 @@ export default function Main() {
                     step={1}
                     onChange={(e) => setRangeValue(e.target.value)}
                     defaultValue={minKindVal}
+                    onMouseUp={() => setMinKindVal(rangeValue)}
                   />
                   <RangeValue>{rangeValue}%</RangeValue>
                 </WrapLevel>
