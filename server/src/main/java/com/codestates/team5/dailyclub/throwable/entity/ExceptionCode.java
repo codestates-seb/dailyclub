@@ -10,6 +10,7 @@ public enum ExceptionCode {
     INVALID_INPUT_VALUE(400,"입력값이 올바르지 않습니다."),
     CANNOT_UPDATE_OTHERS(400, "본인이 작성한 프로그램에 대해서만 수정할 수 있습니다."),
     CANNOT_APPLY_MINE(400, "본인이 작성한 프로그램을 신청할 수 없습니다."),
+    CANNOT_UPDATE_USERS(400, "본인 프로필만 수정할 수 있습니다."),
     CANNOT_CANCEL_OTHERS(400, "본인이 신청한 프로그램에 대해서만 신청을 취소할 수 있습니다."),
     CANNOT_UNBOOKMARK_OTHERS(400, "본인이 북마크한 프로그램에 대해서만 북마크를 해제할 수 있습니다."),
     CANNOT_DELETE_OTHERS(400, "본인이 작성한 프로그램에 대해서만 삭제할 수 있습니다."),

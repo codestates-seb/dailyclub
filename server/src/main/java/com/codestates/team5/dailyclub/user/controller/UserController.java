@@ -1,6 +1,7 @@
 package com.codestates.team5.dailyclub.user.controller;
 
 import com.codestates.team5.dailyclub.common.dto.MultiResponseDto;
+import com.codestates.team5.dailyclub.jwt.AuthDetails;
 import com.codestates.team5.dailyclub.user.dto.UserDto;
 import com.codestates.team5.dailyclub.user.entity.User;
 import com.codestates.team5.dailyclub.user.mapper.UserMapper;
@@ -12,13 +13,20 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+@Slf4j
 @Tag(name = "유저 API")
 @RestController
 @RequiredArgsConstructor
@@ -39,35 +47,33 @@ public class UserController {
     @Operation(summary = "회원 한명 조회")
     @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
     @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUser(@PathVariable("userId") long id) {
+    public ResponseEntity<?> getUser(@PathVariable("userId") Long id) {
         User response = userService.findUser(id);
         return new ResponseEntity<>(userMapper.userToUserResponseDto(response), HttpStatus.OK);
     }
 
-    @Operation(summary = "회원 리스트")
-    @ApiResponse(responseCode = "200", description = "OK")
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MultiResponseDto<UserDto.Response>> getUsers(@Parameter(description = "페이지 번호") @RequestParam int page,
-                                                                       @Parameter(description = "한 페이지당 알림 수") @RequestParam int size) {
-        Page<User> pageUsers = userService.findUsers(page - 1, size);
-        List<User> users = pageUsers.getContent();
-        List<UserDto.Response> responseDtos = userMapper.usersToUserResponseDtos(users);
-        return new ResponseEntity<>(new MultiResponseDto<>(responseDtos,pageUsers), HttpStatus.OK);
-    }
     @Operation(summary = "회원 탈퇴")
     @ApiResponse(responseCode = "204", description = "NOT CONTENT")
     @DeleteMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteUser (@PathVariable("userId") long id) {
+    public void deleteUser (@PathVariable("userId") Long id, @Parameter(hidden =true) @AuthenticationPrincipal AuthDetails authDetails) throws IOException {
         userService.deleteUser(id);
     }
 
 
     @Operation(summary = "회원정보 수정")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
-    @PatchMapping(value = "{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> patchUser(@RequestBody UserDto.Patch requestBody, @PathVariable("userId") long id) {
-        User user = userMapper.userPatchToUser(requestBody);
-        User response = userService.updateUser(user, id);
+    @PatchMapping(value = "{userId}",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> patchUser(@ParameterObject @ModelAttribute UserDto.Patch userPatchDto,
+                                       @RequestPart(required = false) MultipartFile imageFile,
+                                       @PathVariable("userId") Long userId, @Parameter(hidden =true) @AuthenticationPrincipal AuthDetails authDetails) throws IOException {
+        Long loginUserId = authDetails.getUserId();
+        User userFromPatchDto = userMapper.userPatchToUser(userPatchDto);
+        User response = userService.updateUser(
+                loginUserId,
+                userFromPatchDto,
+                userPatchDto.getUserImageId(),
+                imageFile
+                );
         return new ResponseEntity<>(userMapper.userToUserResponseDto(response), HttpStatus.OK);
 
     }
