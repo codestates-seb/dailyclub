@@ -529,6 +529,9 @@ export default function ProgDetail() {
         <CancelModal
           setIsCancelOpen={setIsCancelOpen}
           applyMemberfilter={applyMemberfilter}
+          setApplyList={setApplyList}
+          programId={data?.id}
+          setPageList={setPageList}
         />
       ) : null}
       {isDeleteOpen ? (

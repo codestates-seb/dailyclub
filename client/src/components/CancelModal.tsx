@@ -8,22 +8,42 @@ import {
 } from './MessageModal';
 import { CheckMessage } from './ApplyModal';
 import axios from 'axios';
-import { ApplyListVal } from 'types/programs';
+import { ApplyListVal, PaginationVal } from 'types/programs';
 
 interface CancelModalProps {
   setIsCancelOpen: React.Dispatch<React.SetStateAction<boolean>>;
   applyMemberfilter: ApplyListVal[];
+  setApplyList: React.Dispatch<React.SetStateAction<ApplyListVal[]>>;
+  programId: number | undefined;
+  setPageList: React.Dispatch<React.SetStateAction<PaginationVal | undefined>>;
 }
 
-function CancelModal({ setIsCancelOpen, applyMemberfilter }: CancelModalProps) {
+function CancelModal({
+  setIsCancelOpen,
+  applyMemberfilter,
+  setApplyList,
+  programId,
+  setPageList,
+}: CancelModalProps) {
   const DEV_URL = process.env.REACT_APP_DEV_URL;
 
-  const cancelApply = () => {
-    axios.delete(`${DEV_URL}/api/applies/${applyMemberfilter[0].id}`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+  const cancelApply = async () => {
+    await axios
+      .delete(`${DEV_URL}/api/applies/${applyMemberfilter[0].id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((res) => {
+        setIsCancelOpen(false);
+      });
+
+    await axios
+      .get(`${DEV_URL}/api/applies?page=1&size=4&programId=${programId}`)
+      .then((res) => {
+        setApplyList(res.data.data);
+        setPageList(res.data.pageInfo);
+      });
   };
 
   return (

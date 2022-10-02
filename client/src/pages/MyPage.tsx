@@ -374,11 +374,11 @@ function MyPage() {
   };
 
   //프로필 수정하는 함수입니다
-  const profileUpdate = (e: React.MouseEvent) => {
+  const profileUpdate = async (e: React.MouseEvent) => {
     e.preventDefault;
     const formData = new FormData();
 
-    formData.append('userImages', userImages);
+    formData.append('imageFile', userImages);
     formData.append('id', String(params.userId!));
     formData.append('nickname', nickname);
     formData.append('introduction', introduction!);
@@ -387,7 +387,7 @@ function MyPage() {
       formData.append('userImageId', String(imgId));
     }
 
-    axios({
+    await axios({
       method: 'patch',
       url: `${DEV_URL}/api/users/${params.userId}`,
       headers: { 'Content-Type': 'multipart/form-data' },
@@ -395,6 +395,16 @@ function MyPage() {
     }).catch((err) => console.log(err));
 
     setIsUpdateMode(false);
+
+    await axios
+      .get(`${DEV_URL}/api/users/${params.userId}`, {
+        headers: {
+          'Content-type': 'application/json',
+        },
+      })
+      .then((res) => {
+        setData(res.data);
+      });
   };
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
