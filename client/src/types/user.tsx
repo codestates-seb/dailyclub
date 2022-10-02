@@ -16,4 +16,5 @@ export interface UserVal extends SignUpVal {
   nickname: string;
   introduction: string;
   kind: any;
+  userImages: Blob | undefined;
 }

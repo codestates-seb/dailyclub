@@ -10,6 +10,8 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import ProfileSvg from '../images/Profile.svg';
 import axios from 'axios';
 import { UserVal, SignUpVal } from 'types/user';
+import ImgDeleteBtnSvg from '../images/ImgDeleteBtn.svg';
+import { ImgDeleteBtn } from './ProgUpdate';
 
 const MyPageContainer = styled.div`
   display: flex;
@@ -82,16 +84,28 @@ const UpdateImageInput = styled.input`
   display: none;
 `;
 const UpdateImageLabel = styled.label`
+  position: relative;
   width: 7rem;
   height: 7rem;
   margin: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #e2e6e8;
+  color: #9d9d9d;
   border-radius: 50%;
   &:hover {
     cursor: pointer;
+    color: white;
+    background-color: #9d9d9d;
   }
 `;
 
+const OrgImage = styled.img`
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+`;
 /* 탭 부분 */
 const TabContainer = styled.div`
   width: 60%;
@@ -236,43 +250,38 @@ const programList: ProgProps[] = [
   },
 ];
 
-// 유저정보 데이터
-const userProps: {
-  id: number;
-  nickname: string;
-  picture: string;
-  introduction: string;
-  kind: number;
-  role: string;
-} = {
-  id: 1,
-  nickname: '냥냥',
-  picture: '사진',
-  introduction: '자기소개 입니다.',
-  kind: 50,
-  role: 'USER',
-};
-
 function MyPage() {
-
   const DEV_URL = process.env.REACT_APP_DEV_URL;
   const params = useParams();
   const navigate = useNavigate();
 
   // 회원정보조회
   const [data, setData] = useState<UserVal>();
- 
+  const [nickname, setNickname] = useState('');
+  const [introduction, setIntroduction] = useState<string>('');
+  const [userImages, setUserImages] = useState<string | Blob>('');
+  const [orgImg, setOrgImg] = useState<string>('');
+  const [imgId, setImgId] = useState<number>();
+
   useEffect(() => {
     axios
-      .get(`${DEV_URL}/api/users/${params.userId}`,
-      {
+      .get(`${DEV_URL}/api/users/${params.userId}`, {
         headers: {
           'Content-type': 'application/json',
         },
-      }
-      )
+      })
       .then((res) => {
         setData(res.data);
+        setNickname(res.data.nickname);
+        setIntroduction(res.data?.introduction);
+        setImgId(res.data.userImages[0]?.id);
+
+        /** 이전이미지 있으면, 이미지 받아오기 */
+        if (res.data.userImages.length !== 0) {
+          setOrgImg(
+            `data:${res.data.userImages[0].contentType};base64,${res.data.userImages[0].bytes}`
+          );
+        }
       });
   }, []);
 
@@ -365,9 +374,41 @@ function MyPage() {
   };
 
   //프로필 수정하는 함수입니다
-  const profileUpdate = () => {
+  const profileUpdate = (e: React.MouseEvent) => {
+    e.preventDefault;
+    const formData = new FormData();
+
+    formData.append('userImages', userImages);
+    formData.append('id', String(params.userId!));
+    formData.append('nickname', nickname);
+    formData.append('introduction', introduction!);
+
+    if (imgId) {
+      formData.append('userImageId', String(imgId));
+    }
+
+    axios({
+      method: 'patch',
+      url: `${DEV_URL}/api/users/${params.userId}`,
+      headers: { 'Content-Type': 'multipart/form-data' },
+      data: formData,
+    }).catch((err) => console.log(err));
+
     setIsUpdateMode(false);
   };
+
+  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    setUserImages((e.target as any).files[0]);
+    setOrgImg(URL.createObjectURL((e.target as any).files[0]));
+  };
+
+  const handleDeleteImg = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setUserImages('');
+    setOrgImg('');
+  };
+
   return (
     <Layout>
       <MyPageContainer>
@@ -376,20 +417,41 @@ function MyPage() {
           <ProfileWrap>
             {isUpdateMode ? (
               <>
-                <UpdateImageLabel htmlFor="file"></UpdateImageLabel>
+                {orgImg ? (
+                  <UpdateImageLabel htmlFor="file">
+                    <OrgImage src={orgImg} alt="profile" />
+                    <ImgDeleteBtn onClick={handleDeleteImg}>
+                      <img src={ImgDeleteBtnSvg} alt="delete" />
+                    </ImgDeleteBtn>
+                  </UpdateImageLabel>
+                ) : (
+                  <UpdateImageLabel htmlFor="file">
+                    프로필 사진 변경
+                    <ImgDeleteBtn onClick={handleDeleteImg}>
+                      <img src={ImgDeleteBtnSvg} alt="delete" />
+                    </ImgDeleteBtn>
+                  </UpdateImageLabel>
+                )}
                 <UpdateImageInput
                   id="file"
                   type="file"
                   name="avatar"
                   accept="image/*"
+                  onChange={handleImage}
                 ></UpdateImageInput>
                 <UpdateInput
                   type="text"
-                  value={userProps.nickname}
+                  defaultValue={nickname}
+                  onChange={(e) => {
+                    setNickname(e.target.value);
+                  }}
                 ></UpdateInput>
                 <UpdateInput
                   type="text"
-                  value={userProps.introduction}
+                  defaultValue={introduction}
+                  onChange={(e) => {
+                    setIntroduction(e.target.value);
+                  }}
                 ></UpdateInput>
                 <ProfileUpdateBtn onClick={profileUpdate}>
                   수정완료
@@ -398,11 +460,18 @@ function MyPage() {
             ) : (
               <>
                 <ProfileImage>
-                  <img
-                    src={ProfileSvg}
-                    alt="profile"
-                    style={{ height: 100, width: 100 }}
-                  />
+                  {!orgImg ? (
+                    <img
+                      src={ProfileSvg}
+                      alt="profile"
+                      style={{ height: 100, width: 100 }}
+                    />
+                  ) : (
+                    <img
+                      src={orgImg}
+                      style={{ height: 100, width: 100, borderRadius: 50 }}
+                    />
+                  )}
                 </ProfileImage>
                 <ProfileNickname>{data?.nickname}</ProfileNickname>
                 <ProfileIntro>{data?.introduction}</ProfileIntro>

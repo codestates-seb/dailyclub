@@ -32,7 +32,7 @@ const App: React.FC = () => {
               path="/programs/:programId/update"
               element={<ProgUpdate />}
             />
-            <Route path="/mypage" element={<MyPage />} />
+            <Route path="/users/:userId" element={<MyPage />} />
             <Route path="/notice" element={<NoticeList />} />
             <Route path="/notice/:noticeId" element={<NoticeDetail />} />
             <Route path="/notice/create" element={<NoticeCreate />} />

@@ -244,7 +244,7 @@ export default function Header() {
                   </Link>
                 </Icon>
                 <Icon>
-                  <Link to="/mypage">
+                  <Link to={`/users/${userId}`}>
                     <img
                       src={Message}
                       alt="logo"
@@ -273,7 +273,7 @@ export default function Header() {
           <WrapParent>
             <WrapChild>
               <UserContent>
-                <Link to="/mypage">
+                <Link to={`/users/${userId}`}>
                   <UserProfileImg>
                     <img
                       src={users?.picture ? null : Profile}
@@ -288,7 +288,7 @@ export default function Header() {
                   </UserProfileImg>
                 </Link>
                 <UserNickName>{users?.nickname}</UserNickName>
-                <Link to="/mypage">
+                <Link to={`/users/${userId}`}>
                   <MyPageBtn>마이페이지</MyPageBtn>
                 </Link>
               </UserContent>

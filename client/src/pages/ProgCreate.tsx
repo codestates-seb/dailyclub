@@ -217,7 +217,6 @@ function ProgCreate() {
   //처음 렌더링 될 때 제목인풋에 포커즈
   useEffect(() => {
     firstRef.current.focus();
-    console.log(today);
   }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
