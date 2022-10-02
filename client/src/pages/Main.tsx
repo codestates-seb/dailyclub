@@ -9,12 +9,11 @@ import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { useAppSelector } from 'stores/hooks';
 import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { ProgramDetailVal } from 'types/programs';
-import { searchActions } from 'stores/searchSlice';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -140,6 +139,10 @@ const ProgDate = styled.div``;
 const DoneContainer = styled.div`
   padding: 7rem 0;
 `;
+const DoneProgEmptyMsg = styled.div`
+  margin-top: 1rem;
+  font-weight: 300;
+`;
 
 export default function Main() {
   const URL = process.env.REACT_APP_DEV_URL;
@@ -154,9 +157,7 @@ export default function Main() {
   const [page, setPage] = useState<number>(1);
   const [programStatus, setProgramStatus] = useState('모집중');
   const [minKindVal, setMinKindVal] = useState('');
-  const dispatch = useAppDispatch();
-
-  // console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
+  const [donePrograms, setDonePrograms] = useState<Array<ProgramDetailVal>>([]);
 
   /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const loginUserInfo = useAppSelector((state) => state.userInfo);
@@ -191,13 +192,15 @@ export default function Main() {
         .then(({ data }) => {
           setPrograms(data?.data);
           setPageList(data?.pageInfo);
-          // console.log(REQ_PARAMS);
+          const doneFilter = data?.data.map((el: ProgramDetailVal) => {
+            el.programStatus === '마감';
+          });
+          setDonePrograms(doneFilter);
         })
         .catch((err) => console.log(err.message));
     };
     getProgramList();
   }, [searchKeyword, areaSelected, dateSelected, programStatus, minKindVal]);
-
   return (
     <Layout>
       <WrapContainer>
@@ -253,7 +256,7 @@ export default function Main() {
                               ? '#38D9A9'
                               : null || el.programStatus === '마감임박'
                               ? '#d22a2a'
-                              : null || el.programStatus === '모집종료'
+                              : null || el.programStatus === '마감'
                               ? 'darkGray'
                               : null
                           }`,
@@ -310,11 +313,25 @@ export default function Main() {
         <DoneContainer>
           <RecruitText>모집 마감된 모임</RecruitText>
           <ProgContainer>
-            {programs &&
-              programs?.map((el: any) => (
+            {donePrograms[0] !== undefined ? (
+              donePrograms?.map((el: any) => (
                 <ProgItem key={el.id}>
                   <ProgBanner>
-                    <ProgRecruitment>모집종료</ProgRecruitment>
+                    <ProgRecruitment
+                      style={{
+                        backgroundColor: `${
+                          el.programStatus === '모집중'
+                            ? '#38D9A9'
+                            : null || el.programStatus === '마감임박'
+                            ? '#d22a2a'
+                            : null || el.programStatus === '마감'
+                            ? 'darkGray'
+                            : null
+                        }`,
+                      }}
+                    >
+                      {el?.programStatus}
+                    </ProgRecruitment>
                     <img
                       src={
                         el?.programImages.length === 0
@@ -356,7 +373,12 @@ export default function Main() {
                     </ProgDate>
                   </ProgWrapper>
                 </ProgItem>
-              ))}
+              ))
+            ) : (
+              <DoneProgEmptyMsg>
+                &nbsp;&nbsp;마감된 모임이 없습니다
+              </DoneProgEmptyMsg>
+            )}
           </ProgContainer>
         </DoneContainer>
       </WrapContainer>
