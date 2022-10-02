@@ -193,7 +193,7 @@ export default function Main() {
         // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${minKindVal}&programDate=${dateSelected}&programStatus=${programStatus}`
         // )
         .then(({ data }) => {
-          console.log(data);
+          // console.log(data);
           setPrograms(data?.data);
           setPageList(data?.pageInfo);
           const doneFilter = data?.data.map((el: ProgramDetailVal) => {
