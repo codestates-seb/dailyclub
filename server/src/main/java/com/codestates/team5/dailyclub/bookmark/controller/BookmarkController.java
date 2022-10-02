@@ -5,6 +5,7 @@ import com.codestates.team5.dailyclub.bookmark.entity.Bookmark;
 import com.codestates.team5.dailyclub.bookmark.mapper.BookmarkMapper;
 import com.codestates.team5.dailyclub.bookmark.service.BookmarkService;
 import com.codestates.team5.dailyclub.common.dto.MultiResponseDto;
+import com.codestates.team5.dailyclub.jwt.AuthDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,17 +46,21 @@ public class BookmarkController {
             description = "CREATED"
         )
     )
-    @PostMapping()
-    public ResponseEntity<BookmarkDto.Response> postBookmark(@RequestBody BookmarkDto.Post bookmarkPostDto) {
-        Long loginUserId = 1L;
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<BookmarkDto.Response> postBookmark(@RequestBody BookmarkDto.Post bookmarkPostDto,
+                                                             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Long loginUserId = authDetails.getUser().getId();
+        log.info("[postBookmark] loginUserId={}, programId={}", loginUserId, bookmarkPostDto.getProgramId());
+
         Bookmark bookmark
                 = bookmarkService.createBookmark(loginUserId, bookmarkPostDto.getProgramId());
+
         BookmarkDto.Response responseDto
                 = bookmarkMapper.bookmarkToResponseDto(bookmark);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "북마크 리스트 조회")
+    @Operation(summary = "북마크 리스트 조회 (마이 페이지)")
     @ApiResponses(
         @ApiResponse(
             responseCode = "200",
@@ -62,10 +69,11 @@ public class BookmarkController {
     )
     @GetMapping
     public ResponseEntity<MultiResponseDto<BookmarkDto.ResponseWithProgram>> getBookmarks(@Parameter(description = "페이지 번호") @RequestParam int page,
-                                                                                          @Parameter(description = "한 페이지당 북마크 수") @RequestParam int size) {
-        Long loginUserId = 1L;
+                                                                                          @Parameter(description = "한 페이지당 북마크 수") @RequestParam int size,
+                                                                                          @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Long loginUserId = authDetails.getUserId();
         Page<Bookmark> pageBookmarks
-                = bookmarkService.findBookmarks(page-1, size, loginUserId);
+                = bookmarkService.findBookmarksByUserId(page-1, size, loginUserId);
         List<Bookmark> bookmarks = pageBookmarks.getContent();
         List<BookmarkDto.ResponseWithProgram> responseWithProgramList
                 = bookmarkMapper.bookmarkListToBookmarkResponseDtoWithProgramList(bookmarks);
@@ -80,8 +88,10 @@ public class BookmarkController {
         )
     )
     @DeleteMapping("/{bookmarkId}")
-    public void deleteBookmark(@PathVariable("bookmarkId") Long id) {
-        bookmarkService.deleteBookmark(id);
+    public void deleteBookmark(@PathVariable("bookmarkId") Long bookmarkId,
+                               @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Long loginUserId = authDetails.getUserId();
+        bookmarkService.deleteBookmark(loginUserId, bookmarkId);
     }
 
 }
