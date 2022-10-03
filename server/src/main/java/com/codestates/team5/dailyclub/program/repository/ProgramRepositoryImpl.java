@@ -77,9 +77,10 @@ public class ProgramRepositoryImpl implements ProgramRepositoryCustom {
             program.minKind.goe(minKind) : null;
     }
     //해당 날짜에 프로그램이 시작하는지
+    //조건 없으면 오늘 날짜 포함 그 이후 프로그램으로 검색
     private BooleanExpression programDateEq(LocalDate programDate) {
         return (programDate != null) ?
-            program.programDate.eq(programDate) : null;
+            program.programDate.eq(programDate) : (program.programDate.eq(LocalDate.now()).or(program.programDate.after(LocalDate.now())));
     }
     //[모집중, 마감임박, 마감] 상태
     private BooleanExpression programStatusEq(String programStatus) {

@@ -18,6 +18,8 @@ public enum ExceptionCode {
     CANNOT_DELETE_DDAY(400, "신청 인원이 있을 경우 프로그램 시작 당일에는 삭제할 수 없습니다."),
     LOWER_THAN_MIN_KIND(400, "본인 친절 %가 낮아 신청할 수 없습니다."),
     CANNOT_CANCEL_DDAY(400, "프로그램 시작 당일에는 신청을 취소할 수 없습니다."),
+    CANNOT_READ_OTHERS_NOTIFICATION(400, "다른 유저의 알림을 읽을 수 없습니다."),
+    EXCEEDED_MAX_UPLOAD_SIZE(400, "10MB 이상의 이미지는 업로드할 수 없습니다."),
 
     /* 401 UNAUTHORIZED : 인증되지 않은 사용자 */
 
@@ -29,6 +31,7 @@ public enum ExceptionCode {
     IMAGE_NOT_FOUND(404, "해당 이미지를 찾을 수 없습니다."),
     APPLY_NOT_FOUND(404, "해당 프로그램을 신청한 적이 없습니다."),
     BOOKMARK_NOT_FOUND(404, "해당 프로그램을 북마크한 적이 없습니다"),
+    NOTIFICATION_NOT_FOUND(404, "해당 알림을 찾을 수 없습니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     FULL_OF_APPLY(409, "모집 인원이 다 찼습니다."),

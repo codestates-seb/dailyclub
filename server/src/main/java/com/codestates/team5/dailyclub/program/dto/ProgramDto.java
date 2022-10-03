@@ -38,19 +38,23 @@ public class ProgramDto {
 
         @Schema(description = "모집 인원", example = "10")
         @Range(min = 1, max = 100)
+        @NotNull
         private Integer numOfRecruits;
 
         @Schema(description = "지역명", example = "서울", allowableValues = {"서울", "경기", "강원", "인천", "대전/충청", "대구/경북", "부산/울산/경남", "광주/전라", "제주"})
         @Location
+        @NotNull
         private String location;
 
         @Schema(description = "프로그램 시작 날짜", pattern = "yyyy-MM-dd", example = "2022-09-18")
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         @TodayOrAfter
+        @NotNull
         private LocalDate programDate;
 
         @Schema(description = "최소 신청 가능 친절 %", example = "65")
         @Range(min = 0, max = 100)
+        @NotNull
         private Integer minKind;
     }
 
@@ -73,19 +77,23 @@ public class ProgramDto {
 
         @Schema(description = "모집 인원", example = "7")
         @Range(min = 1, max = 100)
+        @NotNull
         private Integer numOfRecruits;
 
         @Schema(description = "지역명", example = "서울", allowableValues = {"서울", "경기", "강원", "인천", "대전/충청", "대구/경북", "부산/울산/경남", "광주/전라", "제주"})
         @Location
+        @NotNull
         private String location;
 
         @Schema(description = "프로그램 시작 날짜", pattern = "yyyy-MM-dd", example = "2022-09-18")
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         @TodayOrAfter
+        @NotNull
         private LocalDate programDate;
 
         @Schema(description = "최소 신청 가능 친절 %", example = "70")
         @Range(min = 0, max = 100)
+        @NotNull
         private Integer minKind;
 
         @Schema(description = "프로그램 이미지 ID")
