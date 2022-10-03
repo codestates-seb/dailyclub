@@ -15,6 +15,7 @@ import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { ProgramDetailVal } from 'types/programs';
+import { getToday } from 'utils/getToday';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -188,11 +189,6 @@ export default function Main() {
         .get(`${URL}/api/programs?page=${page}&size=10`, {
           params: REQ_PARAMS,
         })
-        // .get(`${URL}/api/programs?page=${page}&size=10`)
-        // .get(
-        //   `${URL}/api/programs?page=${page}&size=10
-        // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${minKindVal}&programDate=${dateSelected}&programStatus=${programStatus}`
-        // )
         .then(({ data }) => {
           // console.log(data?.data);
           setPrograms(data?.data);
@@ -222,7 +218,6 @@ export default function Main() {
       setBookmarked(true);
       setBookmarkedId(bookmarkId);
     }
-    // console.log(id, '전 :', bookmarked, bookmarkedId);
     if (bookmarked === false && bookmarkedId === null) {
       await axios
         .post(`${URL}/api/bookmarks`, { programId: id })
@@ -255,6 +250,7 @@ export default function Main() {
               onBlur={(e) => (e.target.type = 'text')}
               onChange={(e) => setDateSelected(e.target.value)}
               onFocus={(e) => (e.target.type = 'date')}
+              min={getToday()}
             />
             <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
               친절도 &nbsp;{minKindVal}%
