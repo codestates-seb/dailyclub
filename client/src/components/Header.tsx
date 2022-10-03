@@ -119,8 +119,8 @@ const NotificationContainer = styled.div`
   flex-direction: column;
 `;
 const NotificationLabel = styled.div`
-  padding: 0.5rem 0.7rem;
-  background-color: #e6fcf5;
+  padding: 0.4rem 0.7rem;
+  background-color: #fcede6;
   color: gray;
   font-size: 0.7rem;
 `;
@@ -152,11 +152,11 @@ const NotificationTime = styled.div`
 const LogoutBtn = styled.button`
   font-size: 12px;
   text-align: center;
-  background-color: #c3fae8;
+  background-color: #fad5c3;
   border: none;
-  padding: 0.5rem 0;
+  padding: 0.4rem 0;
   &:hover {
-    background-color: #a8ddcb;
+    background-color: #ddb8a8;
   }
 `;
 const HeaderLinkText = styled.div`
@@ -274,12 +274,13 @@ export default function Header() {
                       src={
                         users?.userImages
                           ? byteToBase64(
-                              users?.userImages[0].contentType,
-                              users?.userImages[0].bytes
+                              users?.userImages[0]?.contentType,
+                              users?.userImages[0]?.bytes
                             )
                           : Profile
                       }
                       alt="profile"
+                      loading="lazy"
                       style={{
                         height: 25,
                         width: 25,
@@ -308,12 +309,13 @@ export default function Header() {
                       src={
                         users?.userImages
                           ? byteToBase64(
-                              users?.userImages[0].contentType,
-                              users?.userImages[0].bytes
+                              users?.userImages[0]?.contentType,
+                              users?.userImages[0]?.bytes
                             )
                           : Profile
                       }
                       alt="userImg"
+                      loading="lazy"
                       style={{
                         height: 70,
                         width: 70,
@@ -330,7 +332,7 @@ export default function Header() {
                 </Link>
               </UserContent>
               <NotificationContainer>
-                <NotificationLabel>새 알림 {1}</NotificationLabel>
+                <NotificationLabel>새로운 알림 {1}</NotificationLabel>
                 <Notifications>
                   {notificationList?.map((notification: NotifyList) => (
                     <Notification key={notification.id}>
