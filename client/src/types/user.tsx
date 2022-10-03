@@ -4,8 +4,6 @@ export interface LoginVal {
 }
 
 export interface SignUpVal extends LoginVal {
-  //   loginId: string;
-  //   password: string;
   email: string;
   nickname: string;
 }

@@ -15,6 +15,8 @@ import { ApplyListVal, PaginationVal, ProgramDetailVal } from 'types/programs';
 import { setSourceMapRange } from 'typescript';
 import ImgDeleteBtnSvg from '../images/ImgDeleteBtn.svg';
 import { ImgDeleteBtn } from './ProgUpdate';
+import { useAppDispatch } from 'stores/hooks';
+import { fetchUserInfo } from 'stores/userInfoSlice';
 
 const MyPageContainer = styled.div`
   display: flex;
@@ -263,6 +265,7 @@ function MyPage() {
   const [programs, setPrograms] = useState<Array<ApplyListVal>>([]);
   const [opens, setOpens] = useState<Array<ProgramDetailVal>>([]);
   const [page, setPage] = useState<number>(1);
+  const dispatch = useAppDispatch();
 
   // 회원정보조회
   const [data, setData] = useState<UserVal>();
@@ -315,13 +318,15 @@ function MyPage() {
   useEffect(() => {
     const getApplyList = async () => {
       await axios
-        .get(`${DEV_URL}/api/applies/mypage?page=${page}&size=4&userId=${params.userId}`)
+        .get(
+          `${DEV_URL}/api/applies/mypage?page=${page}&size=4&userId=${params.userId}`
+        )
         .then((res) => {
           setPrograms(res.data.data);
           setPageList(res.data.pageInfo);
-      });
-  }
-  getApplyList();
+        });
+    };
+    getApplyList();
   }, []);
 
   // 개설한 프로그램 리스트
@@ -329,12 +334,14 @@ function MyPage() {
   useEffect(() => {
     const getOpenList = async () => {
       await axios
-        .get(`${DEV_URL}/api/programs/mypage?page=${page}&size=4&userId=${params.userId}`)
+        .get(
+          `${DEV_URL}/api/programs/mypage?page=${page}&size=4&userId=${params.userId}`
+        )
         .then((res) => {
           setOpens(res.data.data);
-          setOpenList(res.data.pageInfo)
+          setOpenList(res.data.pageInfo);
         });
-    }
+    };
     getOpenList();
   }, []);
 
@@ -353,7 +360,9 @@ function MyPage() {
                   <ClubInfo>
                     <ClubTitle>{el?.program.title}</ClubTitle>
                     <ClubBody>{el?.program.text}</ClubBody>
-                    <ClubDate>{el?.program.programDate} {el?.program.programStatus}</ClubDate>
+                    <ClubDate>
+                      {el?.program.programDate} {el?.program.programStatus}
+                    </ClubDate>
                   </ClubInfo>
                 </ClubItem>
               </Link>
@@ -369,7 +378,9 @@ function MyPage() {
                   <ClubInfo>
                     <ClubTitle>{el?.title}</ClubTitle>
                     <ClubBody>{el?.text}</ClubBody>
-                    <ClubDate>{el?.programDate} {el?.programStatus}</ClubDate>
+                    <ClubDate>
+                      {el?.programDate} {el?.programStatus}
+                    </ClubDate>
                   </ClubInfo>
                 </ClubItem>
               </Link>
@@ -438,6 +449,7 @@ function MyPage() {
     }).catch((err) => console.log(err));
 
     setIsUpdateMode(false);
+    dispatch(fetchUserInfo(Number(params.userId)));
 
     await axios
       .get(`${DEV_URL}/api/users/${params.userId}`, {
