@@ -63,11 +63,17 @@ function AreaFilter({ setAreaSelected }: AreaProps) {
   const handleClickArea = (e: React.MouseEvent<HTMLElement>) => {
     setArea((e.target as any).textContent);
     setIsClicked(!isClicked);
-    if (setAreaSelected) setAreaSelected((e.target as any).textContent);
+    if (setAreaSelected) {
+      if ((e.target as any).textContent === '전체') {
+        setAreaSelected('');
+      } else {
+        setAreaSelected((e.target as any).textContent);
+      }
+    }
   };
 
   const areaList: string[] = [
-    '지역',
+    '전체',
     '서울',
     '경기',
     '강원',

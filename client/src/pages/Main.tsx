@@ -4,17 +4,17 @@ import AreaFilter from 'components/AreaFilter';
 import Layout from 'components/Layout';
 import styled from 'styled-components';
 import Bookmark from '../images/Bookmark.svg';
+import Bookmarked from '../images/Bookmarked.svg';
 import QuestionMark from '../images/QuestionMark.svg';
 import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link } from 'react-router-dom';
-import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { useAppSelector } from 'stores/hooks';
 import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { ProgramDetailVal } from 'types/programs';
-import { searchActions } from 'stores/searchSlice';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -118,6 +118,7 @@ const ProgRecruitment = styled.button`
 `;
 const ProgBookmark = styled.button`
   position: absolute;
+  z-index: 1000000;
   right: 0.5rem;
   bottom: 0.5rem;
   border: none;
@@ -140,6 +141,10 @@ const ProgDate = styled.div``;
 const DoneContainer = styled.div`
   padding: 7rem 0;
 `;
+const DoneProgEmptyMsg = styled.div`
+  margin-top: 1rem;
+  font-weight: 300;
+`;
 
 export default function Main() {
   const URL = process.env.REACT_APP_DEV_URL;
@@ -154,9 +159,8 @@ export default function Main() {
   const [page, setPage] = useState<number>(1);
   const [programStatus, setProgramStatus] = useState('모집중');
   const [minKindVal, setMinKindVal] = useState('');
-  const dispatch = useAppDispatch();
-
-  // console.log(searchKeyword); // input값 전역상태에서 가져온거 확인용
+  const [donePrograms, setDonePrograms] = useState<Array<ProgramDetailVal>>([]);
+  const [bookmarked, setBookmarked] = useState<boolean>(false);
 
   /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const loginUserInfo = useAppSelector((state) => state.userInfo);
@@ -180,23 +184,52 @@ export default function Main() {
   useEffect(() => {
     const getProgramList = async () => {
       await axios
-        // .get(`${URL}/api/programs?page=${page}&size=10`, {
-        //   params: REQ_PARAMS,
-        // })
-        .get(`${URL}/api/programs?page=${page}&size=10`)
+        .get(`${URL}/api/programs?page=${page}&size=10`, {
+          params: REQ_PARAMS,
+        })
+        // .get(`${URL}/api/programs?page=${page}&size=10`)
         // .get(
-        //   `${URL}/api/programs?page=1&size=10
+        //   `${URL}/api/programs?page=${page}&size=10
         // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${minKindVal}&programDate=${dateSelected}&programStatus=${programStatus}`
         // )
         .then(({ data }) => {
+          // console.log(data);
           setPrograms(data?.data);
           setPageList(data?.pageInfo);
-          dispatch(searchActions.getKeyword(''));
+          const doneFilter = data?.data.map((el: ProgramDetailVal) => {
+            el.programStatus === '마감';
+          });
+          setDonePrograms(doneFilter);
         })
         .catch((err) => console.log(err.message));
     };
     getProgramList();
-  }, []);
+  }, [
+    searchKeyword,
+    areaSelected,
+    dateSelected,
+    programStatus,
+    minKindVal,
+    bookmarked,
+  ]);
+
+  const handleBookedToggle = (id: number, bookmarkId: number) => {
+    // setBookmarked(!bookmarked);
+    if (bookmarked === false && !bookmarkId) {
+      console.log('booked등록!!');
+      setBookmarked(true);
+      axios
+        .post(`${URL}/api/bookmarks`, { programId: id })
+        .then((res) => console.log(res));
+    }
+    if (bookmarked || bookmarkId) {
+      console.log('booked 삭제');
+      setBookmarked(false);
+      axios
+        .delete(`${URL}/api/bookmarks/${bookmarkId}`)
+        .then((res) => console.log(res.data));
+    }
+  };
 
   return (
     <Layout>
@@ -214,10 +247,7 @@ export default function Main() {
               onChange={(e) => setDateSelected(e.target.value)}
               onFocus={(e) => (e.target.type = 'date')}
             />
-            <LevelRange
-              onClick={() => setLevelOpened(!levelOpened)}
-              onMouseUp={() => setMinKindVal(rangeValue)}
-            >
+            <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
               친절도 &nbsp;{minKindVal}%
               <img src={QuestionMark} alt="question mark" />
               <img src={DownArrow} alt="down arrow" />
@@ -236,6 +266,7 @@ export default function Main() {
                     step={1}
                     onChange={(e) => setRangeValue(e.target.value)}
                     defaultValue={minKindVal}
+                    onMouseUp={() => setMinKindVal(rangeValue)}
                   />
                   <RangeValue>{rangeValue}%</RangeValue>
                 </WrapLevel>
@@ -245,9 +276,9 @@ export default function Main() {
           <ProgContainer>
             {programs &&
               programs?.map((el: any) => (
-                <Link to={`/programs/${el.id}`} key={el.id}>
-                  <ProgItem>
-                    <ProgBanner>
+                <ProgItem key={el.id}>
+                  <ProgBanner>
+                    <Link to={`/programs/${el.id}`} key={el.id}>
                       <ProgRecruitment
                         style={{
                           backgroundColor: `${
@@ -255,7 +286,7 @@ export default function Main() {
                               ? '#38D9A9'
                               : null || el.programStatus === '마감임박'
                               ? '#d22a2a'
-                              : null || el.programStatus === '모집종료'
+                              : null || el.programStatus === '마감'
                               ? 'darkGray'
                               : null
                           }`,
@@ -277,10 +308,18 @@ export default function Main() {
                         alt="program Image"
                         loading="lazy"
                       />
-                      <ProgBookmark>
+                    </Link>
+                    <ProgBookmark
+                      onClick={() => handleBookedToggle(el.id, el.bookmarkId)}
+                    >
+                      {el.bookmarkId !== null ? (
+                        <img src={Bookmarked} alt="bookmarked" />
+                      ) : (
                         <img src={Bookmark} alt="bookmark" />
-                      </ProgBookmark>
-                    </ProgBanner>
+                      )}
+                    </ProgBookmark>
+                  </ProgBanner>
+                  <Link to={`/programs/${el.id}`} key={el.id}>
                     <ProgTitle>
                       [{el.location}] {el.title.slice(0, 16)}...
                     </ProgTitle>
@@ -303,8 +342,8 @@ export default function Main() {
                         일 남음
                       </ProgDate>
                     </ProgWrapper>
-                  </ProgItem>
-                </Link>
+                  </Link>
+                </ProgItem>
               ))}
           </ProgContainer>
           <Pagination list={pageList} page={page} setPage={setPage} />
@@ -312,11 +351,25 @@ export default function Main() {
         <DoneContainer>
           <RecruitText>모집 마감된 모임</RecruitText>
           <ProgContainer>
-            {programs &&
-              programs?.map((el: any) => (
+            {donePrograms[0] !== undefined ? (
+              donePrograms?.map((el: any) => (
                 <ProgItem key={el.id}>
                   <ProgBanner>
-                    <ProgRecruitment>모집종료</ProgRecruitment>
+                    <ProgRecruitment
+                      style={{
+                        backgroundColor: `${
+                          el.programStatus === '모집중'
+                            ? '#38D9A9'
+                            : null || el.programStatus === '마감임박'
+                            ? '#d22a2a'
+                            : null || el.programStatus === '마감'
+                            ? 'darkGray'
+                            : null
+                        }`,
+                      }}
+                    >
+                      {el?.programStatus}
+                    </ProgRecruitment>
                     <img
                       src={
                         el?.programImages.length === 0
@@ -358,7 +411,12 @@ export default function Main() {
                     </ProgDate>
                   </ProgWrapper>
                 </ProgItem>
-              ))}
+              ))
+            ) : (
+              <DoneProgEmptyMsg>
+                &nbsp;&nbsp;마감된 모임이 없습니다
+              </DoneProgEmptyMsg>
+            )}
           </ProgContainer>
         </DoneContainer>
       </WrapContainer>
