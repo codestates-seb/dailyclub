@@ -14,6 +14,7 @@ import NoticeCreate from 'pages/NoticeCreate';
 import ProgDetail from 'pages/ProgDetail';
 import ProgUpdate from 'pages/ProgUpdate';
 import { theme } from 'theme';
+import Hero from 'pages/Hero';
 
 const App: React.FC = () => {
   return (
@@ -23,7 +24,8 @@ const App: React.FC = () => {
         <BrowserRouter>
           <Header />
           <Routes>
-            <Route path="/" element={<Main />} />
+            <Route path="/" element={<Hero />} />
+            <Route path="/programs" element={<Main />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />
             <Route path="/programs/create" element={<ProgCreate />} />

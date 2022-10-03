@@ -28,7 +28,7 @@ function DeleteModal({ setIsDeleteOpen, programId }: DeleteModalProps) {
       })
       .then((res) => {
         setIsDeleteOpen(false);
-        navigate('/');
+        navigate('/programs');
       })
       .catch((err) => {
         setIsDeleteOpen(false);
