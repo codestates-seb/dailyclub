@@ -54,7 +54,7 @@ const SearchBtn = styled.button`
   color: rgba(143, 143, 143, 0.8);
 `;
 const SearchInput = styled.input`
-  width: 300px;
+  width: 200px;
   margin: 0 0.5rem;
   border-radius: 15px;
   font-weight: 300;
@@ -159,6 +159,14 @@ const LogoutBtn = styled.button`
     background-color: #a8ddcb;
   }
 `;
+const HeaderLinkText = styled.div`
+  font-weight: 300;
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 export default function Header() {
   interface NotifyList {
     id: number;
@@ -214,11 +222,18 @@ export default function Header() {
       <HeaderContainer>
         <HeaderContent>
           <LogoContent>
-            <Link to="/programs">
+            <Link to="/">
               <img src={Logo} alt="logo" style={{ height: 55, width: 90 }} />
             </Link>
           </LogoContent>
           <IconContainer>
+            <HeaderLinkText>
+              <Link to="/">홈</Link>
+            </HeaderLinkText>
+            <HeaderLinkText>
+              <Link to="/programs">모임 목록 </Link>
+            </HeaderLinkText>
+
             <SearchForm onSubmit={handelSearchSubmit}>
               <SearchBtn>
                 <img
