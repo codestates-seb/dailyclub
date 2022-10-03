@@ -150,6 +150,7 @@ export const ClubTabTitle = styled.div`
   margin: 2rem 0;
 `;
 export const ClubItem = styled.div`
+  position: relative;
   display: flex;
   width: 90%;
   margin: 0 1.4rem 1.4rem 0;
