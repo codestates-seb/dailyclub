@@ -14,6 +14,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import javax.validation.ConstraintViolationException;
 import java.util.Locale;
@@ -43,6 +45,7 @@ public class GlobalExceptionAdvice {
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     public ErrorResponseDto handleConstraintViolationException(ConstraintViolationException e) {
         log.error("ConstraintViolationException", e);
+        log.info("ConstraintViolations : {}", e.getConstraintViolations());
         return ErrorResponseDto.of(ExceptionCode.INVALID_INPUT_VALUE, e.getConstraintViolations());
     }
 
@@ -54,10 +57,24 @@ public class GlobalExceptionAdvice {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponseDto handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e) {
+        log.info("MaxUploadSizeExceededException = {}0", e.getMessage());
+        return ErrorResponseDto.of(ExceptionCode.EXCEEDED_MAX_UPLOAD_SIZE);
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     public ErrorResponseDto handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         log.info("HttpRequestMethodNotSupportedException = {}", e.getMessage());
         return ErrorResponseDto.of(HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponseDto handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        log.info("MethodArgumentTypeMismatchException = {}", e.getMessage());
+        return ErrorResponseDto.of(ExceptionCode.INVALID_INPUT_VALUE);
     }
 
     @ExceptionHandler

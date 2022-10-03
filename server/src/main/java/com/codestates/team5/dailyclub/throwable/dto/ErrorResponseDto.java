@@ -115,7 +115,7 @@ public class ErrorResponseDto {
             return constraintViolations.stream()
                 .map(constraintViolation -> new ConstraintViolationError(
                     constraintViolation.getPropertyPath().toString(),
-                    constraintViolation.getInvalidValue().toString(),
+                    constraintViolation.getInvalidValue(),
                     constraintViolation.getMessage())
                 )
                 .collect(Collectors.toList());
