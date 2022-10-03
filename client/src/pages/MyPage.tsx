@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import ProgressBar from 'components/ProgressBar';
 import LevelPercent from 'components/LevelPercent';
 import QuestionMark from '../images/QuestionMark.svg';
-import BookMarkTab from 'components/BookMarkTab';
+import BookMarkTab from 'components/Tab/BookMarkTab';
 import MessageTab from 'components/Tab/MessageTab';
 import Pagination from 'pagination/Pagination';
 import { Link, useParams, useNavigate } from 'react-router-dom';
@@ -158,7 +158,7 @@ export const ClubItem = styled.div`
   border-radius: 5px;
 `;
 export const ClubImg = styled.div`
-  border: 0.7px solid gray;
+  /* border: 0.7px solid gray; */
   border-radius: 50%;
   width: 35px;
   height: 30px;
@@ -172,11 +172,13 @@ export const ClubInfo = styled.div`
 export const ClubTitle = styled.div`
   font-size: 0.7rem;
   font-weight: 600;
+  margin-bottom: 0.4rem;
 `;
 export const ClubBody = styled.div`
   font-size: 0.6rem;
   font-weight: 300;
   color: gray;
+  margin-bottom: 0.4rem;
 `;
 export const ClubDate = styled.div`
   font-size: 0.6rem;

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
   ClubTabTitle,
   ClubContainer,
@@ -8,7 +9,9 @@ import {
   ClubItem,
   ClubTitle,
 } from 'pages/MyPage';
-import React from 'react';
+import Pagination from 'pagination/Pagination';
+import React, { useEffect, useState } from 'react';
+import BasicImg from '../../images/BasicImg.jpg';
 
 function BookMarkTab() {
   interface ProgProps {
@@ -68,22 +71,54 @@ function BookMarkTab() {
       content: '내용이다 아이유 콘서트',
     },
   ];
+  const URL = process.env.REACT_APP_DEV_URL;
+  const [bookmarkPage, setBookmarkPage] = useState(1);
+  const [bookmarkPageList, setBookmarkPageList] = useState();
+  const [bookmarkList, setBookmarkList] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`${URL}/api/bookmarks?page=${bookmarkPage}&size=10`)
+      .then(({ data }) => {
+        console.log(data);
+        setBookmarkList(data?.data);
+        setBookmarkPageList(data?.pageInfo);
+      });
+  }, []);
 
   return (
     <div>
       <ClubTabTitle>북마크 중인 모임</ClubTabTitle>
       <ClubContainer>
-        {programList.map((el) => (
-          <ClubItem key={el.id}>
-            <ClubImg></ClubImg>
-            <ClubInfo>
-              <ClubTitle>{el.title}</ClubTitle>
-              <ClubBody>{el.content}</ClubBody>
-              <ClubDate>{el.date}</ClubDate>
-            </ClubInfo>
-          </ClubItem>
-        ))}
+        {bookmarkList &&
+          bookmarkList?.map((el: any) => (
+            <ClubItem key={el.id}>
+              <ClubImg>
+                <img
+                  src={
+                    el?.program?.programImages?.length === 0
+                      ? BasicImg
+                      : `data:${el?.program?.programImages[0].contentType};base64,${el?.program?.programImages[0].bytes}`
+                  }
+                  alt="basicImg"
+                  style={{ height: 40, width: 40, borderRadius: 50 }}
+                  loading="lazy"
+                />
+              </ClubImg>
+              <ClubInfo>
+                <ClubTitle>
+                  [{el?.program?.location}] {el?.program?.title}
+                </ClubTitle>
+                <ClubBody>{el?.program?.text}</ClubBody>
+                <ClubDate>{el?.program?.programDate}</ClubDate>
+              </ClubInfo>
+            </ClubItem>
+          ))}
       </ClubContainer>
+      <Pagination
+        list={bookmarkPageList}
+        page={bookmarkPage}
+        setPage={setBookmarkPage}
+      />
     </div>
   );
 }
