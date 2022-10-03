@@ -6,10 +6,13 @@ import LevelPercent from 'components/LevelPercent';
 import QuestionMark from '../images/QuestionMark.svg';
 import BookMarkTab from 'components/BookMarkTab';
 import MessageTab from 'components/Tab/MessageTab';
+import Pagination from 'pagination/Pagination';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import ProfileSvg from '../images/Profile.svg';
 import axios from 'axios';
 import { UserVal, SignUpVal } from 'types/user';
+import { ApplyListVal, PaginationVal, ProgramDetailVal } from 'types/programs';
+import { setSourceMapRange } from 'typescript';
 import ImgDeleteBtnSvg from '../images/ImgDeleteBtn.svg';
 import { ImgDeleteBtn } from './ProgUpdate';
 
@@ -254,6 +257,9 @@ function MyPage() {
   const DEV_URL = process.env.REACT_APP_DEV_URL;
   const params = useParams();
   const navigate = useNavigate();
+  const [programs, setPrograms] = useState<Array<ApplyListVal>>([]);
+  const [opens, setOpens] = useState<Array<ProgramDetailVal>>([]);
+  const [page, setPage] = useState<number>(1);
 
   // 회원정보조회
   const [data, setData] = useState<UserVal>();
@@ -301,6 +307,34 @@ function MyPage() {
     }
   };
 
+  // 신청한 프로그램 리스트
+  const [pageList, setPageList] = useState<PaginationVal>();
+  useEffect(() => {
+    const getApplyList = async () => {
+      await axios
+        .get(`${DEV_URL}/api/applies/mypage?page=${page}&size=4&userId=${params.userId}`)
+        .then((res) => {
+          setPrograms(res.data.data);
+          setPageList(res.data.pageInfo);
+      });
+  }
+  getApplyList();
+  }, []);
+
+  // 개설한 프로그램 리스트
+  const [openList, setOpenList] = useState<PaginationVal>();
+  useEffect(() => {
+    const getOpenList = async () => {
+      await axios
+        .get(`${DEV_URL}/api/programs/mypage?page=${page}&size=4&userId=${params.userId}`)
+        .then((res) => {
+          setOpens(res.data.data);
+          setOpenList(res.data.pageInfo)
+        });
+    }
+    getOpenList();
+  }, []);
+
   const [currentTab, setCurrentTab] = useState<number>(0);
   const menuArr = [
     {
@@ -309,30 +343,36 @@ function MyPage() {
         <div>
           <ClubTabTitle>참여 중인 모임</ClubTabTitle>
           <ClubContainer>
-            {programList.map((el) => (
-              <ClubItem key={el.id}>
-                <ClubImg></ClubImg>
-                <ClubInfo>
-                  <ClubTitle>{el.title}</ClubTitle>
-                  <ClubBody>{el.content}</ClubBody>
-                  <ClubDate>{el.date}</ClubDate>
-                </ClubInfo>
-              </ClubItem>
+            {programs?.map((el: any) => (
+              <Link to={`/programs/${el?.program.id}`} key={el?.program.id}>
+                <ClubItem key={el?.id}>
+                  <ClubImg></ClubImg>
+                  <ClubInfo>
+                    <ClubTitle>{el?.program.title}</ClubTitle>
+                    <ClubBody>{el?.program.text}</ClubBody>
+                    <ClubDate>{el?.program.programDate} {el?.program.programStatus}</ClubDate>
+                  </ClubInfo>
+                </ClubItem>
+              </Link>
             ))}
           </ClubContainer>
+          <Pagination list={pageList} page={page} setPage={setPage} />
           <ClubTabTitle>개설한 모임</ClubTabTitle>
           <ClubContainer>
-            {programList.map((el) => (
-              <ClubItem key={el.id}>
-                <ClubImg></ClubImg>
-                <ClubInfo>
-                  <ClubTitle>{el.title}</ClubTitle>
-                  <ClubBody>{el.content}</ClubBody>
-                  <ClubDate>{el.date}</ClubDate>
-                </ClubInfo>
-              </ClubItem>
+            {opens?.map((el: any) => (
+              <Link to={`/programs/${el?.id}`} key={el?.id}>
+                <ClubItem key={el?.id}>
+                  <ClubImg></ClubImg>
+                  <ClubInfo>
+                    <ClubTitle>{el?.title}</ClubTitle>
+                    <ClubBody>{el?.text}</ClubBody>
+                    <ClubDate>{el?.programDate} {el?.programStatus}</ClubDate>
+                  </ClubInfo>
+                </ClubItem>
+              </Link>
             ))}
           </ClubContainer>
+          <Pagination list={openList} page={page} setPage={setPage} />
         </div>
       ),
     },
