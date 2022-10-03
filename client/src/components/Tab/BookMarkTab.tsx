@@ -15,6 +15,8 @@ import {
 import Pagination from 'pagination/Pagination';
 import BasicImg from '../../images/BasicImg.jpg';
 import Bookmarked from '../../images/Bookmarked.svg';
+import { compareWithToday } from 'utils/compareWithToday';
+import { byteToBase64 } from 'utils/byteToBase64';
 
 const ClubBookmarkBtn = styled.button`
   position: absolute;
@@ -22,6 +24,18 @@ const ClubBookmarkBtn = styled.button`
   top: -1px;
   border: none;
   background-color: transparent;
+`;
+export const DoneMsg = styled.div`
+  position: absolute;
+  top: 1.2rem;
+  left: 1.2rem;
+  padding: 0.85rem 0.55rem;
+  color: white;
+  font-weight: 300;
+  font-size: 0.8rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 `;
 
 function BookMarkTab() {
@@ -66,12 +80,32 @@ function BookMarkTab() {
                     src={
                       el?.program?.programImages?.length === 0
                         ? BasicImg
-                        : `data:${el?.program?.programImages[0].contentType};base64,${el?.program?.programImages[0].bytes}`
+                        : byteToBase64(
+                            el?.program?.programImages[0]?.contentType,
+                            el?.program?.programImages[0]?.bytes
+                          )
                     }
                     alt="basicImg"
-                    style={{ height: 40, width: 40, borderRadius: 50 }}
+                    style={{
+                      height: 40,
+                      width: 40,
+                      borderRadius: 50,
+                    }}
                     loading="lazy"
                   />
+                  <DoneMsg
+                    style={{
+                      backgroundColor:
+                        compareWithToday(el?.program?.programDate) ===
+                        '모임종료'
+                          ? 'rgba(81, 81, 81, 0.469)'
+                          : 'none',
+                    }}
+                  >
+                    {compareWithToday(el?.program?.programDate) === '모임종료'
+                      ? '종료'
+                      : null}
+                  </DoneMsg>
                 </ClubImg>
               </Link>
               <Link to={`/programs/${el?.program?.id}`}>
@@ -80,7 +114,10 @@ function BookMarkTab() {
                     [{el?.program?.location}] {el?.program?.title.slice(0, 16)}
                   </ClubTitle>
                   <ClubBody>{el?.program?.text.slice(0, 18)}</ClubBody>
-                  <ClubDate>{el?.program?.programDate}</ClubDate>
+                  <ClubDate>
+                    {el?.program?.programDate} &nbsp;&nbsp;
+                    {compareWithToday(el?.program?.programDate)}
+                  </ClubDate>
                 </ClubInfo>
               </Link>
             </ClubItem>
