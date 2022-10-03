@@ -3,6 +3,7 @@ import LevelPercent from 'components/LevelPercent';
 import styled from 'styled-components';
 import User from '../images/User.svg';
 import Bookmark from '../images/BookmarkBtn.svg';
+import Bookmarked from '../images/Bookmarked.svg';
 import Calendar from '../images/Calendar.svg';
 import Loc from '../images/Location.svg';
 import Info from '../images/Info.svg';
@@ -258,6 +259,8 @@ export default function ProgDetail() {
   const [data, setData] = useState<ProgramDetailVal>();
   const [progImg, setProgImg] = useState<string>('');
   const [applyList, setApplyList] = useState<Array<ApplyListVal>>([]);
+  const [detailBookmarked, setDetailBookmarked] = useState<boolean>(false);
+  const [detailBookmarkId, setDetailBookmarkId] = useState<any>(null);
 
   const [pageList, setPageList] = useState<PaginationVal>();
   const [page, setPage] = useState<number>(1);
@@ -269,7 +272,6 @@ export default function ProgDetail() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const { userId } = useAppSelector((state) => state.userInfo);
-
   const navigate = useNavigate();
 
   const applyMemberfilter = applyList.filter((el) => {
@@ -282,6 +284,7 @@ export default function ProgDetail() {
       await axios
         .get(`${DEV_URL}/api/programs/${params.programId}`)
         .then((res) => {
+          console.log(res.data); //
           setData(res.data);
           if (res.data.programImages.length === 0) {
             setProgImg(BasicImg);
@@ -289,6 +292,13 @@ export default function ProgDetail() {
             setProgImg(
               `data:${res.data.programImages[0].contentType};base64,${res.data.programImages[0].bytes}`
             );
+          }
+          if (res.data?.bookmarkId === null) {
+            setDetailBookmarked(false);
+            setDetailBookmarkId(null);
+          } else {
+            setDetailBookmarked(true);
+            setDetailBookmarkId(res.data?.bookmarkId);
           }
         });
     };
@@ -307,6 +317,27 @@ export default function ProgDetail() {
     getProgramDetail();
     getApplyList();
   }, [page]);
+
+  const handleBookmarkedToggle = async () => {
+    setDetailBookmarked(!detailBookmarked);
+
+    if (detailBookmarked === false && detailBookmarkId === null) {
+      await axios
+        .post(`${DEV_URL}/api/bookmarks`, { programId: data?.id })
+        .then(({ data }) => {
+          // console.log('북마크 등록', data);
+          setDetailBookmarkId(data.id);
+        });
+    }
+    if (detailBookmarked === true && detailBookmarkId) {
+      await axios
+        .delete(`${DEV_URL}/api/bookmarks/${detailBookmarkId}`)
+        .then(() => {
+          // console.log('북마크 삭제');
+          setDetailBookmarkId(null);
+        });
+    }
+  };
 
   return (
     <>
@@ -434,13 +465,21 @@ export default function ProgDetail() {
                   </>
                 ) : applyMemberfilter.length !== 0 ? (
                   <>
-                    <BookmarkBtn>
+                    <BookmarkBtn onClick={handleBookmarkedToggle}>
                       <Icon>
-                        <img
-                          src={Bookmark}
-                          alt="logo"
-                          style={{ height: 25, width: 25 }}
-                        />
+                        {detailBookmarked ? (
+                          <img
+                            src={Bookmarked}
+                            alt="logo"
+                            style={{ height: 25, width: 25 }}
+                          />
+                        ) : (
+                          <img
+                            src={Bookmark}
+                            alt="logo"
+                            style={{ height: 25, width: 25 }}
+                          />
+                        )}
                       </Icon>
                     </BookmarkBtn>
 
