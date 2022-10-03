@@ -3,6 +3,7 @@ import Layout from 'components/Layout';
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { getToday } from 'utils/getToday';
 
 const CreateContainer = styled.div`
   width: 100%;
@@ -200,14 +201,6 @@ function ProgCreate() {
   const [minkind, setMinKind] = useState<string>('50');
   const [imagePreview, setImagePreview] = useState('');
 
-  const year = new Date().getFullYear();
-  const month = new Date().getMonth() + 1;
-  const date = new Date().getDate();
-
-  const today = `${year}-${month >= 10 ? month : '0' + month}-${
-    date >= 10 ? date : '0' + date
-  }`;
-
   const DEV_URL = process.env.REACT_APP_DEV_URL;
   const firstRef = useRef<any>(null);
   const secondRef = useRef<any>(null); //focus 처리시 에러
@@ -338,7 +331,7 @@ function ProgCreate() {
               <RecruitInput
                 type="date"
                 name="date"
-                min={today}
+                min={getToday()}
                 onChange={handleProgramDate}
                 required
               />

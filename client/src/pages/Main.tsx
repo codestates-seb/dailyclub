@@ -15,6 +15,7 @@ import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { ProgramDetailVal } from 'types/programs';
+import { getToday } from 'utils/getToday';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -161,6 +162,7 @@ export default function Main() {
   const [minKindVal, setMinKindVal] = useState('');
   const [donePrograms, setDonePrograms] = useState<Array<ProgramDetailVal>>([]);
   const [bookmarked, setBookmarked] = useState<boolean>(false);
+  const [bookmarkedId, setBookmarkedId] = useState<any>(null);
 
   /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const loginUserInfo = useAppSelector((state) => state.userInfo);
@@ -187,13 +189,8 @@ export default function Main() {
         .get(`${URL}/api/programs?page=${page}&size=10`, {
           params: REQ_PARAMS,
         })
-        // .get(`${URL}/api/programs?page=${page}&size=10`)
-        // .get(
-        //   `${URL}/api/programs?page=${page}&size=10
-        // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${minKindVal}&programDate=${dateSelected}&programStatus=${programStatus}`
-        // )
         .then(({ data }) => {
-          // console.log(data);
+          // console.log(data?.data);
           setPrograms(data?.data);
           setPageList(data?.pageInfo);
           const doneFilter = data?.data.map((el: ProgramDetailVal) => {
@@ -213,22 +210,29 @@ export default function Main() {
     bookmarked,
   ]);
 
-  const handleBookedToggle = (id: number, bookmarkId: number) => {
-    // setBookmarked(!bookmarked);
-    if (bookmarked === false && !bookmarkId) {
-      console.log('booked등록!!');
-      setBookmarked(true);
-      axios
-        .post(`${URL}/api/bookmarks`, { programId: id })
-        .then((res) => console.log(res));
-    }
-    if (bookmarked || bookmarkId) {
-      console.log('booked 삭제');
+  const handleBookedToggle = async (id: number, bookmarkId: number) => {
+    if (bookmarkId === null) {
       setBookmarked(false);
-      axios
-        .delete(`${URL}/api/bookmarks/${bookmarkId}`)
-        .then((res) => console.log(res.data));
+      setBookmarkedId(null);
+    } else {
+      setBookmarked(true);
+      setBookmarkedId(bookmarkId);
     }
+    if (bookmarked === false && bookmarkedId === null) {
+      await axios
+        .post(`${URL}/api/bookmarks`, { programId: id })
+        .then(({ data }) => {
+          setBookmarkedId(data.id);
+          // console.log('북마크 등록 :', data);
+        });
+    }
+    if (bookmarked === true && bookmarkedId && bookmarkId) {
+      await axios.delete(`${URL}/api/bookmarks/${bookmarkId}`).then(() => {
+        setBookmarkedId(null);
+        // console.log('북마크 삭제', bookmarked, bookmarkedId);
+      });
+    }
+    setBookmarked(!bookmarked);
   };
 
   return (
@@ -246,6 +250,7 @@ export default function Main() {
               onBlur={(e) => (e.target.type = 'text')}
               onChange={(e) => setDateSelected(e.target.value)}
               onFocus={(e) => (e.target.type = 'date')}
+              min={getToday()}
             />
             <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
               친절도 &nbsp;{minKindVal}%
