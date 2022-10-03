@@ -284,7 +284,6 @@ export default function ProgDetail() {
       await axios
         .get(`${DEV_URL}/api/programs/${params.programId}`)
         .then((res) => {
-          console.log(res.data); //
           setData(res.data);
           if (res.data.programImages.length === 0) {
             setProgImg(BasicImg);

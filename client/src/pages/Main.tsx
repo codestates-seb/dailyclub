@@ -161,6 +161,7 @@ export default function Main() {
   const [minKindVal, setMinKindVal] = useState('');
   const [donePrograms, setDonePrograms] = useState<Array<ProgramDetailVal>>([]);
   const [bookmarked, setBookmarked] = useState<boolean>(false);
+  const [bookmarkedId, setBookmarkedId] = useState<any>(null);
 
   /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const loginUserInfo = useAppSelector((state) => state.userInfo);
@@ -193,7 +194,7 @@ export default function Main() {
         // &keyword=${searchKeyword}&location=${areaSelected}&minKind=${minKindVal}&programDate=${dateSelected}&programStatus=${programStatus}`
         // )
         .then(({ data }) => {
-          // console.log(data);
+          console.log(data?.data);
           setPrograms(data?.data);
           setPageList(data?.pageInfo);
           const doneFilter = data?.data.map((el: ProgramDetailVal) => {
@@ -213,23 +214,30 @@ export default function Main() {
     bookmarked,
   ]);
 
-  const handleBookedToggle = (id: number, bookmarkId?: number) => {
-    // console.log('booked :', bookmarked, bookmarkId);
-
-    if (bookmarked === false && !bookmarkId) {
-      setBookmarked(true);
-      console.log('booked 등록!!', bookmarked, bookmarkId);
-      axios
-        .post(`${URL}/api/bookmarks`, { programId: id })
-        .then(({ data }) => console.log(data));
-    }
-    if (bookmarked === true && bookmarkId) {
+  const handleBookedToggle = async (id: number, bookmarkId: number) => {
+    if (bookmarkId === null) {
       setBookmarked(false);
-      console.log('booked 삭제', bookmarked, bookmarkId);
-      axios
-        .delete(`${URL}/api/bookmarks/${bookmarkId}`)
-        .then((res) => console.log(res.data));
+      setBookmarkedId(null);
+    } else {
+      setBookmarked(true);
+      setBookmarkedId(bookmarkId);
     }
+    // console.log(id, '전 :', bookmarked, bookmarkedId);
+    if (bookmarked === false && bookmarkedId === null) {
+      await axios
+        .post(`${URL}/api/bookmarks`, { programId: id })
+        .then(({ data }) => {
+          setBookmarkedId(data.id);
+          // console.log('북마크 등록 :', data);
+        });
+    }
+    if (bookmarked === true && bookmarkedId && bookmarkId) {
+      await axios.delete(`${URL}/api/bookmarks/${bookmarkId}`).then(() => {
+        setBookmarkedId(null);
+        // console.log('북마크 삭제', bookmarked, bookmarkedId);
+      });
+    }
+    setBookmarked(!bookmarked);
   };
 
   return (
