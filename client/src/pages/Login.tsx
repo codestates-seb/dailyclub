@@ -63,7 +63,6 @@ export default function Login() {
         // API 요청마다 헤더에 access토큰 담아서 요청보내는 설정
         axios.defaults.headers.common['Authorization'] = `${accessToken}`;
         // axios.defaults.headers.common['Refresh'] = `${refreshToken}`;
-        navigate('/');
 
         //JWT디코딩해서 userId, loginId 등 전역상태
         const decodedAccess = parseJwt(accessToken);
@@ -71,7 +70,10 @@ export default function Login() {
         dispatch(fetchUserInfo(decodedAccess.id)); // 로그인유저정보 전역상태에 저장
         // console.log('토큰해부', decodedAccess);
       })
-      .catch((error) => console.log(error));
+      .then((res) => {
+        navigate('/');
+      })
+      .catch((error) => alert('ID와 비밀번호가 일치하지 않습니다.'));
   };
 
   return (

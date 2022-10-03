@@ -229,9 +229,11 @@ function ProgCreate() {
       url: `${DEV_URL}/api/programs`,
       headers: { 'Content-Type': 'multipart/form-data' },
       data: formData,
-    }).then((res) => {
-      navigate(`/programs/${res.data.id}`);
-    });
+    })
+      .then((res) => {
+        navigate(`/programs/${res.data.id}`);
+      })
+      .catch((error) => alert(error.response.data.fieldErrors[0].reason));
   };
 
   //제목인풋에서 엔터누를시 프로그램 설명 인풋으로 포커즈
@@ -286,7 +288,7 @@ function ProgCreate() {
             {/* 제목 인풋입니다 */}
             <TitleInput
               type="text"
-              placeholder="제목을 입력해주세요."
+              placeholder="제목을 입력해주세요. (5 글자 이상 30 글자 이하)"
               name="title"
               ref={firstRef}
               onKeyUp={handleInput}
@@ -318,7 +320,8 @@ function ProgCreate() {
               {/* 모집인원 인풋입니다 */}
               <RecruitInput
                 type="number"
-                min="2"
+                min="1"
+                max="100"
                 name="people"
                 onChange={handleNumofRecruits}
                 required

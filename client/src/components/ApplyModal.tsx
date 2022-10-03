@@ -46,6 +46,7 @@ function ApplyModal({
       })
       .catch((err) => {
         setIsApplyOpen(false);
+        alert(err.response.data.message);
       });
 
     await axios

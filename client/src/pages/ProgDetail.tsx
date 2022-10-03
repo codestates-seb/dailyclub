@@ -21,6 +21,7 @@ import ApplyModal from 'components/ApplyModal';
 import MessageModal from 'components/MessageModal';
 import DeleteModal from 'components/DeleteModal';
 import CancelModal from 'components/CancelModal';
+import ProgressBar from 'components/ProgressBar';
 
 const ProgPageDetail = styled.div`
   max-width: 1200px;
@@ -387,6 +388,10 @@ export default function ProgDetail() {
                         </div>
                         <LevelPercent percent={el.user.kind}></LevelPercent>
                       </KindWrap>
+                      <ProgressBar
+                        currentPerson={el.user.kind}
+                        totalPerson={100}
+                      />
                       <ApplyDate>{el.createdTime} 신청</ApplyDate>
                     </MemItemWrap2>
                   </MemItem>
@@ -557,6 +562,11 @@ export default function ProgDetail() {
                   percent={data?.writer.kind}
                 ></LevelPercent>
               </KindWrap>
+              <ProgressBar
+                //@ts-ignore
+                currentPerson={data?.writer.kind}
+                totalPerson={100}
+              />
               <SendMsgBtn
                 onClick={() => {
                   setIsMessageOpen(true);

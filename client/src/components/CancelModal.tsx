@@ -36,6 +36,10 @@ function CancelModal({
       })
       .then((res) => {
         setIsCancelOpen(false);
+      })
+      .catch((err) => {
+        setIsCancelOpen(false);
+        console.log(err);
       });
 
     await axios
