@@ -122,7 +122,7 @@ const ProgApply = styled.button`
 const ProgUpdateBtn = styled.button`
   background-color: #ff5100;
   color: white;
-  width: 48%;
+  width: 35%;
   padding: 10px 0;
   border: none;
   border-radius: 5px;
@@ -133,7 +133,7 @@ const ProgUpdateBtn = styled.button`
 const ProgDeleteBtn = styled.button`
   background-color: black;
   color: white;
-  width: 48%;
+  width: 35%;
   padding: 10px 0;
   border: none;
   border-radius: 5px;
@@ -448,6 +448,23 @@ export default function ProgDetail() {
               <BtnWrap>
                 {userId === data?.writer.id ? (
                   <>
+                    <BookmarkBtn onClick={handleBookmarkedToggle}>
+                      <Icon>
+                        {detailBookmarked ? (
+                          <img
+                            src={Bookmarked}
+                            alt="logo"
+                            style={{ height: 25, width: 25 }}
+                          />
+                        ) : (
+                          <img
+                            src={Bookmark}
+                            alt="logo"
+                            style={{ height: 25, width: 25 }}
+                          />
+                        )}
+                      </Icon>
+                    </BookmarkBtn>
                     <ProgUpdateBtn
                       onClick={() => {
                         navigate(`/programs/${params.programId}/update`);
