@@ -213,18 +213,19 @@ export default function Main() {
     bookmarked,
   ]);
 
-  const handleBookedToggle = (id: number, bookmarkId: number) => {
-    // setBookmarked(!bookmarked);
+  const handleBookedToggle = (id: number, bookmarkId?: number) => {
+    // console.log('booked :', bookmarked, bookmarkId);
+
     if (bookmarked === false && !bookmarkId) {
-      console.log('booked등록!!');
       setBookmarked(true);
+      console.log('booked 등록!!', bookmarked, bookmarkId);
       axios
         .post(`${URL}/api/bookmarks`, { programId: id })
-        .then((res) => console.log(res));
+        .then(({ data }) => console.log(data));
     }
-    if (bookmarked || bookmarkId) {
-      console.log('booked 삭제');
+    if (bookmarked === true && bookmarkId) {
       setBookmarked(false);
+      console.log('booked 삭제', bookmarked, bookmarkId);
       axios
         .delete(`${URL}/api/bookmarks/${bookmarkId}`)
         .then((res) => console.log(res.data));
