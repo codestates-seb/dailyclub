@@ -10,7 +10,8 @@ import Pagination from 'pagination/Pagination';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import ProfileSvg from '../images/Profile.svg';
 import axios from 'axios';
-import { UserVal, SignUpVal } from 'types/user';
+import { useAppSelector } from 'stores/hooks';
+import { UserVal } from 'types/user';
 import { ApplyListVal, PaginationVal, ProgramDetailVal } from 'types/programs';
 import ImgDeleteBtnSvg from '../images/ImgDeleteBtn.svg';
 import { ImgDeleteBtn } from './ProgUpdate';
@@ -67,6 +68,22 @@ const ProfileUpdateBtn = styled.button`
   border-radius: 5px;
   color: #ff5924;
   margin-bottom: 1rem;
+`;
+
+const SendMsgBtn = styled.button`
+  width: 10rem;
+  height: 2rem;
+  border: 1px solid #e2e6e8;
+  border-radius: 5px;
+  color: #ff5924;
+  margin-bottom: 1rem;
+`;
+
+const SendMsg = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: lighter;
 `;
 
 const KindWrap = styled.div`
@@ -221,6 +238,7 @@ function MyPage() {
   const [opens, setOpens] = useState<Array<ProgramDetailVal>>([]);
   const [page, setPage] = useState<number>(1);
   const dispatch = useAppDispatch();
+  const { userId } = useAppSelector((state) => state.userInfo);
 
   // 회원정보조회
   const [data, setData] = useState<UserVal>();
@@ -443,10 +461,145 @@ function MyPage() {
       ),
     },
   ];
+  // others user
+  const menuArr2 = [
+     {
+      name: `${data?.nickname}의 모임`,
+      content: (
+        <div>
+          <ClubTabTitle>참여 중인 모임</ClubTabTitle>
+          <ClubContainer>
+            {programs?.map((el: any) => (
+              <ClubItem key={el?.id}>
+                <Link to={`/programs/${el?.program.id}`} key={el?.program.id}>
+                  <CardLeftWrapper>
+                    <ClubImg>
+                      <img
+                        src={
+                          el?.program?.programImages?.length === 0
+                            ? BasicImg
+                            : byteToBase64(
+                                el?.program?.programImages[0]?.contentType,
+                                el?.program?.programImages[0]?.bytes
+                              )
+                        }
+                        alt="basicImg"
+                        style={{
+                          height: 40,
+                          width: 40,
+                          borderRadius: 50,
+                        }}
+                        loading="lazy"
+                      />
+                    </ClubImg>
+                    <DoneMsg
+                      style={{
+                        backgroundColor:
+                          compareWithToday(el?.program?.programDate) ===
+                          '모임종료'
+                            ? 'rgba(81, 81, 81, 0.469)'
+                            : 'none',
+                      }}
+                    >
+                      {compareWithToday(el?.program?.programDate) === '모임종료'
+                        ? '종료'
+                        : null}
+                    </DoneMsg>
+                    <ClubInfo>
+                      <ClubTitle>{el?.program.title}</ClubTitle>
+                      <ClubBody>{el?.program.text}</ClubBody>
+                      <ClubDate>
+                        {el?.program.programDate}{' '}
+                        {compareWithToday(el?.program?.programDate)}
+                      </ClubDate>
+                    </ClubInfo>
+                  </CardLeftWrapper>
+                </Link>
+                {compareWithToday(el?.programDate) === '모임종료' ? (
+                  <ReviewBtn onClick={() => handleReviewOpen(el?.id)}>
+                    리뷰작성
+                  </ReviewBtn>
+                ) : null}
+              </ClubItem>
+            ))}
+          </ClubContainer>
+          <Pagination list={pageList} page={page} setPage={setPage} />
+          <ClubTabTitle>개설한 모임</ClubTabTitle>
+          <ClubContainer>
+            {opens?.map((el: any) => (
+              <ClubItem key={el?.id}>
+                <Link to={`/programs/${el?.id}`} key={el?.id}>
+                  <CardLeftWrapper>
+                    <ClubImg>
+                      {' '}
+                      <img
+                        src={
+                          el?.programImages?.length === 0
+                            ? BasicImg
+                            : byteToBase64(
+                                el?.programImages[0]?.contentType,
+                                el?.programImages[0]?.bytes
+                              )
+                        }
+                        alt="basicImg"
+                        style={{
+                          height: 40,
+                          width: 40,
+                          borderRadius: 50,
+                        }}
+                        loading="lazy"
+                      />
+                    </ClubImg>
+                    <DoneMsg
+                      style={{
+                        backgroundColor:
+                          compareWithToday(el?.programDate) === '모임종료'
+                            ? 'rgba(81, 81, 81, 0.469)'
+                            : 'none',
+                      }}
+                    >
+                      {compareWithToday(el?.programDate) === '모임종료'
+                        ? '종료'
+                        : null}
+                    </DoneMsg>
+                    <ClubInfo>
+                      <ClubTitle>{el?.title}</ClubTitle>
+                      <ClubBody>{el?.text}</ClubBody>
+                      <ClubDate>
+                        {el?.programDate} {compareWithToday(el?.programDate)}
+                      </ClubDate>
+                    </ClubInfo>
+                  </CardLeftWrapper>
+                </Link>
+                {compareWithToday(el?.programDate) === '모임종료' ? (
+                  <ReviewBtn onClick={() => handleReviewOpen(el?.id)}>
+                    리뷰작성
+                  </ReviewBtn>
+                ) : null}
+              </ClubItem>
+            ))}
+          </ClubContainer>
+          <Pagination list={openList} page={page} setPage={setPage} />
+        </div>
+      ),
+    },
+  ];
+
   const selectMenuHandler = (index: number) => {
     setCurrentTab(index);
   };
   const menuTab = menuArr.map((el, index) => (
+    <li
+      key={index}
+      onClick={() => selectMenuHandler(index)}
+      className={currentTab === index ? 'submenu focused' : 'submenu'}
+    >
+      {el.name}
+    </li>
+  ));
+
+  // others user
+  const menuTab2 = menuArr2.map((el, index) => (
     <li
       key={index}
       onClick={() => selectMenuHandler(index)}
@@ -518,101 +671,156 @@ function MyPage() {
 
   return (
     <Layout>
-      <MyPageContainer>
-        {/* 프로필 부분 - 정석 */}
-        <Profile>
-          <ProfileWrap>
-            {isUpdateMode ? (
-              <>
-                {orgImg ? (
-                  <UpdateImageLabel htmlFor="file">
-                    <OrgImage src={orgImg} alt="profile" />
-                    <ImgDeleteBtn onClick={handleDeleteImg}>
-                      <img src={ImgDeleteBtnSvg} alt="delete" />
-                    </ImgDeleteBtn>
-                  </UpdateImageLabel>
-                ) : (
-                  <UpdateImageLabel htmlFor="file">
-                    프로필 사진 변경
-                    <ImgDeleteBtn onClick={handleDeleteImg}>
-                      <img src={ImgDeleteBtnSvg} alt="delete" />
-                    </ImgDeleteBtn>
-                  </UpdateImageLabel>
-                )}
-                <UpdateImageInput
-                  id="file"
-                  type="file"
-                  name="avatar"
-                  accept="image/*"
-                  onChange={handleImage}
-                ></UpdateImageInput>
-                <UpdateInput
-                  type="text"
-                  defaultValue={nickname}
-                  onChange={(e) => {
-                    setNickname(e.target.value);
-                  }}
-                ></UpdateInput>
-                <UpdateInput
-                  type="text"
-                  defaultValue={introduction}
-                  onChange={(e) => {
-                    setIntroduction(e.target.value);
-                  }}
-                ></UpdateInput>
-                <ProfileUpdateBtn onClick={profileUpdate}>
-                  수정완료
-                </ProfileUpdateBtn>
-              </>
-            ) : (
-              <>
-                <ProfileImage>
-                  {!orgImg ? (
-                    <img
-                      src={ProfileSvg}
-                      alt="profile"
-                      style={{ height: 100, width: 100 }}
-                    />
+      {userId === data?.id ? (
+        <MyPageContainer>
+          {/* 프로필 부분 - 정석 */}
+          <Profile>
+            <ProfileWrap>
+              {isUpdateMode ? (
+                <>
+                  {orgImg ? (
+                    <UpdateImageLabel htmlFor="file">
+                      <OrgImage src={orgImg} alt="profile" />
+                      <ImgDeleteBtn onClick={handleDeleteImg}>
+                        <img src={ImgDeleteBtnSvg} alt="delete" />
+                      </ImgDeleteBtn>
+                    </UpdateImageLabel>
                   ) : (
-                    <img
-                      src={orgImg}
-                      style={{ height: 100, width: 100, borderRadius: 50 }}
-                    />
+                    <UpdateImageLabel htmlFor="file">
+                      프로필 사진 변경
+                      <ImgDeleteBtn onClick={handleDeleteImg}>
+                        <img src={ImgDeleteBtnSvg} alt="delete" />
+                      </ImgDeleteBtn>
+                    </UpdateImageLabel>
                   )}
-                </ProfileImage>
-                <ProfileNickname>{data?.nickname}</ProfileNickname>
-                <ProfileIntro>{data?.introduction}</ProfileIntro>
-                <ProfileUpdateBtn onClick={handleUpdateMode}>
-                  프로필 수정
-                </ProfileUpdateBtn>
-              </>
-            )}
-            <KindWrap>
-              <div>
-                친절도 &nbsp;
-                <img src={QuestionMark} alt="question mark" />
-              </div>
-              <LevelPercent percent={data?.kind}></LevelPercent>
-            </KindWrap>
-            <ProgressBar
-              currentPerson={data?.kind}
-              totalPerson={100}
-            ></ProgressBar>
-            <UserWrapBtn>
-              <WithdrawalBtn onClick={handleUserDelete}>회원탈퇴</WithdrawalBtn>
-              <LogoutBtn onClick={handleMyPageLogout}>로그아웃</LogoutBtn>
-            </UserWrapBtn>
-          </ProfileWrap>
-        </Profile>
+                  <UpdateImageInput
+                    id="file"
+                    type="file"
+                    name="avatar"
+                    accept="image/*"
+                    onChange={handleImage}
+                  ></UpdateImageInput>
+                  <UpdateInput
+                    type="text"
+                    defaultValue={nickname}
+                    onChange={(e) => {
+                      setNickname(e.target.value);
+                    }}
+                  ></UpdateInput>
+                  <UpdateInput
+                    type="text"
+                    defaultValue={introduction}
+                    onChange={(e) => {
+                      setIntroduction(e.target.value);
+                    }}
+                  ></UpdateInput>
+                  <ProfileUpdateBtn onClick={profileUpdate}>
+                    수정완료
+                  </ProfileUpdateBtn>
+                </>
+              ) : (
+                <>
+                  <ProfileImage>
+                    {!orgImg ? (
+                      <img
+                        src={ProfileSvg}
+                        alt="profile"
+                        style={{ height: 100, width: 100 }}
+                      />
+                    ) : (
+                      <img
+                        src={orgImg}
+                        style={{ height: 100, width: 100, borderRadius: 50 }}
+                      />
+                    )}
+                  </ProfileImage>
+                  <ProfileNickname>{data?.nickname}</ProfileNickname>
+                  <ProfileIntro>{data?.introduction}</ProfileIntro>
+                  <ProfileUpdateBtn onClick={handleUpdateMode}>
+                    프로필 수정
+                  </ProfileUpdateBtn>
+                </>
+              )}
+              <KindWrap>
+                <div>
+                  친절도 &nbsp;
+                  <img src={QuestionMark} alt="question mark" />
+                </div>
+                <LevelPercent percent={data?.kind}></LevelPercent>
+              </KindWrap>
+              <ProgressBar
+                currentPerson={data?.kind}
+                totalPerson={100}
+              ></ProgressBar>
+              <UserWrapBtn>
+                <WithdrawalBtn onClick={handleUserDelete}>회원탈퇴</WithdrawalBtn>
+                <LogoutBtn onClick={handleMyPageLogout}>로그아웃</LogoutBtn>
+              </UserWrapBtn>
+            </ProfileWrap>
+          </Profile>
 
-        {/* 탭 모임목록부분 - 태경 */}
-        <TabContainer>
-          <TabMenu>{menuTab}</TabMenu>
-          <TabContent>
-            <div>{menuArr[currentTab].content}</div>
-          </TabContent>
-        </TabContainer>
-      </MyPageContainer>
+          {/* 탭 모임목록부분 - 태경 */}
+          <TabContainer>
+            <TabMenu>{menuTab}</TabMenu>
+            <TabContent>
+              <div>{menuArr[currentTab].content}</div>
+            </TabContent>
+          </TabContainer>
+        </MyPageContainer>
+      ) : (
+        <MyPageContainer>
+            <Profile>
+            <ProfileWrap>
+            <ProfileImage>
+                      {!orgImg ? (
+                        <img
+                          src={ProfileSvg}
+                          alt="profile"
+                          style={{ height: 100, width: 100 }}
+                        />
+                      ) : (
+                        <img
+                          src={orgImg}
+                          style={{ height: 100, width: 100, borderRadius: 50 }}
+                        />
+                      )}
+            </ProfileImage>
+            <ProfileNickname>{data?.nickname}</ProfileNickname>
+            <ProfileIntro>{data?.introduction}</ProfileIntro>
+            <SendMsgBtn
+                onClick={() => {
+                }}
+            >
+              <SendMsg>
+                메시지 보내기
+              </SendMsg>
+            </SendMsgBtn>
+            <KindWrap>
+                  <div>
+                    친절도 &nbsp;
+                    <img src={QuestionMark} alt="question mark" />
+                  </div>
+                  <LevelPercent percent={data?.kind}></LevelPercent>
+                </KindWrap>
+                <ProgressBar
+                  currentPerson={data?.kind}
+                  totalPerson={100}
+                ></ProgressBar>
+                <UserWrapBtn>
+                  <WithdrawalBtn onClick={handleUserDelete}>회원탈퇴</WithdrawalBtn>
+                  <LogoutBtn>로그아웃</LogoutBtn>
+                </UserWrapBtn>
+              </ProfileWrap>
+            </Profile>
+            <TabContainer>
+            <TabMenu>{menuTab2}</TabMenu>
+            <TabContent>
+              <div>{menuArr2[currentTab].content}</div>
+            </TabContent>
+          </TabContainer>
+          </MyPageContainer>
+          )
+              }
     </Layout>
   );
 }
