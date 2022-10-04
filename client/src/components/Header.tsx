@@ -231,7 +231,7 @@ export default function Header() {
               <Link to="/">홈</Link>
             </HeaderLinkText>
             <HeaderLinkText>
-              <Link to="/programs">모임 목록 </Link>
+              <Link to="/programs">프로그램 / 모임 목록 </Link>
             </HeaderLinkText>
 
             <SearchForm onSubmit={handelSearchSubmit}>
@@ -272,7 +272,7 @@ export default function Header() {
                   <ProfileBtn onClick={() => setIsOpened(!isopened)}>
                     <img
                       src={
-                        users?.userImages
+                        users?.userImages[0]?.length === 0
                           ? byteToBase64(
                               users?.userImages[0]?.contentType,
                               users?.userImages[0]?.bytes
@@ -307,7 +307,7 @@ export default function Header() {
                   <UserProfileImg>
                     <img
                       src={
-                        users?.userImages
+                        users?.userImages[0]?.length === 0
                           ? byteToBase64(
                               users?.userImages[0]?.contentType,
                               users?.userImages[0]?.bytes
