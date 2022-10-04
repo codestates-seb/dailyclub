@@ -15,6 +15,7 @@ import ProgDetail from 'pages/ProgDetail';
 import ProgUpdate from 'pages/ProgUpdate';
 import { theme } from 'theme';
 import Hero from 'pages/Hero';
+import ReviewCreate from 'pages/ReviewCreate';
 
 const App: React.FC = () => {
   return (
@@ -38,6 +39,7 @@ const App: React.FC = () => {
             <Route path="/notice" element={<NoticeList />} />
             <Route path="/notice/:noticeId" element={<NoticeDetail />} />
             <Route path="/notice/create" element={<NoticeCreate />} />
+            <Route path="/reviews/:applyId" element={<ReviewCreate />} />
           </Routes>
           <Footer />
         </BrowserRouter>

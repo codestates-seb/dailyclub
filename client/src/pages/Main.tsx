@@ -14,7 +14,7 @@ import { useAppSelector } from 'stores/hooks';
 import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
-import { ProgramDetailVal } from 'types/programs';
+import { FilterParamsProp, ProgramDetailVal } from 'types/programs';
 import { getToday } from 'utils/getToday';
 
 const WrapContainer = styled.div`
@@ -29,6 +29,7 @@ const IngContainer = styled.div``;
 const FilterContainer = styled.div`
   display: flex;
   margin-bottom: 1rem;
+  justify-content: space-between;
 `;
 const DateInput = styled.input`
   height: 30px;
@@ -139,13 +140,20 @@ const ProgWrapper = styled.div`
 `;
 const ProgPerson = styled.div``;
 const ProgDate = styled.div``;
-const DoneContainer = styled.div`
-  padding: 7rem 0;
+const FilterRowWrapper = styled.div`
+  display: flex;
+  align-items: center;
 `;
-const DoneProgEmptyMsg = styled.div`
-  margin-top: 1rem;
-  font-weight: 300;
+const StatusIng = styled.button`
+  border: none;
+  &:hover {
+    font-weight: 600;
+  }
 `;
+const StatusDeadLine = styled(StatusIng)`
+  margin-left: 1rem;
+`;
+const StatusEnd = styled(StatusDeadLine)``;
 
 export default function Main() {
   const URL = process.env.REACT_APP_DEV_URL;
@@ -158,11 +166,12 @@ export default function Main() {
   const [programs, setPrograms] = useState<Array<ProgramDetailVal>>([]);
   const [pageList, setPageList] = useState();
   const [page, setPage] = useState<number>(1);
-  const [programStatus, setProgramStatus] = useState('모집중');
+  const [programStatus, setProgramStatus] = useState('');
   const [minKindVal, setMinKindVal] = useState('');
   const [donePrograms, setDonePrograms] = useState<Array<ProgramDetailVal>>([]);
   const [bookmarked, setBookmarked] = useState<boolean>(false);
   const [bookmarkedId, setBookmarkedId] = useState<any>(null);
+  const [paramsData, setParamsData] = useState<FilterParamsProp>({});
 
   /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const loginUserInfo = useAppSelector((state) => state.userInfo);
@@ -174,20 +183,16 @@ export default function Main() {
   const userError = useAppSelector(getUserError); // 에러내용
   // console.log('유저 전역상태: ', isLoggedIn, userData, userError); // 확인 후 주석해제하면 됩니다
 
-  const REQ_PARAMS = {
-    keyword: searchKeyword,
-    location: areaSelected,
-    minKind: minKindVal,
-    programDate: dateSelected,
-    programStatus: programStatus,
-  };
-
   /** 필터 조회api - 키워드,지역,날짜,친절도*/
+  /*  useEffect(() => {
+    setParamsData({ ...paramsData, keyword: searchKeyword });
+  }, []); */
+
   useEffect(() => {
     const getProgramList = async () => {
       await axios
-        .get(`${URL}/api/programs?page=${page}&size=10`, {
-          params: REQ_PARAMS,
+        .get(`${URL}/api/programs?page=${page}&size=12`, {
+          params: { ...paramsData, keyword: searchKeyword },
         })
         .then(({ data }) => {
           // console.log(data?.data);
@@ -200,6 +205,7 @@ export default function Main() {
         })
         .catch((err) => console.log(err.message));
     };
+
     getProgramList();
   }, [
     searchKeyword,
@@ -208,6 +214,7 @@ export default function Main() {
     programStatus,
     minKindVal,
     bookmarked,
+    paramsData,
   ]);
 
   const handleBookedToggle = async (id: number, bookmarkId: number) => {
@@ -235,48 +242,94 @@ export default function Main() {
     setBookmarked(!bookmarked);
   };
 
+  // const getProgramsApplyList = async (programId: number) => {
+  //   await axios
+  //     .get(`${URL}/api/applies?page=1&size=32&programId=${programId}`)
+  //     .then((res) => {
+  //       console.log;
+  //     });
+  // };
+
+  const handleStatusIng = () => {
+    console.log('모집중');
+    setParamsData({ ...paramsData, programStatus: '모집중' });
+  };
+
   return (
     <Layout>
       <WrapContainer>
         <IngContainer>
-          <RecruitText>모집 중인 모임</RecruitText>
+          <RecruitText>모집 중인 프로그램 / 모임</RecruitText>
           <FilterContainer>
-            <AreaFilter setAreaSelected={setAreaSelected} />
-            <DateInput
-              type="text"
-              required
-              placeholder="날짜 선택"
-              aria-required="true"
-              onBlur={(e) => (e.target.type = 'text')}
-              onChange={(e) => setDateSelected(e.target.value)}
-              onFocus={(e) => (e.target.type = 'date')}
-              min={getToday()}
-            />
-            <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
-              친절도 &nbsp;{minKindVal}%
-              <img src={QuestionMark} alt="question mark" />
-              <img src={DownArrow} alt="down arrow" />
-              {levelOpened ? (
-                <WrapLevel>
-                  <WrapLevelSpan>
-                    <WrapLevelLabel>친절도 범위</WrapLevelLabel>
-                    <WrapLevelText>
-                      * 최소 친절 % 범위를 선택해보세요.
-                    </WrapLevelText>
-                  </WrapLevelSpan>
-                  <WrapLevelRangeInput
-                    type="range"
-                    min={0}
-                    max={100}
-                    step={1}
-                    onChange={(e) => setRangeValue(e.target.value)}
-                    defaultValue={minKindVal}
-                    onMouseUp={() => setMinKindVal(rangeValue)}
-                  />
-                  <RangeValue>{rangeValue}%</RangeValue>
-                </WrapLevel>
-              ) : null}
-            </LevelRange>
+            <FilterRowWrapper>
+              <AreaFilter
+                setAreaSelected={setAreaSelected}
+                setParamsData={setParamsData}
+                paramsData={paramsData}
+              />
+              <DateInput
+                type="text"
+                required
+                placeholder="날짜 선택"
+                aria-required="true"
+                onBlur={(e) => (e.target.type = 'text')}
+                onChange={(e) =>
+                  setParamsData({ ...paramsData, programDate: e.target.value })
+                }
+                onFocus={(e) => (e.target.type = 'date')}
+                min={getToday()}
+              />
+              <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
+                친절도 &nbsp;{minKindVal}%
+                <img src={QuestionMark} alt="question mark" />
+                <img src={DownArrow} alt="down arrow" />
+                {levelOpened ? (
+                  <WrapLevel>
+                    <WrapLevelSpan>
+                      <WrapLevelLabel>친절도 범위</WrapLevelLabel>
+                      <WrapLevelText>
+                        * 최소 친절 % 범위를 선택해보세요.
+                      </WrapLevelText>
+                    </WrapLevelSpan>
+                    <WrapLevelRangeInput
+                      type="range"
+                      min={0}
+                      max={100}
+                      step={1}
+                      onChange={(e) => setRangeValue(e.target.value)}
+                      defaultValue={minKindVal}
+                      onMouseUp={() =>
+                        setParamsData({ ...paramsData, minKind: rangeValue })
+                      }
+                    />
+                    <RangeValue>{rangeValue}%</RangeValue>
+                  </WrapLevel>
+                ) : null}
+              </LevelRange>
+            </FilterRowWrapper>
+            <FilterRowWrapper>
+              <StatusIng
+                onClick={() =>
+                  setParamsData({ ...paramsData, programStatus: '모집중' })
+                }
+              >
+                • 모집중
+              </StatusIng>
+              <StatusDeadLine
+                onClick={() =>
+                  setParamsData({ ...paramsData, programStatus: '마감임박' })
+                }
+              >
+                • 마감임박
+              </StatusDeadLine>
+              <StatusEnd
+                onClick={() =>
+                  setParamsData({ ...paramsData, programStatus: '마감' })
+                }
+              >
+                • 마감
+              </StatusEnd>
+            </FilterRowWrapper>
           </FilterContainer>
           <ProgContainer>
             {programs &&
@@ -353,77 +406,6 @@ export default function Main() {
           </ProgContainer>
           <Pagination list={pageList} page={page} setPage={setPage} />
         </IngContainer>
-        <DoneContainer>
-          <RecruitText>모집 마감된 모임</RecruitText>
-          <ProgContainer>
-            {donePrograms[0] !== undefined ? (
-              donePrograms?.map((el: any) => (
-                <ProgItem key={el.id}>
-                  <ProgBanner>
-                    <ProgRecruitment
-                      style={{
-                        backgroundColor: `${
-                          el.programStatus === '모집중'
-                            ? '#38D9A9'
-                            : null || el.programStatus === '마감임박'
-                            ? '#d22a2a'
-                            : null || el.programStatus === '마감'
-                            ? 'darkGray'
-                            : null
-                        }`,
-                      }}
-                    >
-                      {el?.programStatus}
-                    </ProgRecruitment>
-                    <img
-                      src={
-                        el?.programImages.length === 0
-                          ? BasicImg
-                          : `data:${el.programImages[0].contentType};base64,${el?.programImages[0].bytes}`
-                      }
-                      style={{
-                        height: '180px',
-                        width: '100%',
-                        borderRadius: '5px',
-                      }}
-                      alt="program Image"
-                      loading="lazy"
-                    />
-                    <ProgBookmark>
-                      <img src={Bookmark} alt="bookmark" />
-                    </ProgBookmark>
-                  </ProgBanner>
-                  <ProgTitle>
-                    [{el.location}] {el.title.slice(0, 16)}...
-                  </ProgTitle>
-                  <LevelPercent percent={el.minKind} />
-                  <ProgProgressBar>
-                    <ProgressBar
-                      currentPerson={el.numOfRecruits}
-                      totalPerson={el.numOfRecruits}
-                    />
-                  </ProgProgressBar>
-                  <ProgWrapper>
-                    <ProgPerson>
-                      모집인원 {el.numOfRecruits} / {el.numOfRecruits}
-                    </ProgPerson>
-                    <ProgDate>
-                      {Math.floor(
-                        (+new Date(el.programDate) - +new Date()) /
-                          (1000 * 60 * 60 * 24)
-                      )}
-                      일 남음
-                    </ProgDate>
-                  </ProgWrapper>
-                </ProgItem>
-              ))
-            ) : (
-              <DoneProgEmptyMsg>
-                &nbsp;&nbsp;마감된 모임이 없습니다
-              </DoneProgEmptyMsg>
-            )}
-          </ProgContainer>
-        </DoneContainer>
       </WrapContainer>
     </Layout>
   );

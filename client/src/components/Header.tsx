@@ -11,6 +11,7 @@ import Profile from '../images/Profile.svg';
 import { logoutUser } from 'stores/userInfoSlice';
 import { removeLocalStorage } from 'apis/localStorage';
 import { byteToBase64 } from 'utils/byteToBase64';
+import axios from 'axios';
 
 const HeaderContainer = styled.div`
   position: fixed;
@@ -203,10 +204,10 @@ export default function Header() {
     (state) => state.userInfo
   );
 
-  const handelSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handelSearchSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(searchActions.getKeyword(InputValue)); //헤더 input값 전역상태에 저장
-    navigate('/'); // 엔터 시 질문목록 메인페이지로 이동
+    navigate('/programs'); // 엔터 시 질문목록 메인페이지로 이동
     setInputValue(''); // input창 초기화
   };
   const handleLogoutBtn = () => {
@@ -231,7 +232,7 @@ export default function Header() {
               <Link to="/">홈</Link>
             </HeaderLinkText>
             <HeaderLinkText>
-              <Link to="/programs">모임 목록 </Link>
+              <Link to="/programs">프로그램 / 모임 목록 </Link>
             </HeaderLinkText>
 
             <SearchForm onSubmit={handelSearchSubmit}>
@@ -272,7 +273,7 @@ export default function Header() {
                   <ProfileBtn onClick={() => setIsOpened(!isopened)}>
                     <img
                       src={
-                        users?.userImages
+                        users?.userImages?.length !== 0
                           ? byteToBase64(
                               users?.userImages[0]?.contentType,
                               users?.userImages[0]?.bytes
@@ -307,7 +308,7 @@ export default function Header() {
                   <UserProfileImg>
                     <img
                       src={
-                        users?.userImages
+                        users?.userImages?.length !== 0
                           ? byteToBase64(
                               users?.userImages[0]?.contentType,
                               users?.userImages[0]?.bytes
