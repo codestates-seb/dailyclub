@@ -213,6 +213,9 @@ const MemName = styled.div`
   font-weight: bold;
   margin-bottom: 10px;
   display: flex;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const MemIntro = styled.div`
@@ -251,6 +254,12 @@ const KindWrap = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+`;
+
+const ProfileImg = styled.img`
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 export default function ProgDetail() {
@@ -322,7 +331,6 @@ export default function ProgDetail() {
 
     getProgramDetail();
     getApplyList();
-    console.log(applyList);
   }, [page]);
 
   const handleBookmarkedToggle = async () => {
@@ -365,7 +373,7 @@ export default function ProgDetail() {
                   <MemItem key={el.id}>
                     <MemItemWrap1>
                       {el.user.userImages.length !== 0 ? (
-                        <img
+                        <ProfileImg
                           src={
                             'data:' +
                             //@ts-ignore
@@ -376,16 +384,28 @@ export default function ProgDetail() {
                           }
                           alt="profile"
                           style={{ height: 40, width: 40, borderRadius: 50 }}
+                          onClick={() => {
+                            navigate(`/users/${el.user.id}`);
+                          }}
                         />
                       ) : (
-                        <img
+                        <ProfileImg
                           src={Profile}
                           alt="profile"
                           style={{ height: 40, width: 40 }}
+                          onClick={() => {
+                            navigate(`/users/${el.user.id}`);
+                          }}
                         />
                       )}
                       <MemInfo>
-                        <MemName>{el.user.nickname}</MemName>
+                        <MemName
+                          onClick={() => {
+                            navigate(el.user.id);
+                          }}
+                        >
+                          {el.user.nickname}
+                        </MemName>
                         <MemIntro>{el.user.introduction}</MemIntro>
                       </MemInfo>
                     </MemItemWrap1>
@@ -546,15 +566,19 @@ export default function ProgDetail() {
             </ProglInfoWrap>
             <H2>모임장 정보</H2>
             <LeaderInfo>
-              <MemName>
+              <MemName
+                onClick={() => {
+                  navigate(`/users/${data?.writer.id}`);
+                }}
+              >
                 {writerImg ? (
-                  <img
+                  <ProfileImg
                     src={writerImg}
                     alt="profile"
                     style={{ height: 40, width: 40, borderRadius: 50 }}
                   />
                 ) : (
-                  <img
+                  <ProfileImg
                     src={Profile}
                     alt="profile"
                     style={{ height: 40, width: 40 }}
