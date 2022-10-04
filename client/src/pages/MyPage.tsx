@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import ProgressBar from 'components/ProgressBar';
 import LevelPercent from 'components/LevelPercent';
 import QuestionMark from '../images/QuestionMark.svg';
-import BookMarkTab from 'components/Tab/BookMarkTab';
+import BookMarkTab, { DoneMsg } from 'components/Tab/BookMarkTab';
 import MessageTab from 'components/Tab/MessageTab';
 import Pagination from 'pagination/Pagination';
 import { Link, useParams, useNavigate } from 'react-router-dom';
@@ -12,11 +12,13 @@ import ProfileSvg from '../images/Profile.svg';
 import axios from 'axios';
 import { UserVal, SignUpVal } from 'types/user';
 import { ApplyListVal, PaginationVal, ProgramDetailVal } from 'types/programs';
-import { setSourceMapRange } from 'typescript';
 import ImgDeleteBtnSvg from '../images/ImgDeleteBtn.svg';
 import { ImgDeleteBtn } from './ProgUpdate';
 import { useAppDispatch } from 'stores/hooks';
 import { fetchUserInfo } from 'stores/userInfoSlice';
+import BasicImg from '../images/BasicImg.jpg';
+import { compareWithToday } from '../utils/compareWithToday';
+import { byteToBase64 } from '../utils/byteToBase64';
 
 const MyPageContainer = styled.div`
   display: flex;
@@ -43,8 +45,6 @@ const ProfileWrap = styled.div`
 `;
 
 const ProfileImage = styled.div`
-  /* width: 7rem;
-  height: 7rem; */
   margin: 1rem;
   background-color: #e2e6e8;
   border-radius: 50%;
@@ -161,7 +161,6 @@ export const ClubItem = styled.div`
   border-radius: 5px;
 `;
 export const ClubImg = styled.div`
-  /* border: 0.7px solid gray; */
   border-radius: 50%;
   width: 35px;
   height: 30px;
@@ -297,12 +296,44 @@ function MyPage() {
             {programs?.map((el: any) => (
               <Link to={`/programs/${el?.program.id}`} key={el?.program.id}>
                 <ClubItem key={el?.id}>
-                  <ClubImg></ClubImg>
+                  <ClubImg>
+                    <img
+                      src={
+                        el?.program?.programImages?.length === 0
+                          ? BasicImg
+                          : byteToBase64(
+                              el?.program?.programImages[0]?.contentType,
+                              el?.program?.programImages[0]?.bytes
+                            )
+                      }
+                      alt="basicImg"
+                      style={{
+                        height: 40,
+                        width: 40,
+                        borderRadius: 50,
+                      }}
+                      loading="lazy"
+                    />
+                  </ClubImg>
+                  <DoneMsg
+                    style={{
+                      backgroundColor:
+                        compareWithToday(el?.program?.programDate) ===
+                        '모임종료'
+                          ? 'rgba(81, 81, 81, 0.469)'
+                          : 'none',
+                    }}
+                  >
+                    {compareWithToday(el?.program?.programDate) === '모임종료'
+                      ? '종료'
+                      : null}
+                  </DoneMsg>
                   <ClubInfo>
                     <ClubTitle>{el?.program.title}</ClubTitle>
                     <ClubBody>{el?.program.text}</ClubBody>
                     <ClubDate>
-                      {el?.program.programDate} {el?.program.programStatus}
+                      {el?.program.programDate}{' '}
+                      {compareWithToday(el?.program?.programDate)}
                     </ClubDate>
                   </ClubInfo>
                 </ClubItem>
@@ -315,12 +346,43 @@ function MyPage() {
             {opens?.map((el: any) => (
               <Link to={`/programs/${el?.id}`} key={el?.id}>
                 <ClubItem key={el?.id}>
-                  <ClubImg></ClubImg>
+                  <ClubImg>
+                    {' '}
+                    <img
+                      src={
+                        el?.programImages?.length === 0
+                          ? BasicImg
+                          : byteToBase64(
+                              el?.programImages[0]?.contentType,
+                              el?.programImages[0]?.bytes
+                            )
+                      }
+                      alt="basicImg"
+                      style={{
+                        height: 40,
+                        width: 40,
+                        borderRadius: 50,
+                      }}
+                      loading="lazy"
+                    />
+                  </ClubImg>
+                  <DoneMsg
+                    style={{
+                      backgroundColor:
+                        compareWithToday(el?.programDate) === '모임종료'
+                          ? 'rgba(81, 81, 81, 0.469)'
+                          : 'none',
+                    }}
+                  >
+                    {compareWithToday(el?.programDate) === '모임종료'
+                      ? '종료'
+                      : null}
+                  </DoneMsg>
                   <ClubInfo>
                     <ClubTitle>{el?.title}</ClubTitle>
                     <ClubBody>{el?.text}</ClubBody>
                     <ClubDate>
-                      {el?.programDate} {el?.programStatus}
+                      {el?.programDate} {compareWithToday(el?.programDate)}
                     </ClubDate>
                   </ClubInfo>
                 </ClubItem>
