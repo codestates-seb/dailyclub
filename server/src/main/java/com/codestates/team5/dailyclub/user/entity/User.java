@@ -73,7 +73,11 @@ public class User extends Auditable {
         this.introduction = introduction;
     }
 
-
+    public void updateKind(Integer score) {
+        int newKind = this.kind + score;
+        //최대 100점, 최소 0점
+        this.kind = (newKind>100)? 100 : (newKind<0)? 0 : newKind;
+    }
 
 }
 

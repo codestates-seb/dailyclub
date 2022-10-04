@@ -39,7 +39,7 @@ public class ApplyController {
     private final ApplyService applyService;
     private final ApplyMapper applyMapper;
 
-    @Operation(summary = "프로그램 신청")
+    @Operation(summary = "프로그램 신청 등록")
     @ApiResponses(
         @ApiResponse(
             responseCode = "201",
@@ -57,7 +57,7 @@ public class ApplyController {
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    @Operation(summary = "프로그램 신청 리스트 조회 by program id")
+    @Operation(summary = "한 프로그램의 신청 리스트 조회 (상세페이지)")
     @ApiResponses(
         @ApiResponse(
             responseCode = "200",
@@ -75,7 +75,7 @@ public class ApplyController {
         return new ResponseEntity<>(new MultiResponseDto<>(responses, pageApplies), HttpStatus.OK);
     }
 
-    @Operation(summary = "프로그램 신청 리스트 조회 by user id")
+    @Operation(summary = "한 유저가 신청한 프로그램 리스트 조회 (마이 페이지)")
     @ApiResponses(
         @ApiResponse(
             responseCode = "200",
@@ -93,7 +93,7 @@ public class ApplyController {
         return new ResponseEntity<>(new MultiResponseDto<>(responses, pageApplies), HttpStatus.OK);
     }
 
-    @Operation(summary = "프로그램 신청 취소")
+    @Operation(summary = "프로그램 신청 삭제")
     @ApiResponses(
         @ApiResponse(
             responseCode = "204",

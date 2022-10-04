@@ -55,6 +55,10 @@ public class ApplyService {
         if (programById.getMinKind() > userById.getKind()) {
             throw new BusinessLogicException(ExceptionCode.LOWER_THAN_MIN_KIND);
         }
+        //종료된 프로그램인지 확인
+        if (programById.getProgramDate().isBefore(LocalDate.now())) {
+            throw new BusinessLogicException(ExceptionCode.PROGRAM_ALREADY_ENDED);
+        }
 
         Apply apply = Apply.builder()
                             .user(userById)
