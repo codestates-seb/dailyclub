@@ -273,7 +273,7 @@ export default function Header() {
                   <ProfileBtn onClick={() => setIsOpened(!isopened)}>
                     <img
                       src={
-                        users?.userImages[0]?.length === 0
+                        users?.userImages?.length !== 0
                           ? byteToBase64(
                               users?.userImages[0]?.contentType,
                               users?.userImages[0]?.bytes
@@ -308,7 +308,7 @@ export default function Header() {
                   <UserProfileImg>
                     <img
                       src={
-                        users?.userImages[0]?.length === 0
+                        users?.userImages?.length !== 0
                           ? byteToBase64(
                               users?.userImages[0]?.contentType,
                               users?.userImages[0]?.bytes
