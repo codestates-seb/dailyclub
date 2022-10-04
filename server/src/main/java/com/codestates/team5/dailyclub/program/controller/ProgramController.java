@@ -108,18 +108,21 @@ public class ProgramController {
     @GetMapping("/{programId}")
     public ResponseEntity<ProgramDto.Response> getProgram(@PathVariable("programId") Long programId,
                                                           @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
-        Long loginUserId = authDetails.getUserId();
+
         Program program = programService.findProgram(programId);
 
         ProgramDto.Response response = programMapper.programToProgramResponseDto(program);
 
-        //현재 프로그램에 대한 북마크 여부
-        checkBookmark(loginUserId, programId, response);
+        if(authDetails != null) {
+            Long loginUserId = authDetails.getUserId();
+            //현재 프로그램에 대한 북마크 여부
+            checkBookmark(loginUserId, programId, response);
+        }
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(summary = "프로그램 리스트 조회 with 검색 & 필터")
+    @Operation(summary = "프로그램 리스트 조회 with 검색 & 필터 (메인 페이지)")
     @ApiResponses(
         @ApiResponse(
             responseCode = "200",
@@ -129,21 +132,22 @@ public class ProgramController {
     @GetMapping
     public ResponseEntity<MultiResponseDto<ProgramDto.Response>> getPrograms(@Parameter(description = "페이지 번호") @RequestParam int page,
                                                                              @Parameter(description = "한 페이지당 프로그램 수") @RequestParam int size,
-                                                                             @ParameterObject @ModelAttribute SearchFilterDto searchFilterDto,
+                                                                             @ParameterObject @Validated @ModelAttribute SearchFilterDto searchFilterDto,
                                                                              @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
-        Long loginUserId = authDetails.getUserId();
-
         Page<Program> pagePrograms = programService.findPrograms(page-1, size, searchFilterDto);
         List<Program> programs = pagePrograms.getContent();
         List<ProgramDto.Response> responses = programMapper.programListToProgramResponseDtoList(programs);
 
-        //각 프로그램에 대해 로그인 유저가 북마크했는지 체크
-        responses.forEach(response -> checkBookmark(loginUserId, response.getId() , response));
+        if (authDetails != null) {
+            Long loginUserId = authDetails.getUserId();
+            //각 프로그램에 대해 로그인 유저가 북마크했는지 체크
+            responses.forEach(response -> checkBookmark(loginUserId, response.getId(), response));
+        }
 
         return new ResponseEntity<>(new MultiResponseDto<>(responses, pagePrograms), HttpStatus.OK);
     }
 
-    @Operation(summary = "프로그램 리스트 조회 by user id (마이 페이지)")
+    @Operation(summary = "작성 프로그램 리스트 조회 by user id (마이 페이지)")
     @ApiResponses(
         @ApiResponse(
             responseCode = "200",
@@ -153,16 +157,10 @@ public class ProgramController {
     @GetMapping("/mypage")
     public ResponseEntity<MultiResponseDto<ProgramDto.Response>> getProgramsByUserId(@Parameter(description = "페이지 번호") @RequestParam int page,
                                                                                      @Parameter(description = "한 페이지당 프로그램 수") @RequestParam int size,
-                                                                                     @RequestParam("userId") Long userId,
-                                                                                     @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
-        Long loginUserId = authDetails.getUserId();
-
+                                                                                     @RequestParam("userId") Long userId) {
         Page<Program> pagePrograms = programService.findPrograms(page-1, size, userId);
         List<Program> programs = pagePrograms.getContent();
         List<ProgramDto.Response> responses = programMapper.programListToProgramResponseDtoList(programs);
-
-        //각 프로그램에 대해 로그인 유저가 북마크했는지 체크
-        responses.forEach(response -> checkBookmark(loginUserId, response.getId(), response));
 
         return new ResponseEntity<>(new MultiResponseDto<>(responses, pagePrograms), HttpStatus.OK);
     }
