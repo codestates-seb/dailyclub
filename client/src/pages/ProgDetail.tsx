@@ -213,6 +213,9 @@ const MemName = styled.div`
   font-weight: bold;
   margin-bottom: 10px;
   display: flex;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const MemIntro = styled.div`
@@ -253,6 +256,12 @@ const KindWrap = styled.div`
   margin-bottom: 10px;
 `;
 
+const ProfileImg = styled.img`
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
 export default function ProgDetail() {
   const DEV_URL = process.env.REACT_APP_DEV_URL;
   const params = useParams();
@@ -262,6 +271,7 @@ export default function ProgDetail() {
   const [applyList, setApplyList] = useState<Array<ApplyListVal>>([]);
   const [detailBookmarked, setDetailBookmarked] = useState<boolean>(false);
   const [detailBookmarkId, setDetailBookmarkId] = useState<any>(null);
+  const [writerImg, setWriterImg] = useState<string>('');
 
   const [pageList, setPageList] = useState<PaginationVal>();
   const [page, setPage] = useState<number>(1);
@@ -299,6 +309,11 @@ export default function ProgDetail() {
           } else {
             setDetailBookmarked(true);
             setDetailBookmarkId(res.data?.bookmarkId);
+          }
+          if (res.data?.writer.userImages.length !== 0) {
+            setWriterImg(
+              `data:${res.data?.writer.userImages[0].contentType};base64,${res.data?.writer.userImages[0].bytes}`
+            );
           }
         });
     };
@@ -357,26 +372,40 @@ export default function ProgDetail() {
                 {applyList?.map((el) => (
                   <MemItem key={el.id}>
                     <MemItemWrap1>
-                      {el.user.picture ? (
-                        <img
+                      {el.user.userImages.length !== 0 ? (
+                        <ProfileImg
                           src={
                             'data:' +
-                            el.user.picture +
+                            //@ts-ignore
+                            el.user.userImages[0].contentType +
                             ';base64,' +
-                            el.user.picture
+                            //@ts-ignore
+                            el.user.userImages[0].bytes
                           }
                           alt="profile"
-                          style={{ height: 40, width: 40 }}
+                          style={{ height: 40, width: 40, borderRadius: 50 }}
+                          onClick={() => {
+                            navigate(`/users/${el.user.id}`);
+                          }}
                         />
                       ) : (
-                        <img
+                        <ProfileImg
                           src={Profile}
                           alt="profile"
                           style={{ height: 40, width: 40 }}
+                          onClick={() => {
+                            navigate(`/users/${el.user.id}`);
+                          }}
                         />
                       )}
                       <MemInfo>
-                        <MemName>{el.user.nickname}</MemName>
+                        <MemName
+                          onClick={() => {
+                            navigate(el.user.id);
+                          }}
+                        >
+                          {el.user.nickname}
+                        </MemName>
                         <MemIntro>{el.user.introduction}</MemIntro>
                       </MemInfo>
                     </MemItemWrap1>
@@ -537,11 +566,19 @@ export default function ProgDetail() {
             </ProglInfoWrap>
             <H2>모임장 정보</H2>
             <LeaderInfo>
-              <MemName>
-                {data?.writer.picture ? (
-                  <img src="" alt="profile" style={{ height: 40, width: 40 }} />
+              <MemName
+                onClick={() => {
+                  navigate(`/users/${data?.writer.id}`);
+                }}
+              >
+                {writerImg ? (
+                  <ProfileImg
+                    src={writerImg}
+                    alt="profile"
+                    style={{ height: 40, width: 40, borderRadius: 50 }}
+                  />
                 ) : (
-                  <img
+                  <ProfileImg
                     src={Profile}
                     alt="profile"
                     style={{ height: 40, width: 40 }}
