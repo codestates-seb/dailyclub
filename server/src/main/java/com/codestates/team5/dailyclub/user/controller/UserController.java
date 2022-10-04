@@ -37,7 +37,7 @@ public class UserController {
     @Operation(summary = "회원가입")
     @ApiResponse(responseCode = "201", description = "CREATED", content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
     @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> postUser(@RequestBody UserDto.Post requestBody) {
+    public ResponseEntity<?> joinUser(@RequestBody UserDto.Post requestBody) {
         User response = userService.createUser(requestBody);
         return new ResponseEntity<>(userMapper.userToUserResponseDto(response), HttpStatus.CREATED);
 
@@ -46,7 +46,7 @@ public class UserController {
     @Operation(summary = "회원 조회")
     @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
     @GetMapping(value = "/api/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getUser(@PathVariable("userId") long id) {
+    public ResponseEntity<?> getUser(@PathVariable("userId") Long id) {
         User response = userService.findUser(id);
         return new ResponseEntity<>(userMapper.userToUserResponseDto(response), HttpStatus.OK);
     }
@@ -54,8 +54,10 @@ public class UserController {
     @Operation(summary = "회원 탈퇴")
     @ApiResponse(responseCode = "204", description = "NOT CONTENT")
     @DeleteMapping(value = "/api/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteUser (@PathVariable("userId") long id) {
-        userService.deleteUser(id);
+    public String deleteUser (@PathVariable("userId") Long id, @Parameter(hidden =true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Long loginUserId = authDetails.getUserId();
+        userService.deleteUser(id, loginUserId);
+        return "회원 탈퇴가 완료되었습니다.";
     }
 
 
@@ -64,7 +66,7 @@ public class UserController {
     @PatchMapping(value = "/api/users/{userId}",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> patchUser(@ParameterObject @ModelAttribute UserDto.Patch userPatchDto,
                                        @RequestPart(required = false) MultipartFile imageFile,
-                                       @PathVariable("userId") Long userId, @Parameter(hidden =true) @AuthenticationPrincipal AuthDetails authDetails) throws IOException {
+                                       @PathVariable("userId") Long id, @Parameter(hidden =true) @AuthenticationPrincipal AuthDetails authDetails) throws IOException {
         Long loginUserId = authDetails.getUserId();
         User userFromPatchDto = userMapper.userPatchToUser(userPatchDto);
         User response = userService.updateUser(
