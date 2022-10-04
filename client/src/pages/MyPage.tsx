@@ -15,10 +15,11 @@ import { ApplyListVal, PaginationVal, ProgramDetailVal } from 'types/programs';
 import ImgDeleteBtnSvg from '../images/ImgDeleteBtn.svg';
 import { ImgDeleteBtn } from './ProgUpdate';
 import { useAppDispatch } from 'stores/hooks';
-import { fetchUserInfo } from 'stores/userInfoSlice';
+import { fetchUserInfo, logoutUser } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import { compareWithToday } from '../utils/compareWithToday';
 import { byteToBase64 } from '../utils/byteToBase64';
+import { removeLocalStorage } from 'apis/localStorage';
 
 const MyPageContainer = styled.div`
   display: flex;
@@ -27,15 +28,13 @@ const MyPageContainer = styled.div`
 
 /* 프로필 부분 - 정석 */
 const Profile = styled.div`
-  width: 40%;
+  width: 30%;
   height: 100%;
-  display: flex;
-  justify-content: end;
   margin: 1rem;
 `;
 
 const ProfileWrap = styled.div`
-  width: 70%;
+  /* width: 70%; */
   height: 43%;
   padding: 2rem 1rem 2rem 1rem;
   border: 1px solid #e2e6e8;
@@ -113,7 +112,7 @@ const OrgImage = styled.img`
 `;
 /* 탭 부분 */
 const TabContainer = styled.div`
-  width: 60%;
+  width: 70%;
   height: 100%;
 `;
 const TabMenu = styled.ul`
@@ -154,6 +153,7 @@ export const ClubTabTitle = styled.div`
 export const ClubItem = styled.div`
   position: relative;
   display: flex;
+  justify-content: space-between;
   width: 90%;
   margin: 0 1.4rem 1.4rem 0;
   padding: 1.2rem;
@@ -197,6 +197,21 @@ const WithdrawalBtn = styled.button`
   }
 `;
 const LogoutBtn = styled(WithdrawalBtn)``;
+const CardLeftWrapper = styled.div`
+  display: flex;
+`;
+const ReviewBtn = styled.button`
+  border: none;
+  font-size: 0.7rem;
+  color: white;
+  padding: 0 0.5rem;
+  border-radius: 5px;
+  background-color: ${(props) => props.theme.accent};
+  &:hover {
+    background-color: ${(props) => props.theme.darkAccent};
+    transition: 0.1s ease-in-out;
+  }
+`;
 
 function MyPage() {
   const DEV_URL = process.env.REACT_APP_DEV_URL;
@@ -285,6 +300,10 @@ function MyPage() {
     getOpenList();
   }, []);
 
+  const handleReviewOpen = (applyId?: number) => {
+    navigate(`/reviews/${applyId}`);
+  };
+
   const [currentTab, setCurrentTab] = useState<number>(0);
   const menuArr = [
     {
@@ -294,99 +313,113 @@ function MyPage() {
           <ClubTabTitle>참여 중인 모임</ClubTabTitle>
           <ClubContainer>
             {programs?.map((el: any) => (
-              <Link to={`/programs/${el?.program.id}`} key={el?.program.id}>
-                <ClubItem key={el?.id}>
-                  <ClubImg>
-                    <img
-                      src={
-                        el?.program?.programImages?.length === 0
-                          ? BasicImg
-                          : byteToBase64(
-                              el?.program?.programImages[0]?.contentType,
-                              el?.program?.programImages[0]?.bytes
-                            )
-                      }
-                      alt="basicImg"
+              <ClubItem key={el?.id}>
+                <Link to={`/programs/${el?.program.id}`} key={el?.program.id}>
+                  <CardLeftWrapper>
+                    <ClubImg>
+                      <img
+                        src={
+                          el?.program?.programImages?.length === 0
+                            ? BasicImg
+                            : byteToBase64(
+                                el?.program?.programImages[0]?.contentType,
+                                el?.program?.programImages[0]?.bytes
+                              )
+                        }
+                        alt="basicImg"
+                        style={{
+                          height: 40,
+                          width: 40,
+                          borderRadius: 50,
+                        }}
+                        loading="lazy"
+                      />
+                    </ClubImg>
+                    <DoneMsg
                       style={{
-                        height: 40,
-                        width: 40,
-                        borderRadius: 50,
+                        backgroundColor:
+                          compareWithToday(el?.program?.programDate) ===
+                          '모임종료'
+                            ? 'rgba(81, 81, 81, 0.469)'
+                            : 'none',
                       }}
-                      loading="lazy"
-                    />
-                  </ClubImg>
-                  <DoneMsg
-                    style={{
-                      backgroundColor:
-                        compareWithToday(el?.program?.programDate) ===
-                        '모임종료'
-                          ? 'rgba(81, 81, 81, 0.469)'
-                          : 'none',
-                    }}
-                  >
-                    {compareWithToday(el?.program?.programDate) === '모임종료'
-                      ? '종료'
-                      : null}
-                  </DoneMsg>
-                  <ClubInfo>
-                    <ClubTitle>{el?.program.title}</ClubTitle>
-                    <ClubBody>{el?.program.text}</ClubBody>
-                    <ClubDate>
-                      {el?.program.programDate}{' '}
-                      {compareWithToday(el?.program?.programDate)}
-                    </ClubDate>
-                  </ClubInfo>
-                </ClubItem>
-              </Link>
+                    >
+                      {compareWithToday(el?.program?.programDate) === '모임종료'
+                        ? '종료'
+                        : null}
+                    </DoneMsg>
+                    <ClubInfo>
+                      <ClubTitle>{el?.program.title}</ClubTitle>
+                      <ClubBody>{el?.program.text}</ClubBody>
+                      <ClubDate>
+                        {el?.program.programDate}{' '}
+                        {compareWithToday(el?.program?.programDate)}
+                      </ClubDate>
+                    </ClubInfo>
+                  </CardLeftWrapper>
+                </Link>
+                {compareWithToday(el?.programDate) === '모임종료' ? (
+                  <ReviewBtn onClick={() => handleReviewOpen(el?.id)}>
+                    리뷰작성
+                  </ReviewBtn>
+                ) : null}
+              </ClubItem>
             ))}
           </ClubContainer>
           <Pagination list={pageList} page={page} setPage={setPage} />
           <ClubTabTitle>개설한 모임</ClubTabTitle>
           <ClubContainer>
             {opens?.map((el: any) => (
-              <Link to={`/programs/${el?.id}`} key={el?.id}>
-                <ClubItem key={el?.id}>
-                  <ClubImg>
-                    {' '}
-                    <img
-                      src={
-                        el?.programImages?.length === 0
-                          ? BasicImg
-                          : byteToBase64(
-                              el?.programImages[0]?.contentType,
-                              el?.programImages[0]?.bytes
-                            )
-                      }
-                      alt="basicImg"
+              <ClubItem key={el?.id}>
+                <Link to={`/programs/${el?.id}`} key={el?.id}>
+                  <CardLeftWrapper>
+                    <ClubImg>
+                      {' '}
+                      <img
+                        src={
+                          el?.programImages?.length === 0
+                            ? BasicImg
+                            : byteToBase64(
+                                el?.programImages[0]?.contentType,
+                                el?.programImages[0]?.bytes
+                              )
+                        }
+                        alt="basicImg"
+                        style={{
+                          height: 40,
+                          width: 40,
+                          borderRadius: 50,
+                        }}
+                        loading="lazy"
+                      />
+                    </ClubImg>
+                    <DoneMsg
                       style={{
-                        height: 40,
-                        width: 40,
-                        borderRadius: 50,
+                        backgroundColor:
+                          compareWithToday(el?.programDate) === '모임종료'
+                            ? 'rgba(81, 81, 81, 0.469)'
+                            : 'none',
                       }}
-                      loading="lazy"
-                    />
-                  </ClubImg>
-                  <DoneMsg
-                    style={{
-                      backgroundColor:
-                        compareWithToday(el?.programDate) === '모임종료'
-                          ? 'rgba(81, 81, 81, 0.469)'
-                          : 'none',
-                    }}
-                  >
-                    {compareWithToday(el?.programDate) === '모임종료'
-                      ? '종료'
-                      : null}
-                  </DoneMsg>
-                  <ClubInfo>
-                    <ClubTitle>{el?.title}</ClubTitle>
-                    <ClubBody>{el?.text}</ClubBody>
-                    <ClubDate>
-                      {el?.programDate} {compareWithToday(el?.programDate)}
-                    </ClubDate>
-                  </ClubInfo>
-                </ClubItem>
-              </Link>
+                    >
+                      {compareWithToday(el?.programDate) === '모임종료'
+                        ? '종료'
+                        : null}
+                    </DoneMsg>
+                    <ClubInfo>
+                      <ClubTitle>{el?.title}</ClubTitle>
+                      <ClubBody>{el?.text}</ClubBody>
+                      <ClubDate>
+                        {el?.programDate} {compareWithToday(el?.programDate)}
+                      </ClubDate>
+                    </ClubInfo>
+                  </CardLeftWrapper>
+                </Link>
+                {compareWithToday(el?.programDate) === '모임종료' ? (
+                  <ReviewBtn onClick={() => handleReviewOpen(el?.id)}>
+                    리뷰작성
+                  </ReviewBtn>
+                ) : null}
+              </ClubItem>
             ))}
           </ClubContainer>
           <Pagination list={openList} page={page} setPage={setPage} />
@@ -476,6 +509,12 @@ function MyPage() {
     setUserImages('');
     setOrgImg('');
   };
+  const handleMyPageLogout = () => {
+    dispatch(logoutUser());
+    removeLocalStorage('access_token');
+    removeLocalStorage('refresh_token');
+    navigate('/');
+  };
 
   return (
     <Layout>
@@ -561,7 +600,7 @@ function MyPage() {
             ></ProgressBar>
             <UserWrapBtn>
               <WithdrawalBtn onClick={handleUserDelete}>회원탈퇴</WithdrawalBtn>
-              <LogoutBtn>로그아웃</LogoutBtn>
+              <LogoutBtn onClick={handleMyPageLogout}>로그아웃</LogoutBtn>
             </UserWrapBtn>
           </ProfileWrap>
         </Profile>
