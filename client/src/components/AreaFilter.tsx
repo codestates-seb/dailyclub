@@ -49,9 +49,11 @@ export const DropDouwnList = styled.li`
 
 interface AreaProps {
   setAreaSelected?: React.Dispatch<React.SetStateAction<string>>;
+  setParamsData?: any;
+  paramsData?: any;
 }
 
-function AreaFilter({ setAreaSelected }: AreaProps) {
+function AreaFilter({ setAreaSelected, setParamsData, paramsData }: AreaProps) {
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [area, setArea] = useState<string>('지역');
 
@@ -66,8 +68,16 @@ function AreaFilter({ setAreaSelected }: AreaProps) {
     if (setAreaSelected) {
       if ((e.target as any).textContent === '전체') {
         setAreaSelected('');
+        setParamsData({
+          ...paramsData,
+          location: '',
+        });
       } else {
         setAreaSelected((e.target as any).textContent);
+        setParamsData({
+          ...paramsData,
+          location: (e.target as any).textContent,
+        });
       }
     }
   };

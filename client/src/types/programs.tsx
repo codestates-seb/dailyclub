@@ -42,3 +42,11 @@ export interface PaginationVal {
   totalElements: number;
   totalPages: number;
 }
+
+export interface FilterParamsProp {
+  keyword?: string;
+  location?: string;
+  minKind?: string;
+  programDate?: string;
+  programStatus?: string;
+}

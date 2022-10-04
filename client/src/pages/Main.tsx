@@ -14,7 +14,7 @@ import { useAppSelector } from 'stores/hooks';
 import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
-import { ProgramDetailVal } from 'types/programs';
+import { FilterParamsProp, ProgramDetailVal } from 'types/programs';
 import { getToday } from 'utils/getToday';
 
 const WrapContainer = styled.div`
@@ -171,6 +171,7 @@ export default function Main() {
   const [donePrograms, setDonePrograms] = useState<Array<ProgramDetailVal>>([]);
   const [bookmarked, setBookmarked] = useState<boolean>(false);
   const [bookmarkedId, setBookmarkedId] = useState<any>(null);
+  const [paramsData, setParamsData] = useState<FilterParamsProp>({});
 
   /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const loginUserInfo = useAppSelector((state) => state.userInfo);
@@ -182,20 +183,16 @@ export default function Main() {
   const userError = useAppSelector(getUserError); // 에러내용
   // console.log('유저 전역상태: ', isLoggedIn, userData, userError); // 확인 후 주석해제하면 됩니다
 
-  const REQ_PARAMS = {
-    keyword: searchKeyword,
-    location: areaSelected,
-    minKind: minKindVal,
-    programDate: dateSelected,
-    programStatus: programStatus,
-  };
-
   /** 필터 조회api - 키워드,지역,날짜,친절도*/
+  /*  useEffect(() => {
+    setParamsData({ ...paramsData, keyword: searchKeyword });
+  }, []); */
+
   useEffect(() => {
     const getProgramList = async () => {
       await axios
         .get(`${URL}/api/programs?page=${page}&size=12`, {
-          params: REQ_PARAMS,
+          params: { ...paramsData, keyword: searchKeyword },
         })
         .then(({ data }) => {
           // console.log(data?.data);
@@ -208,6 +205,7 @@ export default function Main() {
         })
         .catch((err) => console.log(err.message));
     };
+
     getProgramList();
   }, [
     searchKeyword,
@@ -216,9 +214,8 @@ export default function Main() {
     programStatus,
     minKindVal,
     bookmarked,
+    paramsData,
   ]);
-
-  console.log(REQ_PARAMS);
 
   const handleBookedToggle = async (id: number, bookmarkId: number) => {
     if (bookmarkId === null) {
@@ -245,9 +242,17 @@ export default function Main() {
     setBookmarked(!bookmarked);
   };
 
+  // const getProgramsApplyList = async (programId: number) => {
+  //   await axios
+  //     .get(`${URL}/api/applies?page=1&size=32&programId=${programId}`)
+  //     .then((res) => {
+  //       console.log;
+  //     });
+  // };
+
   const handleStatusIng = () => {
     console.log('모집중');
-    setProgramStatus('모집중');
+    setParamsData({ ...paramsData, programStatus: '모집중' });
   };
 
   return (
@@ -257,14 +262,20 @@ export default function Main() {
           <RecruitText>모집 중인 프로그램 / 모임</RecruitText>
           <FilterContainer>
             <FilterRowWrapper>
-              <AreaFilter setAreaSelected={setAreaSelected} />
+              <AreaFilter
+                setAreaSelected={setAreaSelected}
+                setParamsData={setParamsData}
+                paramsData={paramsData}
+              />
               <DateInput
                 type="text"
                 required
                 placeholder="날짜 선택"
                 aria-required="true"
                 onBlur={(e) => (e.target.type = 'text')}
-                onChange={(e) => setDateSelected(e.target.value)}
+                onChange={(e) =>
+                  setParamsData({ ...paramsData, programDate: e.target.value })
+                }
                 onFocus={(e) => (e.target.type = 'date')}
                 min={getToday()}
               />
@@ -287,7 +298,9 @@ export default function Main() {
                       step={1}
                       onChange={(e) => setRangeValue(e.target.value)}
                       defaultValue={minKindVal}
-                      onMouseUp={() => setMinKindVal(rangeValue)}
+                      onMouseUp={() =>
+                        setParamsData({ ...paramsData, minKind: rangeValue })
+                      }
                     />
                     <RangeValue>{rangeValue}%</RangeValue>
                   </WrapLevel>
@@ -295,11 +308,25 @@ export default function Main() {
               </LevelRange>
             </FilterRowWrapper>
             <FilterRowWrapper>
-              <StatusIng onClick={handleStatusIng}>• 모집중</StatusIng>
-              <StatusDeadLine onClick={() => setProgramStatus('마감임박')}>
+              <StatusIng
+                onClick={() =>
+                  setParamsData({ ...paramsData, programStatus: '모집중' })
+                }
+              >
+                • 모집중
+              </StatusIng>
+              <StatusDeadLine
+                onClick={() =>
+                  setParamsData({ ...paramsData, programStatus: '마감임박' })
+                }
+              >
                 • 마감임박
               </StatusDeadLine>
-              <StatusEnd onClick={() => setProgramStatus('마감')}>
+              <StatusEnd
+                onClick={() =>
+                  setParamsData({ ...paramsData, programStatus: '마감' })
+                }
+              >
                 • 마감
               </StatusEnd>
             </FilterRowWrapper>
