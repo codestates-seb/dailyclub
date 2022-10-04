@@ -322,7 +322,13 @@ function ProgUpdate() {
       .then((res) => {
         navigate(`/programs/${programId}`);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.response.data.fieldErrors) {
+          alert(err.response.data.fieldErrors[0].reason);
+        } else {
+          alert(err.response.data.message);
+        }
+      });
   };
 
   //제목인풋에서 엔터누를시 프로그램 설명 인풋으로 포커즈
@@ -411,7 +417,8 @@ function ProgUpdate() {
               {/* 모집인원 인풋입니다 */}
               <RecruitInput
                 type="number"
-                min="2"
+                min="1"
+                max="100"
                 name="people"
                 onChange={handleNumofRecruits}
                 defaultValue={numOfRecruits}

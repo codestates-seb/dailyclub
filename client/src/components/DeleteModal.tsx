@@ -32,6 +32,7 @@ function DeleteModal({ setIsDeleteOpen, programId }: DeleteModalProps) {
       })
       .catch((err) => {
         setIsDeleteOpen(false);
+        alert(err.response.data.message);
       });
   };
 
