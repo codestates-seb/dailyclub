@@ -262,6 +262,7 @@ export default function ProgDetail() {
   const [applyList, setApplyList] = useState<Array<ApplyListVal>>([]);
   const [detailBookmarked, setDetailBookmarked] = useState<boolean>(false);
   const [detailBookmarkId, setDetailBookmarkId] = useState<any>(null);
+  const [writerImg, setWriterImg] = useState<string>('');
 
   const [pageList, setPageList] = useState<PaginationVal>();
   const [page, setPage] = useState<number>(1);
@@ -300,6 +301,11 @@ export default function ProgDetail() {
             setDetailBookmarked(true);
             setDetailBookmarkId(res.data?.bookmarkId);
           }
+          if (res.data?.writer.userImages.length !== 0) {
+            setWriterImg(
+              `data:${res.data?.writer.userImages[0].contentType};base64,${res.data?.writer.userImages[0].bytes}`
+            );
+          }
         });
     };
     //신청한 멤버 조회
@@ -316,6 +322,7 @@ export default function ProgDetail() {
 
     getProgramDetail();
     getApplyList();
+    console.log(applyList);
   }, [page]);
 
   const handleBookmarkedToggle = async () => {
@@ -357,16 +364,18 @@ export default function ProgDetail() {
                 {applyList?.map((el) => (
                   <MemItem key={el.id}>
                     <MemItemWrap1>
-                      {el.user.picture ? (
+                      {el.user.userImages.length !== 0 ? (
                         <img
                           src={
                             'data:' +
-                            el.user.picture +
+                            //@ts-ignore
+                            el.user.userImages[0].contentType +
                             ';base64,' +
-                            el.user.picture
+                            //@ts-ignore
+                            el.user.userImages[0].bytes
                           }
                           alt="profile"
-                          style={{ height: 40, width: 40 }}
+                          style={{ height: 40, width: 40, borderRadius: 50 }}
                         />
                       ) : (
                         <img
@@ -538,8 +547,12 @@ export default function ProgDetail() {
             <H2>모임장 정보</H2>
             <LeaderInfo>
               <MemName>
-                {data?.writer.picture ? (
-                  <img src="" alt="profile" style={{ height: 40, width: 40 }} />
+                {writerImg ? (
+                  <img
+                    src={writerImg}
+                    alt="profile"
+                    style={{ height: 40, width: 40, borderRadius: 50 }}
+                  />
                 ) : (
                   <img
                     src={Profile}

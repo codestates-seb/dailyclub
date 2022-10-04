@@ -16,7 +16,7 @@ export interface ProgramDetailVal {
     kind: number;
     loginId: string;
     nickname: string;
-    picture: null | Blob;
+    userImages: [];
     role: string;
   };
 }
@@ -30,7 +30,7 @@ export interface ApplyListVal {
     kind: number;
     loginId: string;
     nickname: string;
-    picture: null | Blob;
+    userImages: [];
     role: string;
   };
   createdTime: string;
