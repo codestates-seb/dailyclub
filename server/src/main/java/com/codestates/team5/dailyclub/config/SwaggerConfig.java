@@ -19,7 +19,7 @@ public class SwaggerConfig {
     public GroupedOpenApi openApi() {
         return GroupedOpenApi.builder()
                 .group("DailyClub API 명세서")
-                .pathsToMatch("/api/**")
+                .pathsToMatch("/api/**","/join")
                 .build();
     }
 

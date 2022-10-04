@@ -30,23 +30,22 @@ import java.util.List;
 @Tag(name = "유저 API")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
     @Operation(summary = "회원가입")
     @ApiResponse(responseCode = "201", description = "CREATED", content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> postUser(@RequestBody UserDto.Post requestBody) {
+    @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> joinUser(@RequestBody UserDto.Post requestBody) {
         User response = userService.createUser(requestBody);
         return new ResponseEntity<>(userMapper.userToUserResponseDto(response), HttpStatus.CREATED);
 
     }
 
-    @Operation(summary = "회원 한명 조회")
+    @Operation(summary = "회원 조회")
     @ApiResponse(responseCode = "200", description = "OK",content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
-    @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/api/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getUser(@PathVariable("userId") Long id) {
         User response = userService.findUser(id);
         return new ResponseEntity<>(userMapper.userToUserResponseDto(response), HttpStatus.OK);
@@ -54,18 +53,20 @@ public class UserController {
 
     @Operation(summary = "회원 탈퇴")
     @ApiResponse(responseCode = "204", description = "NOT CONTENT")
-    @DeleteMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteUser (@PathVariable("userId") Long id, @Parameter(hidden =true) @AuthenticationPrincipal AuthDetails authDetails) throws IOException {
-        userService.deleteUser(id);
+    @DeleteMapping(value = "/api/users/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String deleteUser (@PathVariable("userId") Long id, @Parameter(hidden =true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Long loginUserId = authDetails.getUserId();
+        userService.deleteUser(id, loginUserId);
+        return "회원 탈퇴가 완료되었습니다.";
     }
 
 
     @Operation(summary = "회원정보 수정")
     @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
-    @PatchMapping(value = "{userId}",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/api/users/{userId}",  consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> patchUser(@ParameterObject @ModelAttribute UserDto.Patch userPatchDto,
                                        @RequestPart(required = false) MultipartFile imageFile,
-                                       @PathVariable("userId") Long userId, @Parameter(hidden =true) @AuthenticationPrincipal AuthDetails authDetails) throws IOException {
+                                       @PathVariable("userId") Long id, @Parameter(hidden =true) @AuthenticationPrincipal AuthDetails authDetails) throws IOException {
         Long loginUserId = authDetails.getUserId();
         User userFromPatchDto = userMapper.userPatchToUser(userPatchDto);
         User response = userService.updateUser(

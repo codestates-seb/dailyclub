@@ -83,7 +83,15 @@ public class UserService {
 
     }
 
-    public void deleteUser(Long id) {
+    public void deleteUser(Long id, Long loginUserId) {
+        User findUser = userRepository.findById(id).orElseThrow(
+                ()-> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
+        );
+
+        if(!findUser.getId().equals(loginUserId)) {
+            throw new BusinessLogicException(ExceptionCode.CANNOT_DELETE_USERS);
+        }
+
         userRepository.deleteById(id);
     }
 }
