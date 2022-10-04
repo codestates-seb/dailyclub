@@ -95,6 +95,7 @@ const WrapLevelText = styled.div`
   font-size: 0.5rem;
 `;
 const ProgContainer = styled.div`
+  min-height: 36rem;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   margin-bottom: 3rem;

@@ -48,7 +48,7 @@ export default function SignUp() {
   const handleLoginSubmit: SubmitHandler<SignUpVal> = (data) => {
     /** 회원가입 API */
     axios
-      .post(`${URL}/api/users`, data, {
+      .post(`${URL}/join`, data, {
         headers: {
           'Content-Type': 'application/json',
         },

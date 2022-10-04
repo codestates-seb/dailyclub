@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import ImgDeleteBtnSvg from '../images/ImgDeleteBtn.svg';
+import { getToday } from 'utils/getToday';
 
 const CreateContainer = styled.div`
   width: 100%;
@@ -325,8 +326,10 @@ function ProgUpdate() {
       .catch((err) => {
         if (err.response.data.fieldErrors) {
           alert(err.response.data.fieldErrors[0].reason);
-        } else {
+        } else if (err.response.data.message) {
           alert(err.response.data.message);
+        } else {
+          alert('새로고침을 진행한 후에 로그인이 되어있다면 작성해주세요!');
         }
       });
   };
@@ -390,6 +393,8 @@ function ProgUpdate() {
               type="text"
               defaultValue={title}
               name="title"
+              minLength={5}
+              maxLength={30}
               ref={firstRef}
               onKeyUp={handleInput}
               onChange={handleTitle}
@@ -403,6 +408,8 @@ function ProgUpdate() {
               name="contents"
               defaultValue={text}
               ref={secondRef}
+              minLength={1}
+              maxLength={1000}
               onChange={handleText}
             />
           </ProgramInfo>
@@ -417,7 +424,7 @@ function ProgUpdate() {
               {/* 모집인원 인풋입니다 */}
               <RecruitInput
                 type="number"
-                min="1"
+                min={numOfRecruits}
                 max="100"
                 name="people"
                 onChange={handleNumofRecruits}
@@ -431,6 +438,7 @@ function ProgUpdate() {
               <RecruitInput
                 type="date"
                 name="date"
+                min={getToday()}
                 onChange={handleProgramDate}
                 defaultValue={programDate}
               />
