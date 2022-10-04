@@ -159,6 +159,11 @@ public class ProgramService {
 
     //by user id
     public Page<Program> findPrograms(int page, int size, Long userId) {
+        //유저 존재 확인
+        User userById = userRepository.findById(userId).orElseThrow(() ->
+            new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
+        );
+        
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
         return programRepository.findByUserId(pageable, userId);
     }
