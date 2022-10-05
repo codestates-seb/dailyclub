@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Layout from 'components/Layout';
 
@@ -45,6 +45,7 @@ const MemberNickName = styled.div``;
 
 export default function ReviewCreate() {
   const URL = process.env.REACT_APP_DEV_URL;
+  const navigate = useNavigate();
   const { programId, applyId } = useParams();
   const [members, setMembers] = useState<any>([]);
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -89,12 +90,14 @@ export default function ReviewCreate() {
     score: score,
   };
 
-  console.log('바디', reviewBody);
+  // console.log('바디', reviewBody);
 
   const handleReviewSubmit = async () => {
-    await axios
-      .post(`${URL}/api/reviews`, reviewBody)
-      .then((res) => console.log(res));
+    await axios.post(`${URL}/api/reviews`, reviewBody).then((res) => {
+      if (res.data === 'success') {
+        navigate(-1);
+      }
+    });
   };
 
   const handleCheckedBox = (e: any) => {
@@ -137,7 +140,6 @@ export default function ReviewCreate() {
       });
       target.checked = true;
       setScore(Number(target.value));
-      console.log(Number(target.value));
     }
   };
 
@@ -165,19 +167,19 @@ export default function ReviewCreate() {
                         &nbsp; {el?.user?.nickname}
                       </label>
                     </MemberNickName>
-                    <MemberNickName>
-                      <label htmlFor={writerInfo?.id}>
-                        <input
-                          type="checkbox"
-                          id={writerInfo?.id}
-                          value={writerInfo?.id}
-                          onChange={(e) => handleCheckedBox(e)}
-                        />
-                        &nbsp; {writerInfo && writerInfo?.nickname}
-                      </label>
-                    </MemberNickName>
                   </MemberRowWapper>
                 ))}
+              <MemberNickName>
+                <label htmlFor={writerInfo?.id}>
+                  <input
+                    type="checkbox"
+                    id={writerInfo?.id}
+                    value={writerInfo?.id}
+                    onChange={(e) => handleCheckedBox(e)}
+                  />
+                  &nbsp; {writerInfo && writerInfo?.nickname}
+                </label>
+              </MemberNickName>
             </ProgSurveyWrap>
           </WantAgainContent>
           <WantAgainContent>
@@ -198,20 +200,20 @@ export default function ReviewCreate() {
                         &nbsp; {el?.user?.nickname}
                       </label>
                     </MemberNickName>
-                    <MemberNickName>
-                      <label>
-                        <input
-                          type="checkbox"
-                          name="onlyCheckedBad"
-                          id={writerInfo?.id}
-                          value={writerInfo?.id}
-                          onChange={(e) => handleCheckBadMember(e.target)}
-                        />
-                        &nbsp; {writerInfo && writerInfo?.nickname}
-                      </label>
-                    </MemberNickName>
                   </MemberRowWapper>
                 ))}
+              <MemberNickName>
+                <label>
+                  <input
+                    type="checkbox"
+                    name="onlyCheckedBad"
+                    id={writerInfo?.id}
+                    value={writerInfo?.id}
+                    onChange={(e) => handleCheckBadMember(e.target)}
+                  />
+                  &nbsp; {writerInfo && writerInfo?.nickname}
+                </label>
+              </MemberNickName>
             </ProgSurveyWrap>
           </WantAgainContent>
           <WantAgainContent>

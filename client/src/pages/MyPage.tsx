@@ -379,7 +379,7 @@ function MyPage() {
                     </ClubInfo>
                   </CardLeftWrapper>
                 </Link>
-                {compareWithToday(el?.programDate) === '모임종료' ? (
+                {compareWithToday(el?.program?.programDate) === '모임종료' ? (
                   <ReviewBtn
                     onClick={() => handleReviewOpen(el?.id, el?.program?.id)}
                   >
