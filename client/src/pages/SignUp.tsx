@@ -64,10 +64,9 @@ export default function SignUp() {
       })
       .then((res) => {
         navigate('/login');
-        console.log('회원등록 응답 :', res);
+        // console.log('회원등록 응답 :', res);
       })
       .catch((err) => {
-        console.log(err?.response?.data?.fieldErrors);
         err?.response?.data?.fieldErrors?.map((el: any) => {
           if (el.field === 'email') setEmailErrMsg(el.reason);
           if (el.field === 'nickname') setNicknameErrMsg(el.reason);
