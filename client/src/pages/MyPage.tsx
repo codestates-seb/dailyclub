@@ -24,10 +24,9 @@ import { removeLocalStorage } from 'apis/localStorage';
 
 const MyPageContainer = styled.div`
   display: flex;
-  height: 100vh;
 `;
 
-/* 프로필 부분 - 정석 */
+/* 프로필 부분 */
 const Profile = styled.div`
   width: 30%;
   height: 100%;
@@ -35,7 +34,6 @@ const Profile = styled.div`
 `;
 
 const ProfileWrap = styled.div`
-  /* width: 70%; */
   height: 43%;
   padding: 2rem 1rem 2rem 1rem;
   border: 1px solid #e2e6e8;
