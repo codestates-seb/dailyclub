@@ -32,6 +32,7 @@ const FilterContainer = styled.div`
   justify-content: space-between;
 `;
 const DateInput = styled.input`
+  all: unset;
   height: 30px;
   width: 115px;
   border: 0.7px solid lightGrey;
@@ -70,6 +71,7 @@ const WrapLevel = styled.div`
   cursor: default;
 `;
 const WrapLevelRangeInput = styled.input`
+  all: unset;
   width: 80%;
   height: 3px;
   background: #ff5924;
@@ -268,7 +270,7 @@ export default function Main() {
                 min={getToday()}
               />
               <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
-                친절도 &nbsp;{minKindVal}%
+                친절도 &nbsp;{rangeValue}%
                 <img src={QuestionMark} alt="question mark" />
                 <img src={DownArrow} alt="down arrow" />
                 {levelOpened ? (
@@ -285,7 +287,7 @@ export default function Main() {
                       max={100}
                       step={1}
                       onChange={(e) => setRangeValue(e.target.value)}
-                      defaultValue={minKindVal}
+                      defaultValue={rangeValue}
                       onMouseUp={() =>
                         setParamsData({ ...paramsData, minKind: rangeValue })
                       }
@@ -381,11 +383,14 @@ export default function Main() {
                         모집인원 {el.numOfApplicants} / {el.numOfRecruits}
                       </ProgPerson>
                       <ProgDate>
-                        {Math.floor(
-                          (+new Date(el.programDate) - +new Date()) /
-                            (1000 * 60 * 60 * 24)
-                        )}
-                        일 남음
+                        {el?.programDate === getToday()
+                          ? '오늘 마감'
+                          : Math.floor(
+                              (+new Date(el.programDate) - +new Date()) /
+                                (1000 * 60 * 60 * 24)
+                            ) +
+                            1 +
+                            '일 남음'}
                       </ProgDate>
                     </ProgWrapper>
                   </Link>

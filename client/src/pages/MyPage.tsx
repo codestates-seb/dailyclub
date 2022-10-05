@@ -24,6 +24,7 @@ import { removeLocalStorage } from 'apis/localStorage';
 
 const MyPageContainer = styled.div`
   display: flex;
+  margin-bottom: 23rem;
 `;
 
 /* 프로필 부분 */
@@ -377,7 +378,8 @@ function MyPage() {
                     </ClubInfo>
                   </CardLeftWrapper>
                 </Link>
-                {compareWithToday(el?.program?.programDate) === '모임종료' ? (
+                {compareWithToday(el?.program?.programDate) === '모임종료' &&
+                el?.reviewStatus === 'UNREVIEWED' ? (
                   <ReviewBtn
                     onClick={() => handleReviewOpen(el?.id, el?.program?.id)}
                   >
@@ -435,11 +437,6 @@ function MyPage() {
                     </ClubInfo>
                   </CardLeftWrapper>
                 </Link>
-                {compareWithToday(el?.programDate) === '모임종료' ? (
-                  <ReviewBtn onClick={() => handleReviewOpen(el?.id, el?.id)}>
-                    리뷰작성
-                  </ReviewBtn>
-                ) : null}
               </ClubItem>
             ))}
           </ClubContainer>
