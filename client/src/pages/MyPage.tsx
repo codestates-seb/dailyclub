@@ -520,11 +520,6 @@ function MyPage() {
                     </ClubInfo>
                   </CardLeftWrapper>
                 </Link>
-                {compareWithToday(el?.programDate) === '모임종료' ? (
-                  <ReviewBtn onClick={() => handleReviewOpen(el?.id)}>
-                    리뷰작성
-                  </ReviewBtn>
-                ) : null}
               </ClubItem>
             ))}
           </ClubContainer>
@@ -576,11 +571,6 @@ function MyPage() {
                     </ClubInfo>
                   </CardLeftWrapper>
                 </Link>
-                {compareWithToday(el?.programDate) === '모임종료' ? (
-                  <ReviewBtn onClick={() => handleReviewOpen(el?.id)}>
-                    리뷰작성
-                  </ReviewBtn>
-                ) : null}
               </ClubItem>
             ))}
           </ClubContainer>
@@ -808,12 +798,6 @@ function MyPage() {
                 currentPerson={data?.kind}
                 totalPerson={100}
               ></ProgressBar>
-              <UserWrapBtn>
-                <WithdrawalBtn onClick={handleUserDelete}>
-                  회원탈퇴
-                </WithdrawalBtn>
-                <LogoutBtn>로그아웃</LogoutBtn>
-              </UserWrapBtn>
             </ProfileWrap>
           </Profile>
           <TabContainer>
