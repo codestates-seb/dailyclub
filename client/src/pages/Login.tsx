@@ -73,7 +73,8 @@ export default function Login() {
         // console.log('토큰해부', decodedAccess);
       })
       .then((res) => {
-        navigate(-1);
+        // navigate(-1);
+        navigate('/');
       })
       .catch((error) => {
         if (error.response.data === 'login fail') {
