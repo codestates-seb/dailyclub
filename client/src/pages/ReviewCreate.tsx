@@ -38,12 +38,27 @@ const CreateBtn = styled.button`
   color: white;
   font-weight: 600;
 `;
+const MemberRowWapper = styled.div`
+  display: flex;
+`;
+const MemberNickName = styled.div``;
+const MemberInput = styled.input`
+  appearance: none;
+  width: 3rem;
+  height: 1.5rem;
+  border: 1.5px solid gainsboro;
+  border-radius: 0.35rem;
+`;
 
 export default function ReviewCreate() {
-  const { applyId } = useParams();
+  const { programId, applyId } = useParams();
   const URL = process.env.REACT_APP_DEV_URL;
+  const [members, setMembers] = useState<any>([]);
+  const [ischecked, setIsChecked] = useState<boolean>(false);
+  const [goodMember, setGoodMember] = useState<any>([]);
 
   const surveyMemberList = ['스티브', '제임스', '데이비드', '케이트'];
+  const secondSurveyMember = ['안녕', '제임스', '데이비드', '케이트'];
   const surveyScoreList = [
     '매우 만족',
     '만족',
@@ -58,19 +73,17 @@ export default function ReviewCreate() {
   };
 
   const getProgramApplyList = async () => {
-    // await axios
-    //   .get(
-    //     `${URL}/api/applies?page=1&size=4&programId=${programId}`
-    //   )
-    //   .then((res) => {
-    //     console.log(res.data.data);
-    //     setApplyList(res.data.data);
-    //   });
+    await axios
+      .get(`${URL}/api/applies?page=1&size=4&programId=${programId}`)
+      .then((res) => {
+        setMembers(res.data.data);
+      });
   };
 
   useEffect(() => {
-    // getProgramApplyList()
+    getProgramApplyList();
   }, []);
+  //   console.log('멤버 :', members && members, goodMember);
 
   const handleReviewSubmit = async () => {
     await axios.post(`${URL}/api/reviews`, {
@@ -96,6 +109,12 @@ export default function ReviewCreate() {
                 onCheck={onSurveyChecked}
                 surveyName={surveyMemberList}
               />
+              {members &&
+                members.map((el: any) => (
+                  <MemberRowWapper key={el?.id}>
+                    <MemberNickName>&nbsp; {el?.user?.nickname}</MemberNickName>
+                  </MemberRowWapper>
+                ))}
             </ProgSurveyWrap>
           </WantAgainContent>
           <WantAgainContent>
@@ -104,8 +123,15 @@ export default function ReviewCreate() {
               <CheckBox
                 checkedSurvey={checkedSurvey}
                 onCheck={onSurveyChecked}
-                surveyName={surveyMemberList}
+                surveyName={secondSurveyMember}
               />
+              {members &&
+                members.map((el: any) => (
+                  <MemberRowWapper key={el?.id}>
+                    <input type="checkbox" />
+                    <MemberNickName>&nbsp; {el?.user?.nickname}</MemberNickName>
+                  </MemberRowWapper>
+                ))}
             </ProgSurveyWrap>
           </WantAgainContent>
           <WantAgainContent>

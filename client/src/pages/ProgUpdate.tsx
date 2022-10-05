@@ -55,6 +55,7 @@ const Label = styled.div`
 `;
 
 const TitleInput = styled.input`
+  all: unset;
   border: 1px solid #e2e6e8;
   border-radius: 5px;
   margin-top: 10px;
@@ -98,6 +99,7 @@ const RecruitName = styled.div`
 `;
 
 const RecruitInput = styled.input`
+  all: unset;
   height: 100%;
   width: 100%;
   padding-left: 5px;
@@ -122,6 +124,7 @@ const KindInputWrap = styled.div`
 `;
 
 const KindInput = styled.input`
+  all: unset;
   width: 80%;
   height: 3px;
   margin: 1rem;
