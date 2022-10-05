@@ -56,8 +56,8 @@ export default function Login() {
       .then((res) => {
         let accessToken = res.headers.authorization;
         let refreshToken = res.headers.refresh;
-        console.log('access 토큰 :', accessToken);
-        console.log('refresh 토큰 :', refreshToken);
+        // console.log('access 토큰 :', accessToken);
+        // console.log('refresh 토큰 :', refreshToken);
         setLocalStorage('access_token', accessToken);
         setLocalStorage('refresh_token', refreshToken);
         // API 요청마다 헤더에 access토큰 담아서 요청보내는 설정
@@ -71,7 +71,7 @@ export default function Login() {
         // console.log('토큰해부', decodedAccess);
       })
       .then((res) => {
-        navigate('/');
+        navigate(-1);
       })
       .catch((error) => alert('ID 또는 비밀번호가 일치하지 않습니다.'));
   };

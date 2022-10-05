@@ -243,19 +243,6 @@ export default function Main() {
     setBookmarked(!bookmarked);
   };
 
-  // const getProgramsApplyList = async (programId: number) => {
-  //   await axios
-  //     .get(`${URL}/api/applies?page=1&size=32&programId=${programId}`)
-  //     .then((res) => {
-  //       console.log;
-  //     });
-  // };
-
-  const handleStatusIng = () => {
-    console.log('모집중');
-    setParamsData({ ...paramsData, programStatus: '모집중' });
-  };
-
   return (
     <Layout>
       <WrapContainer>

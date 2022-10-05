@@ -37,6 +37,9 @@ export const DoneMsg = styled.div`
   height: 40px;
   border-radius: 50%;
 `;
+const ClubBookmarkWrapper = styled.div`
+  display: flex;
+`;
 
 function BookMarkTab() {
   const URL = process.env.REACT_APP_DEV_URL;
@@ -74,52 +77,55 @@ function BookMarkTab() {
               >
                 <img src={Bookmarked} alt="bookmark list button" />
               </ClubBookmarkBtn>
-              <Link to={`/programs/${el?.program?.id}`}>
-                <ClubImg>
-                  <img
-                    src={
-                      el?.program?.programImages?.length === 0
-                        ? BasicImg
-                        : byteToBase64(
-                            el?.program?.programImages[0]?.contentType,
-                            el?.program?.programImages[0]?.bytes
-                          )
-                    }
-                    alt="basicImg"
-                    style={{
-                      height: 40,
-                      width: 40,
-                      borderRadius: 50,
-                    }}
-                    loading="lazy"
-                  />
-                  <DoneMsg
-                    style={{
-                      backgroundColor:
-                        compareWithToday(el?.program?.programDate) ===
-                        '모임종료'
-                          ? 'rgba(81, 81, 81, 0.469)'
-                          : 'none',
-                    }}
-                  >
-                    {compareWithToday(el?.program?.programDate) === '모임종료'
-                      ? '종료'
-                      : null}
-                  </DoneMsg>
-                </ClubImg>
-              </Link>
-              <Link to={`/programs/${el?.program?.id}`}>
-                <ClubInfo>
-                  <ClubTitle>
-                    [{el?.program?.location}] {el?.program?.title.slice(0, 16)}
-                  </ClubTitle>
-                  <ClubBody>{el?.program?.text.slice(0, 18)}</ClubBody>
-                  <ClubDate>
-                    {el?.program?.programDate} &nbsp;&nbsp;
-                    {compareWithToday(el?.program?.programDate)}
-                  </ClubDate>
-                </ClubInfo>
-              </Link>
+              <ClubBookmarkWrapper>
+                <Link to={`/programs/${el?.program?.id}`}>
+                  <ClubImg>
+                    <img
+                      src={
+                        el?.program?.programImages?.length === 0
+                          ? BasicImg
+                          : byteToBase64(
+                              el?.program?.programImages[0]?.contentType,
+                              el?.program?.programImages[0]?.bytes
+                            )
+                      }
+                      alt="basicImg"
+                      style={{
+                        height: 40,
+                        width: 40,
+                        borderRadius: 50,
+                      }}
+                      loading="lazy"
+                    />
+                    <DoneMsg
+                      style={{
+                        backgroundColor:
+                          compareWithToday(el?.program?.programDate) ===
+                          '모임종료'
+                            ? 'rgba(81, 81, 81, 0.469)'
+                            : 'none',
+                      }}
+                    >
+                      {compareWithToday(el?.program?.programDate) === '모임종료'
+                        ? '종료'
+                        : null}
+                    </DoneMsg>
+                  </ClubImg>
+                </Link>
+                <Link to={`/programs/${el?.program?.id}`}>
+                  <ClubInfo>
+                    <ClubTitle>
+                      [{el?.program?.location}]{' '}
+                      {el?.program?.title.slice(0, 16)}
+                    </ClubTitle>
+                    <ClubBody>{el?.program?.text.slice(0, 18)}</ClubBody>
+                    <ClubDate>
+                      {el?.program?.programDate} &nbsp;&nbsp;
+                      {compareWithToday(el?.program?.programDate)}
+                    </ClubDate>
+                  </ClubInfo>
+                </Link>
+              </ClubBookmarkWrapper>
             </ClubItem>
           ))}
       </ClubContainer>

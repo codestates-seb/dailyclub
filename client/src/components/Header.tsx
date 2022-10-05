@@ -210,12 +210,17 @@ export default function Header() {
     navigate('/programs'); // 엔터 시 질문목록 메인페이지로 이동
     setInputValue(''); // input창 초기화
   };
-  const handleLogoutBtn = () => {
+  const handleLogoutBtn = async () => {
     dispatch(logoutUser());
-    removeLocalStorage('access_token');
-    removeLocalStorage('refresh_token');
     setIsOpened(false);
-    navigate('/');
+    await axios
+      .get(`${process.env.REACT_APP_DEV_URL}/logout/${userId}`)
+      .then((res) => console.log(res))
+      .then(() => {
+        removeLocalStorage('access_token');
+        removeLocalStorage('refresh_token');
+        navigate('/');
+      });
   };
 
   return (

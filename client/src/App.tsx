@@ -39,7 +39,10 @@ const App: React.FC = () => {
             <Route path="/notice" element={<NoticeList />} />
             <Route path="/notice/:noticeId" element={<NoticeDetail />} />
             <Route path="/notice/create" element={<NoticeCreate />} />
-            <Route path="/reviews/:applyId" element={<ReviewCreate />} />
+            <Route
+              path="/programs/:programId/reviews/:applyId"
+              element={<ReviewCreate />}
+            />
           </Routes>
           <Footer />
         </BrowserRouter>

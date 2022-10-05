@@ -24,10 +24,9 @@ import { removeLocalStorage } from 'apis/localStorage';
 
 const MyPageContainer = styled.div`
   display: flex;
-  height: 100vh;
 `;
 
-/* 프로필 부분 - 정석 */
+/* 프로필 부분 */
 const Profile = styled.div`
   width: 30%;
   height: 100%;
@@ -35,7 +34,6 @@ const Profile = styled.div`
 `;
 
 const ProfileWrap = styled.div`
-  /* width: 70%; */
   height: 43%;
   padding: 2rem 1rem 2rem 1rem;
   border: 1px solid #e2e6e8;
@@ -280,6 +278,7 @@ function MyPage() {
           `${DEV_URL}/api/applies/mypage?page=${page}&size=4&userId=${params.userId}`
         )
         .then((res) => {
+          // console.log(res?.data.data);
           setPrograms(res.data.data);
           setPageList(res.data.pageInfo);
         });
@@ -291,6 +290,7 @@ function MyPage() {
           `${DEV_URL}/api/programs/mypage?page=${page}&size=4&userId=${params.userId}`
         )
         .then((res) => {
+          // console.log(res?.data.data);
           setOpens(res.data.data);
           setOpenList(res.data.pageInfo);
         });
@@ -319,8 +319,8 @@ function MyPage() {
     }
   };
 
-  const handleReviewOpen = (applyId?: number) => {
-    navigate(`/reviews/${applyId}`);
+  const handleReviewOpen = (applyId?: number, programId?: number) => {
+    navigate(`/programs/${programId}/reviews/${applyId}`);
   };
 
   const [currentTab, setCurrentTab] = useState<number>(0);
@@ -377,8 +377,10 @@ function MyPage() {
                     </ClubInfo>
                   </CardLeftWrapper>
                 </Link>
-                {compareWithToday(el?.programDate) === '모임종료' ? (
-                  <ReviewBtn onClick={() => handleReviewOpen(el?.id)}>
+                {compareWithToday(el?.program?.programDate) === '모임종료' ? (
+                  <ReviewBtn
+                    onClick={() => handleReviewOpen(el?.id, el?.program?.id)}
+                  >
                     리뷰작성
                   </ReviewBtn>
                 ) : null}
@@ -434,7 +436,7 @@ function MyPage() {
                   </CardLeftWrapper>
                 </Link>
                 {compareWithToday(el?.programDate) === '모임종료' ? (
-                  <ReviewBtn onClick={() => handleReviewOpen(el?.id)}>
+                  <ReviewBtn onClick={() => handleReviewOpen(el?.id, el?.id)}>
                     리뷰작성
                   </ReviewBtn>
                 ) : null}
@@ -464,7 +466,7 @@ function MyPage() {
   ];
   // others user
   const menuArr2 = [
-     {
+    {
       name: `${data?.nickname}의 모임`,
       content: (
         <div>
@@ -516,11 +518,6 @@ function MyPage() {
                     </ClubInfo>
                   </CardLeftWrapper>
                 </Link>
-                {compareWithToday(el?.programDate) === '모임종료' ? (
-                  <ReviewBtn onClick={() => handleReviewOpen(el?.id)}>
-                    리뷰작성
-                  </ReviewBtn>
-                ) : null}
               </ClubItem>
             ))}
           </ClubContainer>
@@ -572,11 +569,6 @@ function MyPage() {
                     </ClubInfo>
                   </CardLeftWrapper>
                 </Link>
-                {compareWithToday(el?.programDate) === '모임종료' ? (
-                  <ReviewBtn onClick={() => handleReviewOpen(el?.id)}>
-                    리뷰작성
-                  </ReviewBtn>
-                ) : null}
               </ClubItem>
             ))}
           </ClubContainer>
@@ -754,7 +746,9 @@ function MyPage() {
                 totalPerson={100}
               ></ProgressBar>
               <UserWrapBtn>
-                <WithdrawalBtn onClick={handleUserDelete}>회원탈퇴</WithdrawalBtn>
+                <WithdrawalBtn onClick={handleUserDelete}>
+                  회원탈퇴
+                </WithdrawalBtn>
                 <LogoutBtn onClick={handleMyPageLogout}>로그아웃</LogoutBtn>
               </UserWrapBtn>
             </ProfileWrap>
@@ -770,58 +764,48 @@ function MyPage() {
         </MyPageContainer>
       ) : (
         <MyPageContainer>
-            <Profile>
+          <Profile>
             <ProfileWrap>
-            <ProfileImage>
-                      {!orgImg ? (
-                        <img
-                          src={ProfileSvg}
-                          alt="profile"
-                          style={{ height: 100, width: 100 }}
-                        />
-                      ) : (
-                        <img
-                          src={orgImg}
-                          style={{ height: 100, width: 100, borderRadius: 50 }}
-                        />
-                      )}
-            </ProfileImage>
-            <ProfileNickname>{data?.nickname}</ProfileNickname>
-            <ProfileIntro>{data?.introduction}</ProfileIntro>
-            <SendMsgBtn
-                onClick={() => {
-                }}
-            >
-              <SendMsg>
-                메시지 보내기
-              </SendMsg>
-            </SendMsgBtn>
-            <KindWrap>
-                  <div>
-                    친절도 &nbsp;
-                    <img src={QuestionMark} alt="question mark" />
-                  </div>
-                  <LevelPercent percent={data?.kind}></LevelPercent>
-                </KindWrap>
-                <ProgressBar
-                  currentPerson={data?.kind}
-                  totalPerson={100}
-                ></ProgressBar>
-                <UserWrapBtn>
-                  <WithdrawalBtn onClick={handleUserDelete}>회원탈퇴</WithdrawalBtn>
-                  <LogoutBtn>로그아웃</LogoutBtn>
-                </UserWrapBtn>
-              </ProfileWrap>
-            </Profile>
-            <TabContainer>
+              <ProfileImage>
+                {!orgImg ? (
+                  <img
+                    src={ProfileSvg}
+                    alt="profile"
+                    style={{ height: 100, width: 100 }}
+                  />
+                ) : (
+                  <img
+                    src={orgImg}
+                    style={{ height: 100, width: 100, borderRadius: 50 }}
+                  />
+                )}
+              </ProfileImage>
+              <ProfileNickname>{data?.nickname}</ProfileNickname>
+              <ProfileIntro>{data?.introduction}</ProfileIntro>
+              <SendMsgBtn onClick={() => {}}>
+                <SendMsg>메시지 보내기</SendMsg>
+              </SendMsgBtn>
+              <KindWrap>
+                <div>
+                  친절도 &nbsp;
+                  <img src={QuestionMark} alt="question mark" />
+                </div>
+                <LevelPercent percent={data?.kind}></LevelPercent>
+              </KindWrap>
+              <ProgressBar
+                currentPerson={data?.kind}
+                totalPerson={100}
+              ></ProgressBar>
+            </ProfileWrap>
+          </Profile>
+          <TabContainer>
             <TabMenu>{menuTab2}</TabMenu>
             <TabContent>
               <div>{menuArr2[currentTab].content}</div>
             </TabContent>
           </TabContainer>
-          </MyPageContainer>
-          )
-              }
+        </MyPageContainer>
+      )}
     </Layout>
   );
 }
