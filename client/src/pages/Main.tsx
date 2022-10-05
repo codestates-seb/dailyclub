@@ -372,13 +372,13 @@ export default function Main() {
                     <LevelPercent percent={el.minKind} />
                     <ProgProgressBar>
                       <ProgressBar
-                        currentPerson={el.numOfRecruits}
+                        currentPerson={el.numOfApplicants}
                         totalPerson={el.numOfRecruits}
                       />
                     </ProgProgressBar>
                     <ProgWrapper>
                       <ProgPerson>
-                        모집인원 {el.numOfRecruits} / {el.numOfRecruits}
+                        모집인원 {el.numOfApplicants} / {el.numOfRecruits}
                       </ProgPerson>
                       <ProgDate>
                         {Math.floor(

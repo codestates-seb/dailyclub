@@ -20,23 +20,27 @@ const Nav = styled.nav`
 
 const Button = styled.button`
   border: none;
-  border-radius: 5px;
+  /* border-radius: 5px; */
   padding: 8px;
   margin: 0;
-  background: #ff5100;
-  color: white;
+  /* background: #ff5100; */
+  color: black;
   font-size: 1rem;
 
   &:hover {
-    background: #ff5924;
+    color: #ff5924;
     cursor: pointer;
   }
 
   &[disabled] {
-    background: grey;
+    /* background: grey; */
     cursor: revert;
     transform: revert;
   }
+
+  &:active{
+    color: #c98169;
+  } 
 `;
 
 function Pagination({ list, page, setPage }: PaginationProps) {
@@ -54,7 +58,7 @@ function Pagination({ list, page, setPage }: PaginationProps) {
     <>
       <Nav>
         <Button onClick={() => setPage(page - 1)} disabled={page === 1}>
-          &lt;
+           &#9664;
         </Button>
         {numPages.map((el) => (
           <Button key={el} onClick={() => setPage(el)} disabled={page === el}>
@@ -66,7 +70,7 @@ function Pagination({ list, page, setPage }: PaginationProps) {
           onClick={() => setPage(page + 1)}
           disabled={page === numPages.length}
         >
-          &gt;
+          &#9654;
         </Button>
       </Nav>
     </>
