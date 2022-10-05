@@ -88,10 +88,11 @@ public class BookmarkController {
         )
     )
     @DeleteMapping("/{bookmarkId}")
-    public void deleteBookmark(@PathVariable("bookmarkId") Long bookmarkId,
+    public String deleteBookmark(@PathVariable("bookmarkId") Long bookmarkId,
                                @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Long loginUserId = authDetails.getUserId();
         bookmarkService.deleteBookmark(loginUserId, bookmarkId);
+        return "북마크를 삭제했습니다.";
     }
 
 }

@@ -10,9 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,11 +35,11 @@ public class ReviewController {
         )
     )
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> postReview(@Validated @RequestBody ReviewDto.Post reviewPostDto,
-                                             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+    public String postReview(@Validated @RequestBody ReviewDto.Post reviewPostDto,
+                             @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Long loginUserId = authDetails.getUserId();
         reviewService.createReview(reviewPostDto, loginUserId);
 
-        return new ResponseEntity<>("success", HttpStatus.CREATED);
+        return "리뷰를 남겼습니다.";
     }
 }
