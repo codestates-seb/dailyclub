@@ -75,6 +75,9 @@ public class ApplyDto {
 
         private Long userId;
 
+        @Schema(description = "리뷰 작성 여부", example = "REVIEWED", allowableValues = {"REVIEWED", "UNREVIEWED"})
+        private String reviewStatus;
+
         private ProgramDto.Response program;
 
         @Schema(description = "신청 시간", example = "2022-09-18 10:11:22", pattern = "yyyy-MM-dd HH:mm:ss", type = "string")
