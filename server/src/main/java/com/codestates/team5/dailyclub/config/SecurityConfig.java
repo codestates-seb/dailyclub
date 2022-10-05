@@ -69,10 +69,7 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.PATCH,"/api/**").access("hasRole('USER')")
                 .antMatchers(HttpMethod.DELETE,"/api/**").access("hasRole('USER')")
                 .antMatchers(HttpMethod.GET,"/api/bookmarks/**", "/api/notifications/**", "/api/messages/**").access("hasRole('USER')")
-                .anyRequest().permitAll()
-                .and()
-                .logout()
-                .logoutSuccessUrl("/api/programs");
+                .anyRequest().permitAll();
         return http.build();
     }
 

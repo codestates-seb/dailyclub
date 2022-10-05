@@ -78,4 +78,13 @@ public class UserController {
 
     }
 
+    //로그아웃 컨트롤러
+    @GetMapping(value = "/logout/{userId}")
+    public String logout(@PathVariable("userId") Long id, @Parameter(hidden =true) @AuthenticationPrincipal AuthDetails authDetails) {
+        Long loginUserId =authDetails.getUserId();
+        userService.logoutUser(id, loginUserId);
+        return "로그아웃 되었습니다.";
+
+    }
+
 }
