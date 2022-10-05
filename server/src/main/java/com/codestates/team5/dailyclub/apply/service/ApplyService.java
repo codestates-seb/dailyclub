@@ -88,6 +88,10 @@ public class ApplyService {
         return applyRepository.findAllByProgramId(pageRequest, programId);
     }
 
+    public int countAppliesByProgramId(Long programId) {
+        return applyRepository.findByProgramId(programId).size();
+    }
+
     public Page<Apply> findAppliesByUserId(int page, int size, Long userId) {
         //유저 존재 확인
         User userById = userRepository.findById(userId).orElseThrow(() ->
