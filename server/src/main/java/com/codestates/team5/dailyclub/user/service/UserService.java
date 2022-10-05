@@ -29,6 +29,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final UserImageRepository userImageRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public User createUser(UserDto.Post requestBody) {
@@ -107,6 +108,15 @@ public class UserService {
         }
 
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void logoutUser(Long id, Long loginUserId) {
+        User findUser = userRepository.findById(id).orElseThrow(
+                ()-> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
+        );
+        String loginId = findUser.getLoginId();
+        refreshTokenRepository.deleteByLoginId(loginId);
     }
 }
 

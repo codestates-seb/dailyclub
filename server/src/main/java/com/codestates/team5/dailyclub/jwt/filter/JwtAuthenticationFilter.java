@@ -8,9 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -43,9 +45,17 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             //AuthenticationManager에 token을 넘기면 UserDetailService가 받아 처리하도록 하다.
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
             return authentication;
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+        } catch (UsernameNotFoundException | BadCredentialsException | IOException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                logger.info(("로그인 실패 유저 처리"));
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("text/html; charset=UTF-8");
+                String failMessage = "로그인에 실패하였습니다.";
+            try {
+                response.getWriter().write(failMessage);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
         }
         return null;
     }
@@ -57,5 +67,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String refreshToken = tokenProvider.renewalRefreshToken(authentication);
         response.addHeader("Authorization", "Bearer " + accessToken);
         response.addHeader("Refresh", "Bearer " + refreshToken);
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html; charset=UTF-8");
+        String successMessage = "로그인에 성공하였습니다.";
+        response.getWriter().write(successMessage);
     }
 }
