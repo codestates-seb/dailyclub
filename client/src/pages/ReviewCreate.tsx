@@ -55,7 +55,6 @@ export default function ReviewCreate() {
   const [score, setScore] = useState<number>(0);
   const [writerInfo, setWriterInfo] = useState<any>({});
   const { userId } = useAppSelector((state) => state.userInfo);
-  // console.log(userId);
 
   const surveyScoreList = [
     { content: '매우 만족', score: 2 },
@@ -73,6 +72,7 @@ export default function ReviewCreate() {
           (el: any) => el?.user?.id !== userId
         );
         setMembers(exceptMe);
+        // console.log(exceptMe); ////
       });
   };
   const getProgramWriter = async () => {
@@ -91,7 +91,7 @@ export default function ReviewCreate() {
 
   const reviewBody = {
     applyId: Number(applyId),
-    likes: goodMembers?.size !== 0 ? Array.from(goodMembers) : '',
+    likes: goodMembers?.size !== 0 ? Array.from(goodMembers) : [],
     hate: badMember,
     score: score,
   };
@@ -100,7 +100,7 @@ export default function ReviewCreate() {
 
   const handleReviewSubmit = async () => {
     await axios.post(`${URL}/api/reviews`, reviewBody).then((res) => {
-      if (res.data === 'success') {
+      if (res.status === 200) {
         navigate(-1);
       }
     });
@@ -129,12 +129,17 @@ export default function ReviewCreate() {
 
   const handleCheckBadMember = (target: any) => {
     const checkBadMember = document.getElementsByName('onlyCheckedBad');
+
     if (checkBadMember) {
       checkBadMember.forEach((item: any) => {
         item.checked = false;
+        setBadMember(undefined);
       });
-      target.checked = true;
-      setBadMember(Number(target.value));
+      // 좋은멤버로 선택안한 멤버만 나쁜멤버로 선택하게 하기
+      if (Array.from(goodMembers).includes(Number(target.value)) === false) {
+        target.checked = true;
+        setBadMember(Number(target.value));
+      }
     }
   };
 
