@@ -383,11 +383,14 @@ export default function Main() {
                         모집인원 {el.numOfApplicants} / {el.numOfRecruits}
                       </ProgPerson>
                       <ProgDate>
-                        {Math.floor(
-                          (+new Date(el.programDate) - +new Date()) /
-                            (1000 * 60 * 60 * 24)
-                        )}
-                        일 남음
+                        {el?.programDate === getToday()
+                          ? '오늘 마감'
+                          : Math.floor(
+                              (+new Date(el.programDate) - +new Date()) /
+                                (1000 * 60 * 60 * 24)
+                            ) +
+                            1 +
+                            '일 남음'}
                       </ProgDate>
                     </ProgWrapper>
                   </Link>
