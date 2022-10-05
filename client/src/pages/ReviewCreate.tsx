@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Layout from 'components/Layout';
+import { useAppSelector } from 'stores/hooks';
 
 const ReviewContainer = styled.div`
   margin-bottom: 15rem;
@@ -53,6 +54,8 @@ export default function ReviewCreate() {
   const [badMember, setBadMember] = useState<number>();
   const [score, setScore] = useState<number>(0);
   const [writerInfo, setWriterInfo] = useState<any>({});
+  const { userId } = useAppSelector((state) => state.userInfo);
+  // console.log(userId);
 
   const surveyScoreList = [
     { content: '매우 만족', score: 2 },
@@ -66,7 +69,10 @@ export default function ReviewCreate() {
     await axios
       .get(`${URL}/api/applies?page=1&size=4&programId=${programId}`)
       .then((res) => {
-        setMembers(res.data.data);
+        const exceptMe = res?.data?.data?.filter(
+          (el: any) => el?.user?.id !== userId
+        );
+        setMembers(exceptMe);
       });
   };
   const getProgramWriter = async () => {
