@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotNull;
@@ -30,10 +31,12 @@ public class ProgramDto {
     public static class Post {
         @Schema(description = "프로그램 제목", example = "제목")
         @Length(min = 5, max = 30)
+        @NotNull
         private String title;
 
         @Schema(description = "프로그램 본문", example = "본문")
         @Length(min = 1, max = 1000)
+        @NotNull
         private String text;
 
         @Schema(description = "모집 인원", example = "10")
@@ -64,15 +67,17 @@ public class ProgramDto {
     @Builder
     public static class Patch {
         @Schema(description = "프로그램 ID", example = "4")
-        @Positive
+        @NotNull
         private Long id;
 
         @Schema(description = "프로그램 제목", example = "한강 달리기 하실 분??")
         @Length(min = 5, max = 30)
+        @NotNull
         private String title;
 
         @Schema(description = "프로그램 본문", example = "10/18 여의도 한강공원에서 저녁 8시에 같이 달리실 분 모집합니다.")
         @Length(min = 1, max = 1000)
+        @NotNull
         private String text;
 
         @Schema(description = "모집 인원", example = "7")
@@ -97,7 +102,6 @@ public class ProgramDto {
         private Integer minKind;
 
         @Schema(description = "프로그램 이미지 ID")
-        @Positive
         private Long programImageId;
     }
 
@@ -135,6 +139,9 @@ public class ProgramDto {
 
         @Schema(description = "인원 상태", example = "모집중", allowableValues = {"모집중", "마감임박", "마감"})
         private String programStatus;
+
+        @Schema(description = "신청 인원 수")
+        private int numOfApplicants;
 
         @Schema(description = "북마크 ID")
         private Long bookmarkId;
