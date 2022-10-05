@@ -655,11 +655,17 @@ function MyPage() {
     setUserImages('');
     setOrgImg('');
   };
-  const handleMyPageLogout = () => {
+  const handleMyPageLogout = async () => {
     dispatch(logoutUser());
-    removeLocalStorage('access_token');
-    removeLocalStorage('refresh_token');
-    navigate('/');
+    await axios
+      .get(`${process.env.REACT_APP_DEV_URL}/logout/${userId}`)
+      .then((res) => console.log(res))
+      .then(() => {
+        removeLocalStorage('access_token');
+        removeLocalStorage('refresh_token');
+        navigate('/');
+      })
+      .catch((err) => console.log(err));
   };
 
   return (

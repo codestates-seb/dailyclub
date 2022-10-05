@@ -13,6 +13,7 @@ import OauthTitle from 'components/OAuth/OauthTitle';
 import { useAppDispatch } from 'stores/hooks';
 import { fetchUserInfo, getUserId } from 'stores/userInfoSlice';
 import { parseJwt } from 'utils/parseJwt';
+import { useState } from 'react';
 
 const LoginContainer = styled.div`
   margin: 0 auto;
@@ -50,6 +51,7 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginVal>();
+  const [errMsg, setErrMsg] = useState('');
 
   const handleLoginSubmit: SubmitHandler<LoginVal> = (data) => {
     API.login(data)
@@ -73,7 +75,11 @@ export default function Login() {
       .then((res) => {
         navigate(-1);
       })
-      .catch((error) => alert('ID 또는 비밀번호가 일치하지 않습니다.'));
+      .catch((error) => {
+        if (error.response.data === 'login fail') {
+          setErrMsg('ID 또는 비밀번호가 일치하지 않습니다.');
+        }
+      });
   };
 
   return (
@@ -95,6 +101,7 @@ export default function Login() {
           {errors.password && errors.password.type === 'required' && (
             <FormError>비밀번호를 입력해주세요.</FormError>
           )}
+          <FormError>{errMsg && errMsg}</FormError>
           <OauthBtn type="submit">로그인</OauthBtn>
         </LoginForm>
         <WrapperColumn>
