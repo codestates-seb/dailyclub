@@ -1,5 +1,6 @@
 package com.codestates.team5.dailyclub.program.controller;
 
+import com.codestates.team5.dailyclub.apply.service.ApplyService;
 import com.codestates.team5.dailyclub.bookmark.service.BookmarkService;
 import com.codestates.team5.dailyclub.common.dto.MultiResponseDto;
 import com.codestates.team5.dailyclub.jwt.AuthDetails;
@@ -47,6 +48,7 @@ public class ProgramController {
 
     private final ProgramService programService;
     private final BookmarkService bookmarkService;
+    private final ApplyService applyService;
     private final ProgramMapper programMapper;
 
     @Operation(summary = "프로그램 등록")
@@ -141,8 +143,15 @@ public class ProgramController {
         if (authDetails != null) {
             Long loginUserId = authDetails.getUserId();
             //각 프로그램에 대해 로그인 유저가 북마크했는지 체크
-            responses.forEach(response -> checkBookmark(loginUserId, response.getId(), response));
+            responses.forEach(response ->
+                checkBookmark(loginUserId, response.getId(), response)
+            );
         }
+
+        //각 프로그램 신청 인원 count
+        responses.forEach(response ->
+            response.setNumOfApplicants(applyService.countAppliesByProgramId(response.getId()))
+        );
 
         return new ResponseEntity<>(new MultiResponseDto<>(responses, pagePrograms), HttpStatus.OK);
     }
@@ -172,10 +181,11 @@ public class ProgramController {
             description = "NO CONTENT")
     )
     @DeleteMapping("/{programId}")
-    public void deleteProgram(@PathVariable("programId") Long programId,
-                              @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
+    public String deleteProgram(@PathVariable("programId") Long programId,
+                                @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Long loginUserId = authDetails.getUserId();
         programService.deleteProgram(loginUserId, programId);
+        return "프로그램을 삭제했습니다.";
     }
 
     //로그인 유저가 해당 프로그램 북마크 했는지 체크하고, bookmarkId setting하는 메소드
