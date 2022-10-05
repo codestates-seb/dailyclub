@@ -68,8 +68,16 @@ public class User extends Auditable {
         }
     }
 
-    public void update(String nickname, String introduction) {
+    public void updateAll(String nickname, String introduction) {
         this.nickname = nickname;
+        this.introduction = introduction;
+    }
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateIntroduction(String introduction) {
         this.introduction = introduction;
     }
 

@@ -3,6 +3,8 @@ package com.codestates.team5.dailyclub.user.service;
 import com.codestates.team5.dailyclub.image.entity.UserImage;
 import com.codestates.team5.dailyclub.image.repository.UserImageRepository;
 import com.codestates.team5.dailyclub.image.util.ImageUtils;
+import com.codestates.team5.dailyclub.refreshToken.RefreshToken;
+import com.codestates.team5.dailyclub.refreshToken.RefreshTokenRepository;
 import com.codestates.team5.dailyclub.throwable.entity.BusinessLogicException;
 import com.codestates.team5.dailyclub.throwable.entity.ExceptionCode;
 import com.codestates.team5.dailyclub.user.dto.UserDto;
@@ -50,7 +52,19 @@ public class UserService {
             throw new BusinessLogicException(ExceptionCode.CANNOT_UPDATE_USERS);
         }
 
-        findUser.update(userFromPatchDto.getNickname(), userFromPatchDto.getIntroduction());
+        //닉네임, 자기소개 둘 다 변경 요청
+        if(userFromPatchDto.getNickname() != findUser.getNickname()
+                && userFromPatchDto.getIntroduction() != findUser.getIntroduction()) {
+            findUser.updateAll(userFromPatchDto.getNickname(), userFromPatchDto.getIntroduction());
+            //닉네임 변경 요청
+        }else if(userFromPatchDto.getNickname() != findUser.getNickname()
+                && userFromPatchDto.getIntroduction() == findUser.getIntroduction()) {
+            findUser.updateNickname(userFromPatchDto.getNickname());
+            //자기소개 변경 요청
+        }else if(userFromPatchDto.getNickname() == findUser.getNickname()
+                && userFromPatchDto.getIntroduction() != findUser.getIntroduction()) {
+            findUser.updateIntroduction(userFromPatchDto.getIntroduction());
+        }
 
         if(imageFile == null && userImageId == null) {
             return userRepository.save(findUser);

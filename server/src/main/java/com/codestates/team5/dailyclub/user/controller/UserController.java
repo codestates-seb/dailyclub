@@ -1,6 +1,5 @@
 package com.codestates.team5.dailyclub.user.controller;
 
-import com.codestates.team5.dailyclub.common.dto.MultiResponseDto;
 import com.codestates.team5.dailyclub.jwt.AuthDetails;
 import com.codestates.team5.dailyclub.user.dto.UserDto;
 import com.codestates.team5.dailyclub.user.entity.User;
@@ -15,7 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
+
 @Slf4j
 @Tag(name = "유저 API")
 @RestController
@@ -35,11 +33,12 @@ public class UserController {
     private final UserMapper userMapper;
 
     @Operation(summary = "회원가입")
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiResponse(responseCode = "201", description = "CREATED", content = @Content(schema = @Schema(implementation = UserDto.Response.class)))
     @PostMapping(value = "/join", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> joinUser(@RequestBody UserDto.Post requestBody) {
+    public String joinUser(@RequestBody @Validated UserDto.Post requestBody) {
         User response = userService.createUser(requestBody);
-        return new ResponseEntity<>(userMapper.userToUserResponseDto(response), HttpStatus.CREATED);
+        return "회원가입이 완료되었습니다.";
 
     }
 
