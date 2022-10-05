@@ -93,17 +93,18 @@ public class ApplyController {
         return new ResponseEntity<>(new MultiResponseDto<>(responses, pageApplies), HttpStatus.OK);
     }
 
-    @Operation(summary = "프로그램 신청 삭제")
+    @Operation(summary = "프로그램 신청 취소")
     @ApiResponses(
         @ApiResponse(
             responseCode = "204",
             description = "NO CONTENT")
     )
     @DeleteMapping("/{applyId}")
-    public void deleteProgram(@PathVariable("applyId") Long applyId,
+    public String deleteProgram(@PathVariable("applyId") Long applyId,
                               @Parameter(hidden = true) @AuthenticationPrincipal AuthDetails authDetails) {
         Long loginUserId = authDetails.getUser().getId();
         applyService.deleteApply(loginUserId, applyId);
+        return "신청을 취소했습니다.";
     }
 
 }
