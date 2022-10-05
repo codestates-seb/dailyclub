@@ -278,7 +278,7 @@ function MyPage() {
           `${DEV_URL}/api/applies/mypage?page=${page}&size=4&userId=${params.userId}`
         )
         .then((res) => {
-          // console.log(res?.data.data);
+          console.log(res?.data.data);
           setPrograms(res.data.data);
           setPageList(res.data.pageInfo);
         });
@@ -377,7 +377,8 @@ function MyPage() {
                     </ClubInfo>
                   </CardLeftWrapper>
                 </Link>
-                {compareWithToday(el?.program?.programDate) === '모임종료' ? (
+                {compareWithToday(el?.program?.programDate) === '모임종료' &&
+                el?.reviewStatus === 'UNREVIEWED' ? (
                   <ReviewBtn
                     onClick={() => handleReviewOpen(el?.id, el?.program?.id)}
                   >
@@ -435,11 +436,6 @@ function MyPage() {
                     </ClubInfo>
                   </CardLeftWrapper>
                 </Link>
-                {compareWithToday(el?.programDate) === '모임종료' ? (
-                  <ReviewBtn onClick={() => handleReviewOpen(el?.id, el?.id)}>
-                    리뷰작성
-                  </ReviewBtn>
-                ) : null}
               </ClubItem>
             ))}
           </ClubContainer>
