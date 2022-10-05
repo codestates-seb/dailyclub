@@ -71,7 +71,7 @@ export default function Login() {
         // console.log('토큰해부', decodedAccess);
       })
       .then((res) => {
-        navigate('/');
+        navigate(-1);
       })
       .catch((error) => alert('ID 또는 비밀번호가 일치하지 않습니다.'));
   };
