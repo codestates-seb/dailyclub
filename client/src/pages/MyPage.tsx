@@ -24,6 +24,7 @@ import { removeLocalStorage } from 'apis/localStorage';
 
 const MyPageContainer = styled.div`
   display: flex;
+  margin-bottom: 23rem;
 `;
 
 /* 프로필 부분 */
