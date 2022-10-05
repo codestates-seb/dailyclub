@@ -8,6 +8,7 @@ import OauthBtn from 'components/OAuth/OauthBtn';
 import OauthGoogleBtn from 'components/OAuth/OauthGoogleBtn';
 import OauthNaverBtn from 'components/OAuth/OauthNaverBtn';
 import OauthTitle from 'components/OAuth/OauthTitle';
+import { useState } from 'react';
 
 const SignUpContainer = styled.div`
   margin: 0 auto;
@@ -44,8 +45,16 @@ export default function SignUp() {
     handleSubmit,
     formState: { errors },
   } = useForm<SignUpVal>();
+  const [idErrMsg, setIdErrMsg] = useState('');
+  const [nicknameErrMsg, setNicknameErrMsg] = useState('');
+  const [emailErrMsg, setEmailErrMsg] = useState('');
+  const [pwdErrMsg, setPwdErrMsg] = useState('');
 
   const handleLoginSubmit: SubmitHandler<SignUpVal> = (data) => {
+    setEmailErrMsg('');
+    setNicknameErrMsg('');
+    setIdErrMsg('');
+    setPwdErrMsg('');
     /** 회원가입 API */
     axios
       .post(`${URL}/join`, data, {
@@ -57,7 +66,15 @@ export default function SignUp() {
         navigate('/login');
         console.log('회원등록 응답 :', res);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err?.response?.data?.fieldErrors);
+        err?.response?.data?.fieldErrors?.map((el: any) => {
+          if (el.field === 'email') setEmailErrMsg(el.reason);
+          if (el.field === 'nickname') setNicknameErrMsg(el.reason);
+          if (el.field === 'loginId') setIdErrMsg(el.reason);
+          if (el.field === 'password') setPwdErrMsg(el.reason);
+        });
+      });
   };
 
   return (
@@ -66,12 +83,22 @@ export default function SignUp() {
         <OauthTitle>J O I N</OauthTitle>
         <SignUpForm onSubmit={handleSubmit(handleLoginSubmit)}>
           <SignUpInput
-            {...register('loginId', { required: true })}
+            {...register('loginId', {
+              required: '아이디를 입력해주세요.',
+              minLength: {
+                value: 5,
+                message: '5자 이상 15자 이하의 아이디를 입력해주세요.',
+              },
+              maxLength: {
+                value: 15,
+                message: '15자 이하의 아이디를 입력해주세요',
+              },
+            })}
             placeholder="아이디"
+            onChange={() => setIdErrMsg('')}
           />
-          {errors.loginId && errors.loginId.type === 'required' && (
-            <FormError>아이디를 입력해주세요.</FormError>
-          )}
+          {errors.loginId && <FormError>{errors.loginId.message}</FormError>}
+          {idErrMsg && <FormError>{idErrMsg}</FormError>}
           <SignUpInput
             {...register('email', {
               required: true,
@@ -79,27 +106,48 @@ export default function SignUp() {
             })}
             type="email"
             placeholder="이메일"
+            onChange={() => setEmailErrMsg('')}
           />
           {errors.email && errors.email.type === 'required' && (
             <FormError>이메일을 입력해주세요.</FormError>
           )}
+          {emailErrMsg && <FormError>{emailErrMsg}</FormError>}
           {errors.email && errors.email.type === 'pattern' && (
             <FormError>{`잘못된 이메일 형식입니다. 예) @email.com`}</FormError>
           )}
           <SignUpInput
-            {...register('password', { required: true })}
+            {...register('password', {
+              required: '비밀번호를 입력해주세요.',
+              minLength: {
+                value: 6,
+                message: '6자 이상 18자 이하의 비밀번호를 입력해주세요.',
+              },
+              maxLength: {
+                value: 18,
+                message: '18자 이하의 비밀번호를 입력해주세요',
+              },
+            })}
             placeholder="비밀번호"
           />
-          {errors.password && errors.password.type === 'required' && (
-            <FormError>비밀번호를 입력해주세요.</FormError>
-          )}
+          {errors.password && <FormError>{errors.password.message}</FormError>}
+          {pwdErrMsg && <FormError>{pwdErrMsg}</FormError>}
           <SignUpInput
-            {...register('nickname', { required: true })}
+            {...register('nickname', {
+              required: '닉네임을 입력해주세요.',
+              minLength: {
+                value: 2,
+                message: '2자 이상 10자 이하의 닉네임을 입력해주세요.',
+              },
+              maxLength: {
+                value: 10,
+                message: '10자 이하의 닉네임을 입력해주세요',
+              },
+            })}
             placeholder="닉네임"
+            onChange={() => setNicknameErrMsg('')}
           />
-          {errors.nickname && errors.nickname.type === 'required' && (
-            <FormError>닉네임을 입력해주세요.</FormError>
-          )}
+          {errors.nickname && <FormError>{errors.nickname.message}</FormError>}
+          {nicknameErrMsg && <FormError>{nicknameErrMsg}</FormError>}
           <OauthBtn type="submit">회원가입</OauthBtn>
         </SignUpForm>
         <LoginLink>
