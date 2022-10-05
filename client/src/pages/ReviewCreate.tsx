@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Layout from 'components/Layout';
-import CheckBox from 'components/CheckBox';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import Layout from 'components/Layout';
 
 const ReviewContainer = styled.div`
   margin-bottom: 15rem;
@@ -40,37 +39,27 @@ const CreateBtn = styled.button`
 `;
 const MemberRowWapper = styled.div`
   display: flex;
+  flex-direction: column;
 `;
 const MemberNickName = styled.div``;
-const MemberInput = styled.input`
-  appearance: none;
-  width: 3rem;
-  height: 1.5rem;
-  border: 1.5px solid gainsboro;
-  border-radius: 0.35rem;
-`;
 
 export default function ReviewCreate() {
-  const { programId, applyId } = useParams();
   const URL = process.env.REACT_APP_DEV_URL;
+  const { programId, applyId } = useParams();
   const [members, setMembers] = useState<any>([]);
-  const [ischecked, setIsChecked] = useState<boolean>(false);
-  const [goodMember, setGoodMember] = useState<any>([]);
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [goodMembers, setGoodMembers] = useState(new Set()); // 체크된 항목
+  const [badMember, setBadMember] = useState<number>();
+  const [score, setScore] = useState<number>(0);
+  const [writerInfo, setWriterInfo] = useState<any>({});
 
-  const surveyMemberList = ['스티브', '제임스', '데이비드', '케이트'];
-  const secondSurveyMember = ['안녕', '제임스', '데이비드', '케이트'];
   const surveyScoreList = [
-    '매우 만족',
-    '만족',
-    '보통',
-    '불만족',
-    '매우 불만족',
+    { content: '매우 만족', score: 2 },
+    { content: '만족', score: 1 },
+    { content: '보통', score: 0 },
+    { content: '불만족', score: -1 },
+    { content: '매우 불만족', score: -2 },
   ];
-  const [checkedSurvey, setCheckedSurvey] = useState<string[]>([]);
-  const onSurveyChecked = (checked: string[]) => {
-    setCheckedSurvey(checked);
-    console.log(checked);
-  };
 
   const getProgramApplyList = async () => {
     await axios
@@ -79,19 +68,77 @@ export default function ReviewCreate() {
         setMembers(res.data.data);
       });
   };
+  const getProgramWriter = async () => {
+    await axios.get(`${URL}/api/programs/${programId}`).then(({ data }) => {
+      setWriterInfo({
+        id: data?.writer?.id,
+        nickname: data?.writer?.nickname,
+      });
+    });
+  };
 
   useEffect(() => {
     getProgramApplyList();
+    getProgramWriter();
   }, []);
-  //   console.log('멤버 :', members && members, goodMember);
+
+  const reviewBody = {
+    applyId: Number(applyId),
+    likes: goodMembers?.size !== 0 ? Array.from(goodMembers) : '',
+    hate: badMember,
+    score: score,
+  };
+
+  console.log('바디', reviewBody);
 
   const handleReviewSubmit = async () => {
-    await axios.post(`${URL}/api/reviews`, {
-      applyId: applyId,
-      likes: [0],
-      hate: 0,
-      score: -2,
-    });
+    await axios
+      .post(`${URL}/api/reviews`, reviewBody)
+      .then((res) => console.log(res));
+  };
+
+  const handleCheckedBox = (e: any) => {
+    setIsChecked(!isChecked);
+    handlecheckedItem(e.target.parentNode, e.target.value, e.target.checked);
+  };
+
+  const handlecheckedItem = (box: any, id: number, isChecked: any) => {
+    if (isChecked) {
+      id = Number(id);
+      goodMembers.add(id);
+      setGoodMembers(goodMembers);
+      box.style.color = '#ff5924';
+    }
+    if (!isChecked && goodMembers.has(Number(id))) {
+      id = Number(id);
+      goodMembers.delete(id);
+      setGoodMembers(goodMembers);
+      box.style.color = 'black';
+    }
+    return goodMembers;
+  };
+
+  const handleCheckBadMember = (target: any) => {
+    const checkBadMember = document.getElementsByName('onlyCheckedBad');
+    if (checkBadMember) {
+      checkBadMember.forEach((item: any) => {
+        item.checked = false;
+      });
+      target.checked = true;
+      setBadMember(Number(target.value));
+    }
+  };
+
+  const handleCheckScore = (target: any) => {
+    const checkScore = document.getElementsByName('onlyCheckedScore');
+    if (checkScore) {
+      checkScore.forEach((item: any) => {
+        item.checked = false;
+      });
+      target.checked = true;
+      setScore(Number(target.value));
+      console.log(Number(target.value));
+    }
   };
 
   return (
@@ -104,15 +151,31 @@ export default function ReviewCreate() {
               다시 함께하고 싶은 멤버 (복수 선택 가능)
             </WantAgainHead>
             <ProgSurveyWrap>
-              <CheckBox
-                checkedSurvey={checkedSurvey}
-                onCheck={onSurveyChecked}
-                surveyName={surveyMemberList}
-              />
               {members &&
                 members.map((el: any) => (
                   <MemberRowWapper key={el?.id}>
-                    <MemberNickName>&nbsp; {el?.user?.nickname}</MemberNickName>
+                    <MemberNickName>
+                      <label htmlFor={el?.user?.id}>
+                        <input
+                          type="checkbox"
+                          id={el?.user?.id}
+                          value={el?.user?.id}
+                          onChange={(e) => handleCheckedBox(e)}
+                        />
+                        &nbsp; {el?.user?.nickname}
+                      </label>
+                    </MemberNickName>
+                    <MemberNickName>
+                      <label htmlFor={writerInfo?.id}>
+                        <input
+                          type="checkbox"
+                          id={writerInfo?.id}
+                          value={writerInfo?.id}
+                          onChange={(e) => handleCheckedBox(e)}
+                        />
+                        &nbsp; {writerInfo && writerInfo?.nickname}
+                      </label>
+                    </MemberNickName>
                   </MemberRowWapper>
                 ))}
             </ProgSurveyWrap>
@@ -120,16 +183,33 @@ export default function ReviewCreate() {
           <WantAgainContent>
             <WantAgainHead>다신 함께하고 싶지 않은 멤버</WantAgainHead>
             <ProgSurveyWrap>
-              <CheckBox
-                checkedSurvey={checkedSurvey}
-                onCheck={onSurveyChecked}
-                surveyName={secondSurveyMember}
-              />
               {members &&
                 members.map((el: any) => (
                   <MemberRowWapper key={el?.id}>
-                    <input type="checkbox" />
-                    <MemberNickName>&nbsp; {el?.user?.nickname}</MemberNickName>
+                    <MemberNickName>
+                      <label>
+                        <input
+                          type="checkbox"
+                          name="onlyCheckedBad"
+                          id={el?.id}
+                          value={el?.user?.id}
+                          onChange={(e) => handleCheckBadMember(e.target)}
+                        />
+                        &nbsp; {el?.user?.nickname}
+                      </label>
+                    </MemberNickName>
+                    <MemberNickName>
+                      <label>
+                        <input
+                          type="checkbox"
+                          name="onlyCheckedBad"
+                          id={writerInfo?.id}
+                          value={writerInfo?.id}
+                          onChange={(e) => handleCheckBadMember(e.target)}
+                        />
+                        &nbsp; {writerInfo && writerInfo?.nickname}
+                      </label>
+                    </MemberNickName>
                   </MemberRowWapper>
                 ))}
             </ProgSurveyWrap>
@@ -137,11 +217,23 @@ export default function ReviewCreate() {
           <WantAgainContent>
             <WantAgainHead>이 프로그램은 어땠나요? *</WantAgainHead>
             <ProgSurveyWrap>
-              <CheckBox
-                checkedSurvey={checkedSurvey}
-                onCheck={onSurveyChecked}
-                surveyName={surveyScoreList}
-              />
+              {surveyScoreList &&
+                surveyScoreList.map((el: any, idx: number) => (
+                  <MemberRowWapper key={idx}>
+                    <MemberNickName>
+                      <label>
+                        <input
+                          type="checkbox"
+                          name="onlyCheckedScore"
+                          id={String(idx)}
+                          value={el.score}
+                          onChange={(e) => handleCheckScore(e.target)}
+                        />
+                        &nbsp; {el.content}
+                      </label>
+                    </MemberNickName>
+                  </MemberRowWapper>
+                ))}
             </ProgSurveyWrap>
           </WantAgainContent>
         </WantAgainWrap>

@@ -280,7 +280,7 @@ function MyPage() {
           `${DEV_URL}/api/applies/mypage?page=${page}&size=4&userId=${params.userId}`
         )
         .then((res) => {
-          console.log(res?.data.data);
+          // console.log(res?.data.data);
           setPrograms(res.data.data);
           setPageList(res.data.pageInfo);
         });
@@ -292,7 +292,7 @@ function MyPage() {
           `${DEV_URL}/api/programs/mypage?page=${page}&size=4&userId=${params.userId}`
         )
         .then((res) => {
-          console.log(res?.data.data);
+          // console.log(res?.data.data);
           setOpens(res.data.data);
           setOpenList(res.data.pageInfo);
         });
