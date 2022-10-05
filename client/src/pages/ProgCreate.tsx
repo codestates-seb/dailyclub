@@ -233,7 +233,15 @@ function ProgCreate() {
       .then((res) => {
         navigate(`/programs/${res.data.id}`);
       })
-      .catch((error) => alert(error.response.data.fieldErrors[0].reason));
+      .catch((error) => {
+        if (error.response.data.fieldErrors) {
+          alert(error.response.data.fieldErrors[0].reason);
+        } else if (error.response.data.message) {
+          alert(error.response.data.message);
+        } else {
+          alert('새로고침을 진행한 후에 로그인이 되어있다면 작성해주세요!');
+        }
+      });
   };
 
   //제목인풋에서 엔터누를시 프로그램 설명 인풋으로 포커즈
@@ -290,6 +298,8 @@ function ProgCreate() {
               type="text"
               placeholder="제목을 입력해주세요. (5 글자 이상 30 글자 이하)"
               name="title"
+              minLength={5}
+              maxLength={30}
               ref={firstRef}
               onKeyUp={handleInput}
               required
@@ -306,6 +316,8 @@ function ProgCreate() {
               ex) 모이는 장소, 진행시간, 회비, 오픈 카카오톡 링크 등"
               ref={secondRef}
               onChange={handleText}
+              minLength={1}
+              maxLength={1000}
               required
             />
           </ProgramInfo>

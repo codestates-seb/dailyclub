@@ -73,7 +73,7 @@ export default function Login() {
       .then((res) => {
         navigate('/');
       })
-      .catch((error) => alert('ID와 비밀번호가 일치하지 않습니다.'));
+      .catch((error) => alert('ID 또는 비밀번호가 일치하지 않습니다.'));
   };
 
   return (

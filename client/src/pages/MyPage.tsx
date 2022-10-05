@@ -247,27 +247,60 @@ function MyPage() {
   const [userImages, setUserImages] = useState<string | Blob>('');
   const [orgImg, setOrgImg] = useState<string>('');
   const [imgId, setImgId] = useState<number>();
+  // 신청한 프로그램 리스트
+  const [pageList, setPageList] = useState<PaginationVal>();
+  // 개설한 프로그램 리스트
+  const [openList, setOpenList] = useState<PaginationVal>();
 
   useEffect(() => {
-    axios
-      .get(`${DEV_URL}/api/users/${params.userId}`, {
-        headers: {
-          'Content-type': 'application/json',
-        },
-      })
-      .then((res) => {
-        setData(res.data);
-        setNickname(res.data.nickname);
-        setIntroduction(res.data?.introduction);
-        setImgId(res.data.userImages[0]?.id);
+    const getUserProfile = async () =>
+      await axios
+        .get(`${DEV_URL}/api/users/${params.userId}`, {
+          headers: {
+            'Content-type': 'application/json',
+          },
+        })
+        .then((res) => {
+          setData(res.data);
+          setNickname(res.data.nickname);
+          setIntroduction(res.data?.introduction);
 
-        /** 이전이미지 있으면, 이미지 받아오기 */
-        if (res.data.userImages.length !== 0) {
-          setOrgImg(
-            `data:${res.data.userImages[0].contentType};base64,${res.data.userImages[0].bytes}`
-          );
-        }
-      });
+          /** 이전이미지 있으면, 이미지 받아오기 */
+          if (res.data.userImages.length !== 0) {
+            setImgId(res.data.userImages[0].id);
+            setOrgImg(
+              `data:${res.data.userImages[0].contentType};base64,${res.data.userImages[0].bytes}`
+            );
+          }
+        });
+
+    const getApplyList = async () => {
+      await axios
+        .get(
+          `${DEV_URL}/api/applies/mypage?page=${page}&size=4&userId=${params.userId}`
+        )
+        .then((res) => {
+          setPrograms(res.data.data);
+          setPageList(res.data.pageInfo);
+        });
+    };
+
+    const getOpenList = async () => {
+      await axios
+        .get(
+          `${DEV_URL}/api/programs/mypage?page=${page}&size=4&userId=${params.userId}`
+        )
+        .then((res) => {
+          setOpens(res.data.data);
+          setOpenList(res.data.pageInfo);
+        });
+    };
+
+    getUserProfile();
+    getApplyList();
+    getOpenList();
+
+    console.log(imgId);
   }, []);
 
   // 회원탈퇴
@@ -285,38 +318,6 @@ function MyPage() {
       return;
     }
   };
-
-  // 신청한 프로그램 리스트
-  const [pageList, setPageList] = useState<PaginationVal>();
-  useEffect(() => {
-    const getApplyList = async () => {
-      await axios
-        .get(
-          `${DEV_URL}/api/applies/mypage?page=${page}&size=4&userId=${params.userId}`
-        )
-        .then((res) => {
-          setPrograms(res.data.data);
-          setPageList(res.data.pageInfo);
-        });
-    };
-    getApplyList();
-  }, []);
-
-  // 개설한 프로그램 리스트
-  const [openList, setOpenList] = useState<PaginationVal>();
-  useEffect(() => {
-    const getOpenList = async () => {
-      await axios
-        .get(
-          `${DEV_URL}/api/programs/mypage?page=${page}&size=4&userId=${params.userId}`
-        )
-        .then((res) => {
-          setOpens(res.data.data);
-          setOpenList(res.data.pageInfo);
-        });
-    };
-    getOpenList();
-  }, []);
 
   const handleReviewOpen = (applyId?: number) => {
     navigate(`/reviews/${applyId}`);

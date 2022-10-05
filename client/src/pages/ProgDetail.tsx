@@ -22,6 +22,7 @@ import MessageModal from 'components/MessageModal';
 import DeleteModal from 'components/DeleteModal';
 import CancelModal from 'components/CancelModal';
 import ProgressBar from 'components/ProgressBar';
+import { getToday } from 'utils/getToday';
 
 const ProgPageDetail = styled.div`
   max-width: 1200px;
@@ -498,20 +499,46 @@ export default function ProgDetail() {
                         )}
                       </Icon>
                     </BookmarkBtn>
-                    <ProgUpdateBtn
-                      onClick={() => {
-                        navigate(`/programs/${params.programId}/update`);
-                      }}
-                    >
-                      수정하기
-                    </ProgUpdateBtn>
-                    <ProgDeleteBtn
-                      onClick={() => {
-                        setIsDeleteOpen(true);
-                      }}
-                    >
-                      삭제하기
-                    </ProgDeleteBtn>
+                    {applyList.length !== 0 &&
+                    data?.programDate !== getToday() ? (
+                      <ProgUpdateBtn
+                        onClick={() => {
+                          navigate(`/programs/${params.programId}/update`);
+                        }}
+                      >
+                        수정하기
+                      </ProgUpdateBtn>
+                    ) : (
+                      <ProgUpdateBtn
+                        onClick={() => {
+                          alert(
+                            '함께하는 멤버가 있으므로 당일 수정이 불가합니다!'
+                          );
+                        }}
+                      >
+                        수정하기
+                      </ProgUpdateBtn>
+                    )}
+                    {applyList.length !== 0 &&
+                    data?.programDate !== getToday() ? (
+                      <ProgDeleteBtn
+                        onClick={() => {
+                          setIsDeleteOpen(true);
+                        }}
+                      >
+                        삭제하기
+                      </ProgDeleteBtn>
+                    ) : (
+                      <ProgDeleteBtn
+                        onClick={() => {
+                          alert(
+                            '함께하는 멤버가 있으므로 당일 삭제가 불가합니다!'
+                          );
+                        }}
+                      >
+                        삭제하기
+                      </ProgDeleteBtn>
+                    )}
                   </>
                 ) : applyMemberfilter.length !== 0 ? (
                   <>
@@ -533,13 +560,23 @@ export default function ProgDetail() {
                       </Icon>
                     </BookmarkBtn>
 
-                    <ProgApply
-                      onClick={() => {
-                        setIsCancelOpen(true);
-                      }}
-                    >
-                      취소하기
-                    </ProgApply>
+                    {data?.programDate !== getToday() ? (
+                      <ProgApply
+                        onClick={() => {
+                          setIsCancelOpen(true);
+                        }}
+                      >
+                        취소하기
+                      </ProgApply>
+                    ) : (
+                      <ProgApply
+                        onClick={() => {
+                          alert('프로그램 당일 신청 취소가 불가합니다!');
+                        }}
+                      >
+                        취소하기
+                      </ProgApply>
+                    )}
                   </>
                 ) : (
                   <>
@@ -553,13 +590,23 @@ export default function ProgDetail() {
                       </Icon>
                     </BookmarkBtn>
 
-                    <ProgApply
-                      onClick={() => {
-                        setIsApplyOpen(true);
-                      }}
-                    >
-                      신청하기
-                    </ProgApply>
+                    {data?.numOfRecruits === applyList.length ? (
+                      <ProgApply
+                        onClick={() => {
+                          alert('신청인원이 가득 찼습니다!');
+                        }}
+                      >
+                        신청하기
+                      </ProgApply>
+                    ) : (
+                      <ProgApply
+                        onClick={() => {
+                          setIsApplyOpen(true);
+                        }}
+                      >
+                        신청하기
+                      </ProgApply>
+                    )}
                   </>
                 )}
               </BtnWrap>

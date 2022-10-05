@@ -39,7 +39,7 @@ function CancelModal({
       })
       .catch((err) => {
         setIsCancelOpen(false);
-        console.log(err);
+        alert(err.response.data.message);
       });
 
     await axios
