@@ -37,6 +37,7 @@
   </div>
   <div>
     <h3>BE</h3>
+    추가해야함
   </div>
   <div>
     <h3>Tool</h3>
@@ -69,12 +70,12 @@
       </tr>
     <tbody>
       <tr align="center">
-        <td>이미지</td>
-        <td>이미지</td>
-        <td>이미지</td>
-        <td>이미지</td>
-        <td>이미지</td>
-        <td>이미지</td>
+        <td><img src=""/></td>
+        <td><img src=""/></td>
+        <td><img src=""/></td>
+        <td><img src=""/></td>
+        <td><img src=""/></td>
+        <td><img src=""/></td>
       </tr>
       <tr align="center">
         <td><a href = "https://github.com/nelljun">@nelljun</a></td>
