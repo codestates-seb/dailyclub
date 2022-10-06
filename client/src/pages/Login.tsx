@@ -77,7 +77,7 @@ export default function Login() {
         navigate('/');
       })
       .catch((error) => {
-        if (error.response.data === 'login fail') {
+        if (error.response.status === 401) {
           setErrMsg('ID 또는 비밀번호가 일치하지 않습니다.');
         }
       });
