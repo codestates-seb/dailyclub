@@ -8,7 +8,7 @@ export const fetchUserInfo = createAsyncThunk(
   async (id: number, thunkApi) => {
     try {
       const response = await axios.get(`${URL}/api/users/${id}`);
-      console.log('회원정보조회다!!', response.data);
+      // console.log('회원정보조회다!!', response.data);
       return response.data;
     } catch (err) {
       // return console.log(err);
