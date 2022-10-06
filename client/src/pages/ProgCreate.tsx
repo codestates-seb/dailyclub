@@ -304,7 +304,7 @@ function ProgCreate() {
               minLength={5}
               maxLength={30}
               ref={firstRef}
-              onKeyUp={handleInput}
+              onKeyPress={handleInput}
               required
               onChange={handleTitle}
             />

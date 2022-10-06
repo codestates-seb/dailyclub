@@ -6,6 +6,7 @@ import Layout from 'components/Layout';
 import { useAppSelector } from 'stores/hooks';
 
 const ReviewContainer = styled.div`
+  height: 100vh;
   margin-bottom: 15rem;
 `;
 const ReviewHead = styled.div`
