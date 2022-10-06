@@ -72,6 +72,7 @@ const ContentsInput = styled.textarea`
   padding: 10px;
   width: 90%;
   height: 600px;
+  line-height: 20px;
   resize: none;
 `;
 
@@ -321,6 +322,7 @@ function ProgCreate() {
               onChange={handleText}
               minLength={1}
               maxLength={1000}
+              wrap="hard"
               required
             />
           </ProgramInfo>

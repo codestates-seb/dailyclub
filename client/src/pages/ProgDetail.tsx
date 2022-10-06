@@ -62,6 +62,7 @@ const ProgTitleSection = styled.div`
 const ProgTxtSection = styled.div`
   margin-top: 30px;
   height: 20rem;
+  line-height: 25px;
 `;
 
 const ProgText = styled.div`
@@ -69,6 +70,7 @@ const ProgText = styled.div`
   margin-bottom: 5px;
   font-size: 18px;
   font-weight: 500;
+  white-space: pre-line;
 `;
 
 const ProgMemberContent = styled.div`

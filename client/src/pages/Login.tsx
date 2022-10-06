@@ -97,6 +97,7 @@ export default function Login() {
           )}
           <LoginInput
             {...register('password', { required: true })}
+            type="password"
             placeholder="비밀번호"
           />
           {errors.password && errors.password.type === 'required' && (

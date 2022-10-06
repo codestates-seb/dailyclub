@@ -127,6 +127,7 @@ export default function SignUp() {
               },
             })}
             placeholder="비밀번호"
+            type="password"
           />
           {errors.password && <FormError>{errors.password.message}</FormError>}
           {pwdErrMsg && <FormError>{pwdErrMsg}</FormError>}
