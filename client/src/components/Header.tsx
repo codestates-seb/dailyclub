@@ -228,16 +228,16 @@ export default function Header() {
       <HeaderContainer>
         <HeaderContent>
           <LogoContent>
-            <Link to="/">
+            <Link to="/programs">
               <img src={Logo} alt="logo" style={{ height: 55, width: 90 }} />
             </Link>
           </LogoContent>
           <IconContainer>
             <HeaderLinkText>
-              <Link to="/">홈</Link>
+              <Link to="/programs">홈</Link>
             </HeaderLinkText>
             <HeaderLinkText>
-              <Link to="/programs">프로그램 / 모임 목록 </Link>
+              <Link to="/">서비스 소개 </Link>
             </HeaderLinkText>
 
             <SearchForm onSubmit={handelSearchSubmit}>

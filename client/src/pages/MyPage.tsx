@@ -367,8 +367,16 @@ function MyPage() {
                         : null}
                     </DoneMsg>
                     <ClubInfo>
-                      <ClubTitle>{el?.program.title}</ClubTitle>
-                      <ClubBody>{el?.program.text}</ClubBody>
+                      <ClubTitle>
+                        {el?.program.title?.length > 12
+                          ? el?.program.title.slice(0, 12) + '...'
+                          : el?.program?.title}
+                      </ClubTitle>
+                      <ClubBody>
+                        {el?.program.text?.length > 16
+                          ? el?.program.text.slice(0, 16) + '...'
+                          : el?.program.text}
+                      </ClubBody>
                       <ClubDate>
                         {el?.program.programDate}{' '}
                         {compareWithToday(el?.program?.programDate)}
@@ -427,8 +435,16 @@ function MyPage() {
                         : null}
                     </DoneMsg>
                     <ClubInfo>
-                      <ClubTitle>{el?.title}</ClubTitle>
-                      <ClubBody>{el?.text}</ClubBody>
+                      <ClubTitle>
+                        {el?.title?.length > 18
+                          ? el?.title.slice(0, 18) + '...'
+                          : el?.title}
+                      </ClubTitle>
+                      <ClubBody>
+                        {el?.text?.length > 18
+                          ? el?.text.slice(0, 18) + '...'
+                          : el?.text}
+                      </ClubBody>
                       <ClubDate>
                         {el?.programDate} {compareWithToday(el?.programDate)}
                       </ClubDate>
@@ -504,8 +520,16 @@ function MyPage() {
                         : null}
                     </DoneMsg>
                     <ClubInfo>
-                      <ClubTitle>{el?.program.title}</ClubTitle>
-                      <ClubBody>{el?.program.text}</ClubBody>
+                      <ClubTitle>
+                        {el?.program.title?.length > 18
+                          ? el?.program.title.slice(0, 18) + '...'
+                          : el?.program?.title}
+                      </ClubTitle>
+                      <ClubBody>
+                        {el?.program.text?.length > 18
+                          ? el?.program.text.slice(0, 18) + '...'
+                          : el?.program.text}
+                      </ClubBody>
                       <ClubDate>
                         {el?.program.programDate}{' '}
                         {compareWithToday(el?.program?.programDate)}
@@ -556,8 +580,16 @@ function MyPage() {
                         : null}
                     </DoneMsg>
                     <ClubInfo>
-                      <ClubTitle>{el?.title}</ClubTitle>
-                      <ClubBody>{el?.text}</ClubBody>
+                      <ClubTitle>
+                        {el?.title?.length > 18
+                          ? el?.title.slice(0, 18) + '...'
+                          : el?.title.slice}
+                      </ClubTitle>
+                      <ClubBody>
+                        {el?.text?.length > 18
+                          ? el?.text.slice(0, 18) + '...'
+                          : el?.text}
+                      </ClubBody>
                       <ClubDate>
                         {el?.programDate} {compareWithToday(el?.programDate)}
                       </ClubDate>

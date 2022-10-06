@@ -580,13 +580,21 @@ export default function ProgDetail() {
                   </>
                 ) : (
                   <>
-                    <BookmarkBtn>
+                    <BookmarkBtn onClick={handleBookmarkedToggle}>
                       <Icon>
-                        <img
-                          src={Bookmark}
-                          alt="logo"
-                          style={{ height: 25, width: 25 }}
-                        />
+                        {detailBookmarked ? (
+                          <img
+                            src={Bookmarked}
+                            alt="logo"
+                            style={{ height: 25, width: 25 }}
+                          />
+                        ) : (
+                          <img
+                            src={Bookmark}
+                            alt="logo"
+                            style={{ height: 25, width: 25 }}
+                          />
+                        )}
                       </Icon>
                     </BookmarkBtn>
 

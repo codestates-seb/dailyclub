@@ -29,10 +29,9 @@ export const DoneMsg = styled.div`
   position: absolute;
   top: 1.2rem;
   left: 1.2rem;
-  padding: 0.85rem 0.55rem;
+  padding: 1rem 0.6rem;
   color: white;
-  font-weight: 300;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -116,9 +115,15 @@ function BookMarkTab() {
                   <ClubInfo>
                     <ClubTitle>
                       [{el?.program?.location}]{' '}
-                      {el?.program?.title.slice(0, 16)}
+                      {el?.program?.title.length > 14
+                        ? el?.program?.title.slice(0, 14) + '...'
+                        : el?.program?.title}
                     </ClubTitle>
-                    <ClubBody>{el?.program?.text.slice(0, 18)}</ClubBody>
+                    <ClubBody>
+                      {el?.program?.text.length > 18
+                        ? el?.program?.text.slice(0, 18) + '...'
+                        : el?.program?.text}
+                    </ClubBody>
                     <ClubDate>
                       {el?.program?.programDate} &nbsp;&nbsp;
                       {compareWithToday(el?.program?.programDate)}

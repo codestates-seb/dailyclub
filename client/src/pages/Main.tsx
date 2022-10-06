@@ -199,7 +199,7 @@ export default function Main() {
         })
         .then(({ data }) => {
           // console.log(data?.data);
-          setPrograms(data?.data);
+          setPrograms(data?.data?.reverse());
           setPageList(data?.pageInfo);
           const doneFilter = data?.data.map((el: ProgramDetailVal) => {
             el.programStatus === '마감';
@@ -369,7 +369,10 @@ export default function Main() {
                   </ProgBanner>
                   <Link to={`/programs/${el.id}`} key={el.id}>
                     <ProgTitle>
-                      [{el.location}] {el.title.slice(0, 16)}...
+                      [{el.location}]{' '}
+                      {el?.title?.length > 16
+                        ? el.title.slice(0, 16) + '...'
+                        : el?.title}
                     </ProgTitle>
                     <LevelPercent percent={el.minKind} />
                     <ProgProgressBar>
