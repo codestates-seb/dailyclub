@@ -44,6 +44,7 @@
       <img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=Slack&logoColor=white"/>
       <img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"/>
       <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=Figma&logoColor=white"/>
+      <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white"/>
       <img src="https://img.shields.io/badge/Amazon AWS-232F3E?style=for-the-badge&logo=AmazonAWS&logoColor=white"/>
       <img src="https://img.shields.io/badge/Amazon S3-569A31?style=for-the-badge&logo=AmazonS3&logoColor=white"/>
   </div>
@@ -53,7 +54,7 @@
     <table>
     <thead >
       <tr align="center">
-        <th width = 200>김xx</th>
+        <th width = 200>ⓒ 김xx</th>
         <th width = 200>고xx</th>
         <th width = 200>문xx</th>
         <th width = 200>최xx</th>
@@ -93,3 +94,4 @@
   <img src="https://capsule-render.vercel.app/api?type=waving&color=ff5100&height=150&section=footer&reversal=true&text=Daily%20Club&fontSize=90&fontColor=fff"/>
  </div>
 </div>
+
