@@ -501,16 +501,8 @@ export default function ProgDetail() {
                         )}
                       </Icon>
                     </BookmarkBtn>
-                    {applyList.length === 0 &&
-                    data?.programDate !== getToday() ? (
-                      <ProgUpdateBtn
-                        onClick={() => {
-                          navigate(`/programs/${params.programId}/update`);
-                        }}
-                      >
-                        수정하기
-                      </ProgUpdateBtn>
-                    ) : (
+                    {applyList.length !== 0 &&
+                    data?.programDate === getToday() ? (
                       <ProgUpdateBtn
                         onClick={() => {
                           alert(
@@ -520,12 +512,22 @@ export default function ProgDetail() {
                       >
                         수정하기
                       </ProgUpdateBtn>
+                    ) : (
+                      <ProgUpdateBtn
+                        onClick={() => {
+                          navigate(`/programs/${params.programId}/update`);
+                        }}
+                      >
+                        수정하기
+                      </ProgUpdateBtn>
                     )}
-                    {applyList.length === 0 &&
-                    data?.programDate !== getToday() ? (
+                    {applyList.length !== 0 &&
+                    data?.programDate === getToday() ? (
                       <ProgDeleteBtn
                         onClick={() => {
-                          setIsDeleteOpen(true);
+                          alert(
+                            '함께하는 멤버가 있으므로 당일 삭제가 불가합니다!'
+                          );
                         }}
                       >
                         삭제하기
@@ -533,9 +535,7 @@ export default function ProgDetail() {
                     ) : (
                       <ProgDeleteBtn
                         onClick={() => {
-                          alert(
-                            '함께하는 멤버가 있으므로 당일 삭제가 불가합니다!'
-                          );
+                          setIsDeleteOpen(true);
                         }}
                       >
                         삭제하기

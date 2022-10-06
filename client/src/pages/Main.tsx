@@ -218,6 +218,7 @@ export default function Main() {
     minKindVal,
     bookmarked,
     paramsData,
+    page,
   ]);
 
   const handleBookedToggle = async (id: number, bookmarkId: number) => {

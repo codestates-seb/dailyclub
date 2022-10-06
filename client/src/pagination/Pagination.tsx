@@ -33,14 +33,14 @@ const Button = styled.button`
   }
 
   &[disabled] {
-    /* background: grey; */
+    color: grey;
     cursor: revert;
     transform: revert;
   }
 
-  &:active{
+  &:active {
     color: #c98169;
-  } 
+  }
 `;
 
 function Pagination({ list, page, setPage }: PaginationProps) {
@@ -58,7 +58,7 @@ function Pagination({ list, page, setPage }: PaginationProps) {
     <>
       <Nav>
         <Button onClick={() => setPage(page - 1)} disabled={page === 1}>
-           &#9664;
+          &#9664;
         </Button>
         {numPages.map((el) => (
           <Button key={el} onClick={() => setPage(el)} disabled={page === el}>

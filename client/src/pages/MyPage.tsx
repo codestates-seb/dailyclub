@@ -300,7 +300,7 @@ function MyPage() {
     getUserProfile();
     getApplyList();
     getOpenList();
-  }, []);
+  }, [page]);
 
   // 회원탈퇴
   const handleUserDelete = () => {
