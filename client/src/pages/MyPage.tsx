@@ -300,8 +300,6 @@ function MyPage() {
     getUserProfile();
     getApplyList();
     getOpenList();
-
-    console.log(imgId);
   }, []);
 
   // 회원탈퇴

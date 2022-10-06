@@ -499,7 +499,7 @@ export default function ProgDetail() {
                         )}
                       </Icon>
                     </BookmarkBtn>
-                    {applyList.length !== 0 &&
+                    {applyList.length === 0 &&
                     data?.programDate !== getToday() ? (
                       <ProgUpdateBtn
                         onClick={() => {
@@ -519,7 +519,7 @@ export default function ProgDetail() {
                         수정하기
                       </ProgUpdateBtn>
                     )}
-                    {applyList.length !== 0 &&
+                    {applyList.length === 0 &&
                     data?.programDate !== getToday() ? (
                       <ProgDeleteBtn
                         onClick={() => {
