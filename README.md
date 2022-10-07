@@ -112,11 +112,11 @@
     <table>
     <thead >
       <tr align="center">
-        <th width = 200>ⓒ 김xx</th>
-        <th width = 200>고xx</th>
-        <th width = 200>문xx</th>
-        <th width = 200>최xx</th>
-        <th width = 200>황xx</th>
+        <th width = 200>ⓒ 김준형</th>
+        <th width = 200>고민정</th>
+        <th width = 200>문태경</th>
+        <th width = 200>최정석</th>
+        <th width = 200>황인준</th>
         <th width = 200>김xx</th>
       </tr>
       <tr align="center">
