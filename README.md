@@ -19,29 +19,31 @@
   <p>누구나 프로그램을 만들고 참여할 수 있는 데일리 클럽을 기획했습니다.</p>
   <h1>미리보기</h1>
   <table>
- <thead>
-  <th>서비스 소개 페이지</th>
-  <th>회원가입</th>
- </thead>
+    <thead>
+      <th>서비스 소개 페이지</th>
+      <th>회원가입</th>
+    </thead>
     <tr align="center">
-      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194460012-a4ec04d4-441d-43d7-b7f0-ba299b1d0db7.gif" width = 450 height = 310 /></th>
-      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194460010-2dbadd88-d8cb-42f3-8955-1787cc90e349.gif" width = 450 height = 310 /></th>
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194467151-b8adc18d-af82-4c3f-8e80-35aff8a9cd9f.gif" width = 450 height = 310 /> 
+      </th>
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194467098-2f603630-77bd-40ec-8710-26b507430c4b.gif" width = 450 height = 310 /> 
+      </th>
     </tr>
     <thead>
-  <th>로그인</th>
-  <th>로그아웃</th>
- </thead>
+      <th>로그인</th>
+      <th>로그아웃</th>
+    </thead>
     <tr align="center">
-      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194459995-00e84bac-17dc-404e-81d9-844f0e3fae78.gif" width = 450 height = 310 /></th>
-      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194465958-20cdfa13-ce07-4d5e-92fd-6e9b71c281f7.gif" width = 450 height = 310 /></th>
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194459995-00e84bac-17dc-404e-81d9-844f0e3fae78.gif" width = 450 height = 310 />         </th>
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194465958-20cdfa13-ce07-4d5e-92fd-6e9b71c281f7.gif" width = 450 height = 310 />         </th>
     </tr>
-     thead>
-  <th>필터</th>
-  <th>검색</th>
- </thead>
+    <thead>
+     <th>필터</th>
+     <th>검색</th>
+    </thead>
     <tr align="center">
-      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194466361-e73d15b2-c8a0-46f6-bc15-d7727ab11c1f.gif" width = 450 height = 310 /></th>
-      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194466356-b8387bd9-259a-413f-b781-95bf3ce2563f.gif" width = 450 height = 310 /></th>
+     <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194466361-e73d15b2-c8a0-46f6-bc15-d7727ab11c1f.gif" width = 450 height = 310 />          </th>
+     <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194466356-b8387bd9-259a-413f-b781-95bf3ce2563f.gif" width = 450 height = 310 />          </th>
     </tr>
     <thead>
   <th>프로그램 신청, 북마크</th>
