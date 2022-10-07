@@ -13,11 +13,10 @@
 </div>
   <hr style="border: solid 1px black;">
 <div>
-  <h1>서비스 소개</h1>
-  <p>blah, blah, blah</p>
-  <p>blah, blah, blah</p>
-  <p>blah, blah, blah</p>
-  <p>blah, blah, blah</p>
+  <h1>소개</h1>
+  <p>운동이나 원데이 클래스 등 모임에 관심은 있지만 지속적인 참여가 어려운 사람들은 기존에 있던 동호회나 모임에 하루만 참여하는 것이 어렵습니다.</p>
+  <p>그런 사람들을 위해 일회성 동호회를 모집하고 참여할 수 있는 사이트가 필요하다고 생각했습니다.</p>
+  <p>누구나 프로그램을 만들고 참여할 수 있는 데일리 클럽을 기획했습니다.</p>
   <h1>미리보기</h1>
   <table>
  <thead>
