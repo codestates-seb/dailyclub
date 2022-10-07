@@ -120,7 +120,7 @@
         <th width = 200>문태경</th>
         <th width = 200>최정석</th>
         <th width = 200>황인준</th>
-        <th width = 200>김xx</th>
+        <th width = 200>김유현</th>
       </tr>
       <tr align="center">
         <td>BackEnd</td>
