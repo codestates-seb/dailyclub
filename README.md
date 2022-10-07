@@ -140,7 +140,7 @@
   </table>
  </div>
  <div align = center>
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=ff5100&height=150&section=footer&reversal=true&text=Daily%20클럽&fontSize=90&fontColor=fff"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=ff5100&height=150&section=footer&reversal=true&text=데일리%20클럽&fontSize=90&fontColor=fff"/>
  </div>
 </div>
 
