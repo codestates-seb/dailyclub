@@ -15,9 +15,48 @@
   <hr style="border: solid 1px black;">
 <div>
   <h1>미리보기</h1>
-  <p>blah, blah, blah</p>
-  <p>blah, blah, blah</p>
-  <p>blah, blah, blah</p>
+  <table>
+ <thead>
+  <th>서비스 소개 페이지</th>
+  <th>회원가입</th>
+ </thead>
+    <tr align="center">
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194460012-a4ec04d4-441d-43d7-b7f0-ba299b1d0db7.gif" width = 450 height = 310 /></th>
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194460010-2dbadd88-d8cb-42f3-8955-1787cc90e349.gif" width = 450 height = 310 /></th>
+    </tr>
+    <thead>
+  <th>로그인</th>
+  <th>로그아웃</th>
+ </thead>
+    <tr align="center">
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194459995-00e84bac-17dc-404e-81d9-844f0e3fae78.gif" width = 450 height = 310 /></th>
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194460008-0c3a0cca-9198-4829-838e-a922f73b93c7.gif" width = 450 height = 310 /></th>
+    </tr>
+    <thead>
+  <th>프로그램 신청</h>
+  <th>프로그램 신청 최소 친절도</th>
+ </thead>
+    <tr align="center">
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194460008-0c3a0cca-9198-4829-838e-a922f73b93c7.gif" width = 450 height = 310 /></th>
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194461265-d95ed947-218e-4b4c-9036-535b2d74d814.gif" width = 450 height = 310 /></th>
+    </tr>
+  <thead>
+  <th>프로그램 등록</th>
+  <th>프로그램 수정/삭제</th>
+ </thead>
+    <tr align="center">
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194460000-ce0a03c0-37fc-4213-b640-b1fbf6d79b88.gif" width = 450 height = 310 /></th>
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194460003-c8123e77-0f4d-44fe-a110-e61c01fe68c3.gif" width = 450 height = 310 /></th>
+    </tr>
+  <thead>
+  <th>프로그램 북마크</th>
+  <th>프로그램 리뷰</th>
+ </thead>
+    <tr align="center">
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194461263-b25166ba-19c0-45e4-9319-ee95048be57a.gif" width = 450 height = 310 /></th>
+      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194461259-2334c8b7-a9b6-40c9-9c97-37806049f528.gif" width = 450 height = 310 /></th>
+    </tr>
+  </table>
   <h1>서비스 소개</h1>
   <p>blah, blah, blah</p>
   <p>blah, blah, blah</p>
@@ -106,30 +145,5 @@
  </div>
 </div>
 
- <table>
- <thead>
-  <th>dd</th>
-  <th>dd</th>
- </thead>
-    <tr align="center">
-      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194460012-a4ec04d4-441d-43d7-b7f0-ba299b1d0db7.gif" /></th>
-      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194460010-2dbadd88-d8cb-42f3-8955-1787cc90e349.gif" /></th>
-    </tr>
-    <thead>
-  <th>dd</th>
-  <th>dd</th>
- </thead>
-    <tr align="center">
-      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194459995-00e84bac-17dc-404e-81d9-844f0e3fae78.gif" /></th>
-      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194460008-0c3a0cca-9198-4829-838e-a922f73b93c7.gif" /></th>
-    </tr>
-    <thead>
-  <th>dd</th>
-  <th>dd</th>
- </thead>
-    <tr align="center">
-      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194460000-ce0a03c0-37fc-4213-b640-b1fbf6d79b88.gif" /></th>
-      <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194460003-c8123e77-0f4d-44fe-a110-e61c01fe68c3.gif" /></th>
-    </tr>
-  </table>
+ 
 
