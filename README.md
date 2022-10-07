@@ -133,7 +133,7 @@
     <tbody>
       <tr align="center">
         <td><img src="https://user-images.githubusercontent.com/67827456/194477188-800cef98-f184-464e-a0d6-81071361e9e2.png"/></td>
-        <td><img src="https://user-images.githubusercontent.com/67827456/194477480-3ab85c51-852d-4c51-9fba-c6307abfead8.png"/></td>
+        <td><img src="https://user-images.githubusercontent.com/67827456/194483502-dbcabfb2-6190-45db-9594-4d8084dd6610.png"/></td>
         <td><img src="https://user-images.githubusercontent.com/67827456/194477192-c5bd2ec5-7cd2-4b9f-a7f9-a8724664d863.png"/></td>
         <td><img src="https://user-images.githubusercontent.com/67827456/194477183-b890b3e8-0a5f-43d7-a918-0d66df59a7c1.png"/></td>
         <td><img src="https://user-images.githubusercontent.com/67827456/194478253-323965f3-37b5-4fd0-b560-da8af949453f.png"/></td>
