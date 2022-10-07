@@ -14,6 +14,11 @@
 </div>
   <hr style="border: solid 1px black;">
 <div>
+  <h1>서비스 소개</h1>
+  <p>blah, blah, blah</p>
+  <p>blah, blah, blah</p>
+  <p>blah, blah, blah</p>
+  <p>blah, blah, blah</p>
   <h1>미리보기</h1>
   <table>
  <thead>
@@ -57,11 +62,6 @@
       <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194461259-2334c8b7-a9b6-40c9-9c97-37806049f528.gif" width = 450 height = 310 /></th>
     </tr>
   </table>
-  <h1>서비스 소개</h1>
-  <p>blah, blah, blah</p>
-  <p>blah, blah, blah</p>
-  <p>blah, blah, blah</p>
-  <p>blah, blah, blah</p>
   <hr style="border: solid 1px black;">
   <h1>Tech Stack</h1>
   <div>
