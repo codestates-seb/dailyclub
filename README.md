@@ -76,6 +76,11 @@
       <th width = 500><img src = "https://user-images.githubusercontent.com/67827456/194466161-5bba38c7-ba35-4b84-ad03-4d1a26c73e69.gif" width = 380 height = 310 /></th>
     </tr>
   </table>
+  
+  # System Architecture
+  ![데일리클럽-아키텍쳐](https://user-images.githubusercontent.com/77045939/194706673-13120051-210a-4fb0-9bd8-1dc7f6dd72ca.png)
+ <br />
+ 
   <hr style="border: solid 1px black;">
   <h1>Tech Stack</h1>
   <div>
