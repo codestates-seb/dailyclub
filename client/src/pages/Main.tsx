@@ -9,7 +9,7 @@ import QuestionMark from '../images/QuestionMark.svg';
 import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAppSelector } from 'stores/hooks';
 import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
@@ -162,6 +162,7 @@ const StatusEnd = styled(StatusDeadLine)``;
 
 export default function Main() {
   const URL = process.env.REACT_APP_DEV_URL;
+  const navigate = useNavigate();
 
   const searchKeyword = useAppSelector((state) => state.search.keyword);
   const [levelOpened, setLevelOpened] = useState(false);
@@ -179,14 +180,8 @@ export default function Main() {
   const [paramsData, setParamsData] = useState<FilterParamsProp>({});
 
   /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
-  const loginUserInfo = useAppSelector((state) => state.userInfo);
-  // console.log('유저 전역정보: ', loginUserInfo ?? loginUserInfo); // 확인용
-
-  /** 유저 전역상태 1개씩 - isLoggedIn, users, error */
-  const isLoggedIn = useAppSelector(getisLoggedIn); // 로그인여부
-  const userData = useAppSelector(getUserData); // 유저정보
-  const userError = useAppSelector(getUserError); // 에러내용
-  // console.log('유저 전역상태: ', isLoggedIn, userData, userError); // 확인 후 주석해제하면 됩니다
+  const { users, isLoggedIn } = useAppSelector((state) => state.userInfo);
+  // console.log('유저 전역정보: ', users, isLoggedIn); // 확인용
 
   /** 필터 조회api - 키워드,지역,날짜,친절도*/
   /*  useEffect(() => {
@@ -361,7 +356,11 @@ export default function Main() {
                       />
                     </Link>
                     <ProgBookmark
-                      onClick={() => handleBookedToggle(el.id, el.bookmarkId)}
+                      onClick={() => {
+                        isLoggedIn === false
+                          ? navigate('/login')
+                          : handleBookedToggle(el.id, el.bookmarkId);
+                      }}
                     >
                       {el.bookmarkId !== null ? (
                         <img src={Bookmarked} alt="bookmarked" />
