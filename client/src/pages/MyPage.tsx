@@ -29,6 +29,7 @@ const MyPageContainer = styled.div`
 
 /* 프로필 부분 */
 const Profile = styled.div`
+  min-width: 210px;
   width: 30%;
   height: 100%;
   margin: 1rem;
@@ -128,6 +129,7 @@ const OrgImage = styled.img`
 `;
 /* 탭 부분 */
 const TabContainer = styled.div`
+  min-width: 650px;
   width: 70%;
   height: 100%;
 `;

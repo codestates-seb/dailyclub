@@ -25,7 +25,9 @@ const RecruitText = styled.div`
   font-weight: 600;
   margin-bottom: 1rem;
 `;
-const IngContainer = styled.div``;
+const IngContainer = styled.div`
+  min-width: 600px;
+`;
 const FilterContainer = styled.div`
   display: flex;
   margin-bottom: 1rem;

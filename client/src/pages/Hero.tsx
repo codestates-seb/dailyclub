@@ -56,6 +56,7 @@ const ProgramsBtn = styled.button`
 `;
 
 const MainBannerImg = styled.img`
+  min-width: 470px;
   width: 60%;
   height: 50%;
   display: flex;
@@ -64,6 +65,7 @@ const MainBannerImg = styled.img`
 `;
 
 const IntroService = styled.div`
+  min-width: 810px;
   width: 60%;
   height: 55%;
   display: flex;

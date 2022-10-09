@@ -18,6 +18,7 @@ export const ModalBackDrop = styled.div`
 export const ModalView = styled.div`
   position: fixed;
   background-color: white;
+  min-width: 360px;
   width: 40%;
   height: 30%;
   display: flex;
