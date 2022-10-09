@@ -395,6 +395,14 @@ function MyPage() {
                     리뷰작성
                   </ReviewBtn>
                 ) : null}
+                {compareWithToday(el?.program?.programDate) === '모임종료' &&
+                el?.reviewStatus === 'REVIEWED' ? (
+                  <ReviewBtn
+                    style={{ backgroundColor: 'gray', cursor: 'default' }}
+                  >
+                    리뷰완료
+                  </ReviewBtn>
+                ) : null}
               </ClubItem>
             ))}
           </ClubContainer>
