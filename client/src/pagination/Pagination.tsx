@@ -58,7 +58,7 @@ function Pagination({ list, page, setPage }: PaginationProps) {
     <>
       <Nav>
         <Button onClick={() => setPage(page - 1)} disabled={page === 1}>
-          &#9664;
+          &#9664; {/*◀*/}
         </Button>
         {numPages.map((el) => (
           <Button key={el} onClick={() => setPage(el)} disabled={page === el}>
@@ -70,7 +70,7 @@ function Pagination({ list, page, setPage }: PaginationProps) {
           onClick={() => setPage(page + 1)}
           disabled={page === numPages.length}
         >
-          &#9654;
+          &#9654; {/*▶*/}
         </Button>
       </Nav>
     </>

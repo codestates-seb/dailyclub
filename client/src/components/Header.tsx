@@ -58,6 +58,7 @@ const SearchBtn = styled.button`
 `;
 const SearchInput = styled.input`
   width: 200px;
+  height: 35px;
   margin: 0 0.5rem;
   border-radius: 15px;
   font-weight: 300;

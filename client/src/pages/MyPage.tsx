@@ -251,8 +251,10 @@ function MyPage() {
   const [imgId, setImgId] = useState<number>();
   // 신청한 프로그램 리스트
   const [pageList, setPageList] = useState<PaginationVal>();
+  const [otherPageList, setOtherPageList] = useState<PaginationVal>();
   // 개설한 프로그램 리스트
   const [openList, setOpenList] = useState<PaginationVal>();
+  const [otherOpenList, setOtherOpenList] = useState<PaginationVal>();
 
   useEffect(() => {
     const getUserProfile = async () =>
@@ -285,6 +287,7 @@ function MyPage() {
           // console.log(res?.data.data);
           setPrograms(res.data.data);
           setPageList(res.data.pageInfo);
+          setOtherPageList(res.data.pageInfo);
         });
     };
 
@@ -297,6 +300,7 @@ function MyPage() {
           // console.log(res?.data.data);
           setOpens(res.data.data);
           setOpenList(res.data.pageInfo);
+          setOtherOpenList(res.data.pageInfo);
         });
     };
 
@@ -555,7 +559,7 @@ function MyPage() {
               </ClubItem>
             ))}
           </ClubContainer>
-          <Pagination list={pageList} page={page} setPage={setPage} />
+          <Pagination list={otherPageList} page={page} setPage={setPage} />
           <ClubTabTitle>개설한 모임</ClubTabTitle>
           <ClubContainer>
             {opens?.map((el: any) => (
@@ -614,7 +618,11 @@ function MyPage() {
               </ClubItem>
             ))}
           </ClubContainer>
-          <Pagination list={openList} page={page} setPage={setPage} />
+          <Pagination
+            list={otherOpenList}
+            page={openListPage}
+            setPage={setOpenListPage}
+          />
         </div>
       ),
     },
