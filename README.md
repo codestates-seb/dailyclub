@@ -1,5 +1,5 @@
 <div align = center>
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=ff5100&height=300&section=header&text=Daily%20Club&fontSize=90&fontColor=fff" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=ff5100&height=300&section=header&text=Dailyclub&fontSize=90&fontColor=fff" />
   <h1><img src="https://user-images.githubusercontent.com/67827456/194221057-51fe063c-4fa9-4d1c-82cd-69e29e209bc6.png"> Dailyclub</h1>
   <h3>가볍게 즐기는 다양한 모임</h3>
   <div>
