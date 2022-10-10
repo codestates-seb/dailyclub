@@ -34,6 +34,7 @@ const ProgPageDetail = styled.div`
 `;
 const ProgDetailWrap = styled.div`
   position: relative;
+  min-width: 520px;
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
@@ -41,6 +42,7 @@ const ProgDetailWrap = styled.div`
 `;
 
 const ProgDetailInfo = styled.div`
+  min-width: 250px;
   width: 35%;
   margin-bottom: 10px;
   box-sizing: border-box;

@@ -20,6 +20,7 @@ const CreateForm = styled.form`
 `;
 
 const ProgramInfo = styled.div`
+  min-width: 500px;
   width: 60%;
   height: 100%;
   display: flex;
@@ -27,6 +28,7 @@ const ProgramInfo = styled.div`
 `;
 
 const RecruitInfo = styled.div`
+  min-width: 350px;
   width: 40%;
   height: 100%;
   display: flex;

@@ -29,6 +29,7 @@ const MyPageContainer = styled.div`
 
 /* 프로필 부분 */
 const Profile = styled.div`
+  min-width: 210px;
   width: 30%;
   height: 100%;
   margin: 1rem;
@@ -128,6 +129,7 @@ const OrgImage = styled.img`
 `;
 /* 탭 부분 */
 const TabContainer = styled.div`
+  min-width: 650px;
   width: 70%;
   height: 100%;
 `;
@@ -236,6 +238,7 @@ function MyPage() {
   const [programs, setPrograms] = useState<Array<ApplyListVal>>([]);
   const [opens, setOpens] = useState<Array<ProgramDetailVal>>([]);
   const [page, setPage] = useState<number>(1);
+  const [openListPage, setOpenListPage] = useState<number>(1);
   const dispatch = useAppDispatch();
   const { userId } = useAppSelector((state) => state.userInfo);
 
@@ -288,7 +291,7 @@ function MyPage() {
     const getOpenList = async () => {
       await axios
         .get(
-          `${DEV_URL}/api/programs/mypage?page=${page}&size=4&userId=${params.userId}`
+          `${DEV_URL}/api/programs/mypage?page=${openListPage}&size=4&userId=${params.userId}`
         )
         .then((res) => {
           // console.log(res?.data.data);
@@ -300,7 +303,7 @@ function MyPage() {
     getUserProfile();
     getApplyList();
     getOpenList();
-  }, [page]);
+  }, [page, openListPage]);
 
   // 회원탈퇴
   const handleUserDelete = () => {
@@ -454,7 +457,11 @@ function MyPage() {
               </ClubItem>
             ))}
           </ClubContainer>
-          <Pagination list={openList} page={page} setPage={setPage} />
+          <Pagination
+            list={openList}
+            page={openListPage}
+            setPage={setOpenListPage}
+          />
         </div>
       ),
     },

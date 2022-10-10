@@ -25,7 +25,8 @@ const HeaderContainer = styled.div`
   background-color: white;
 `;
 const HeaderContent = styled.div`
-  min-width: 60%;
+  min-width: 590px;
+  width: 60%;
   display: flex;
   align-items: center;
   justify-content: space-between;
