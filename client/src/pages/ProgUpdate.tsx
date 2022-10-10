@@ -1,9 +1,10 @@
-import React from 'react';
 import axios from 'axios';
 import Layout from 'components/Layout';
-import { useEffect } from 'react';
-import { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import ImgDeleteBtnSvg from '../images/ImgDeleteBtn.svg';
+import { getToday } from 'utils/getToday';
 
 const CreateContainer = styled.div`
   width: 100%;
@@ -20,6 +21,7 @@ const CreateForm = styled.form`
 `;
 
 const ProgramInfo = styled.div`
+  min-width: 500px;
   width: 60%;
   height: 100%;
   display: flex;
@@ -27,6 +29,7 @@ const ProgramInfo = styled.div`
 `;
 
 const RecruitInfo = styled.div`
+  min-width: 350px;
   width: 40%;
   height: 100%;
   display: flex;
@@ -54,6 +57,7 @@ const Label = styled.div`
 `;
 
 const TitleInput = styled.input`
+  all: unset;
   border: 1px solid #e2e6e8;
   border-radius: 5px;
   margin-top: 10px;
@@ -97,6 +101,7 @@ const RecruitName = styled.div`
 `;
 
 const RecruitInput = styled.input`
+  all: unset;
   height: 100%;
   width: 100%;
   padding-left: 5px;
@@ -121,6 +126,7 @@ const KindInputWrap = styled.div`
 `;
 
 const KindInput = styled.input`
+  all: unset;
   width: 80%;
   height: 3px;
   margin: 1rem;
@@ -154,6 +160,7 @@ const ImageInput = styled.input`
 `;
 
 const ImageLabel = styled.label`
+  position: relative;
   height: 200px;
   width: 100%;
   border: 1px solid #e2e6e8;
@@ -190,51 +197,146 @@ const AreaSelect = styled.select`
   display: flex;
   align-items: center;
 `;
-
-const AreaOption = styled.option`
-  margin-left: 5px;
+export const ImgDeleteBtn = styled.button`
+  position: absolute;
+  z-index: 10;
+  top: -1rem;
+  right: -1rem;
+  border: none;
+  background-color: transparent;
 `;
 
+interface PrevProgramProps {
+  id: number;
+  writer?: {
+    id: number;
+    loginId: string;
+    nickname: string;
+    picture: string;
+    introduction: string;
+    kind: number;
+    role: string;
+  };
+  title: string;
+  text: string;
+  numOfRecruits: number;
+  location: string;
+  programDate: string;
+  minKind: number;
+  programStatus: string;
+  bookmarkId: number;
+  createdDate: string;
+  programImages?: null;
+}
+
 function ProgUpdate() {
+  const URL = process.env.REACT_APP_DEV_URL;
   const [title, setTitle] = useState<string>('');
   const [text, setText] = useState<string>('');
   const [numOfRecruits, setNumOfRecruits] = useState<string>('');
   const [location, setLocation] = useState<string>('');
   const [programDate, setProgramDate] = useState<string>('');
   const [picture, setPicture] = useState<string | Blob>('');
-  const [minkind, setMinKind] = useState<string>('50');
+  const [prev, setPrev] = useState<any>({});
+  const [imagePreview, setImagePreview] = useState('');
+  const [minkind, setMinKind] = useState<string>(`${prev && prev?.minKind}`);
+  const [prevImgId, setPrevImgId] = useState<any>(null);
 
-  const URL = process.env.REACT_APP_DEV_URL;
+  const { programId } = useParams();
+  const navigate = useNavigate();
 
   const firstRef = useRef<any>(null);
   const secondRef = useRef<any>(null); //focus 처리시 에러
 
+  const getProgram = async () => {
+    await axios
+      .get(`${URL}/api/programs/${programId}`)
+      .then(({ data }) => {
+        setPrev(data);
+        setTitle(data?.title);
+        setText(data?.text);
+        setNumOfRecruits(data?.numOfRecruits);
+        setLocation(data?.location);
+        setProgramDate(data?.programDate);
+        setMinKind(data?.minKind);
+
+        /** 이전이미지 있으면, 이미지 받아오기 */
+        if (data?.programImages.length !== 0) {
+          setPicture(
+            `data:${data.programImages[0].contentType};base64,${data?.programImages[0].bytes}`
+          );
+          setImagePreview(
+            `data:${data.programImages[0].contentType};base64,${data?.programImages[0].bytes}`
+          );
+          setPrevImgId(data.programImages[0].id); // 이전 img Id
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   //처음 렌더링 될 때 제목인풋에 포커즈
   useEffect(() => {
     firstRef.current.focus();
+    getProgram();
   }, []);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData();
 
+    formData.append('id', programId!);
     formData.append('title', title);
     formData.append('text', text);
     formData.append('numOfRecruits', numOfRecruits);
     formData.append('location', location);
     formData.append('programDate', programDate);
-    formData.append('picture', picture);
+    formData.append('minKind', minkind);
 
-    for (let values of formData.values()) {
-      console.log(values); // formData 객체의 정보 확인하는 법
+    /** 이전이미지가 있어서 base64로 인코딩된 경우 - 이미지파일, 이미지id 추가*/
+    if (typeof picture === 'string' && picture.length > 0) {
+      /** 미리보기때문에 img base64인코딩 문자열을 다시 => Blob 형식으로 변환 후 전달 */
+      const byteString = window.atob((picture as string).split(',')[1]);
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([ia], {
+        type: `${prev && prev?.programImages[0].contentType}`,
+      });
+      // const file = new File([blob], 'image.png'); //이걸로 넣으면 안되서 일단 주석
+      formData.append('imageFile', blob);
+      formData.append('programImageId', prevImgId);
+    } else {
+      /** 이전이미지 O 이미지 수정할때 - id전송 */
+      if (prevImgId !== null) {
+        formData.append('programImageId', prevImgId);
+      }
+      /** 이전이미지 X 이미지 추가할때 - 파일전송*/
+      formData.append('imageFile', picture);
     }
 
-    // axios({
-    //   method: 'post',
-    //   url: URL,
-    //   headers: {"Content-Type": "multipart/form-data"},
-    //   data: formData
-    // });
+    // for (let values of formData.values()) {
+    //   console.log(values); // formData 객체의 정보 확인하는 법
+    // }
+    axios({
+      method: 'patch',
+      url: `${URL}/api/programs/${programId}`,
+      headers: { 'Content-Type': 'multipart/form-data' },
+      data: formData,
+    })
+      .then((res) => {
+        navigate(`/programs/${programId}`);
+      })
+      .catch((err) => {
+        if (err.response.data.fieldErrors) {
+          alert(err.response.data.fieldErrors[0].reason);
+        } else if (err.response.data.message) {
+          alert(err.response.data.message);
+        } else {
+          alert('새로고침을 진행한 후에 로그인이 되어있다면 작성해주세요!');
+        }
+      });
   };
 
   //제목인풋에서 엔터누를시 프로그램 설명 인풋으로 포커즈
@@ -242,8 +344,6 @@ function ProgUpdate() {
     if (event.key === 'Enter') {
       if (event.target === firstRef.current) {
         secondRef.current.focus();
-      } else {
-        return;
       }
     }
   };
@@ -275,6 +375,13 @@ function ProgUpdate() {
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setPicture((e.target as any).files[0]);
+    // @ts-ignore
+    setImagePreview(window.URL.createObjectURL((e.target as any).files[0]));
+  };
+  const handelImgDeleteBtn = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setPicture('');
+    setImagePreview('');
   };
 
   return (
@@ -289,13 +396,14 @@ function ProgUpdate() {
             {/* 제목 인풋입니다 */}
             <TitleInput
               type="text"
-              placeholder="제목을 입력해주세요."
+              defaultValue={title}
               name="title"
+              minLength={5}
+              maxLength={30}
               ref={firstRef}
               onKeyUp={handleInput}
-              required
               onChange={handleTitle}
-            ></TitleInput>
+            />
             <ProgramInfoTitle>
               <Redstar>*</Redstar>
               <Label>프로그램 설명</Label>
@@ -303,12 +411,12 @@ function ProgUpdate() {
             {/* 프로그램 설명 인풋입니다 */}
             <ContentsInput
               name="contents"
-              placeholder="프로그램 설명을 입력해주세요.
-              ex) 모이는 장소, 진행시간, 회비, 오픈 카카오톡 링크 등"
+              defaultValue={text}
               ref={secondRef}
+              minLength={1}
+              maxLength={1000}
               onChange={handleText}
-              required
-            ></ContentsInput>
+            />
           </ProgramInfo>
           <RecruitInfo>
             <RecruitInfoTitle>
@@ -321,11 +429,12 @@ function ProgUpdate() {
               {/* 모집인원 인풋입니다 */}
               <RecruitInput
                 type="number"
-                min="2"
+                min={numOfRecruits}
+                max="100"
                 name="people"
                 onChange={handleNumofRecruits}
-                required
-              ></RecruitInput>
+                defaultValue={numOfRecruits}
+              />
             </RecruitContents>
             <RecruitContents>
               <Redstar>*</Redstar>
@@ -334,14 +443,20 @@ function ProgUpdate() {
               <RecruitInput
                 type="date"
                 name="date"
+                min={getToday()}
                 onChange={handleProgramDate}
-                required
-              ></RecruitInput>
+                defaultValue={programDate}
+              />
             </RecruitContents>
             <RecruitContents>
               <Redstar>*</Redstar>
               <RecruitName>모집지역</RecruitName>
-              <AreaSelect name="area" onChange={handleLocation}>
+              <AreaSelect
+                name="area"
+                onChange={handleLocation}
+                key={location}
+                defaultValue={location}
+              >
                 <option value="지역">지역</option>
                 <option value="서울">서울</option>
                 <option value="경기">경기</option>
@@ -366,8 +481,9 @@ function ProgUpdate() {
                   step="1"
                   name="kind"
                   onChange={handleMinKindValue}
-                  required
-                ></KindInput>
+                  key={prev && prev?.minKind}
+                  defaultValue={minkind}
+                />
                 <KindValue>{minkind}%</KindValue>
               </KindInputWrap>
             </RecruitContents>
@@ -377,17 +493,28 @@ function ProgUpdate() {
                 저작권에 위배되지 않는 파일을 업로드 해주세요.
               </ImageRule>
             </RecruitContents>
-            <ImageLabel htmlFor="file">
-              우리 모임을 소개할 이미지를 첨부해주세요.
-            </ImageLabel>
+            {!picture ? (
+              <ImageLabel htmlFor="file">
+                우리 모임을 소개할 이미지를 첨부해주세요.
+              </ImageLabel>
+            ) : (
+              <>
+                <ImageLabel htmlFor="file">
+                  <img width="100%" height="100%" src={imagePreview}></img>
+                  <ImgDeleteBtn type="button" onClick={handelImgDeleteBtn}>
+                    <img src={ImgDeleteBtnSvg} alt="delete" />
+                  </ImgDeleteBtn>
+                </ImageLabel>
+              </>
+            )}
             <ImageInput
               id="file"
               type="file"
               name="avatar"
               accept="image/*"
               onChange={handleImage}
-            ></ImageInput>
-            <CreateBtn type="submit">등록하기</CreateBtn>
+            />
+            <CreateBtn type="submit">수정하기</CreateBtn>
           </RecruitInfo>
         </CreateForm>
       </CreateContainer>

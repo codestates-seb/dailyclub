@@ -49,9 +49,11 @@ export const DropDouwnList = styled.li`
 
 interface AreaProps {
   setAreaSelected?: React.Dispatch<React.SetStateAction<string>>;
+  setParamsData?: any;
+  paramsData?: any;
 }
 
-function AreaFilter({ setAreaSelected }: AreaProps) {
+function AreaFilter({ setAreaSelected, setParamsData, paramsData }: AreaProps) {
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [area, setArea] = useState<string>('지역');
 
@@ -63,13 +65,28 @@ function AreaFilter({ setAreaSelected }: AreaProps) {
   const handleClickArea = (e: React.MouseEvent<HTMLElement>) => {
     setArea((e.target as any).textContent);
     setIsClicked(!isClicked);
-    if (setAreaSelected) setAreaSelected((e.target as any).textContent);
+    if (setAreaSelected) {
+      if ((e.target as any).textContent === '전체') {
+        setAreaSelected('');
+        setParamsData({
+          ...paramsData,
+          location: '',
+        });
+      } else {
+        setAreaSelected((e.target as any).textContent);
+        setParamsData({
+          ...paramsData,
+          location: (e.target as any).textContent,
+        });
+      }
+    }
   };
 
   const areaList: string[] = [
-    '지역',
+    '전체',
     '서울',
-    '경기/강원',
+    '경기',
+    '강원',
     '인천',
     '대전/충청',
     '대구/경북',

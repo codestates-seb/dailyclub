@@ -1,5 +1,12 @@
 package com.codestates.team5.dailyclub.user.service;
 
+import com.codestates.team5.dailyclub.image.entity.UserImage;
+import com.codestates.team5.dailyclub.image.repository.UserImageRepository;
+import com.codestates.team5.dailyclub.image.util.ImageUtils;
+import com.codestates.team5.dailyclub.refreshToken.RefreshToken;
+import com.codestates.team5.dailyclub.refreshToken.RefreshTokenRepository;
+import com.codestates.team5.dailyclub.throwable.entity.BusinessLogicException;
+import com.codestates.team5.dailyclub.throwable.entity.ExceptionCode;
 import com.codestates.team5.dailyclub.user.dto.UserDto;
 import com.codestates.team5.dailyclub.user.entity.User;
 import com.codestates.team5.dailyclub.user.mapper.UserMapper;
@@ -11,6 +18,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 
 @Service
@@ -18,9 +28,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final UserImageRepository userImageRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Transactional
     public User createUser(UserDto.Post requestBody) {
         User user = User.builder()
                 .loginId(requestBody.getLoginId())
@@ -32,25 +43,80 @@ public class UserService {
                 .build();
         return userRepository.save(user);
     }
-    @Transactional
-    public User updateUser(User user, long id) {
-        User findUser = userRepository.findById(id).orElseThrow();
-        findUser.update(user.getNickname(), user.getIntroduction(), user.getPicture());
+
+    public User updateUser(Long loginUserId, User userFromPatchDto, Long userImageId, MultipartFile imageFile) throws IOException {
+        User findUser
+                = userRepository.findById(userFromPatchDto.getId())
+                .orElseThrow(() ->
+                        new BusinessLogicException(ExceptionCode.USER_NOT_FOUND));
+        if(!findUser.getId().equals(loginUserId)) {
+            throw new BusinessLogicException(ExceptionCode.CANNOT_UPDATE_USERS);
+        }
+
+        //닉네임, 자기소개 둘 다 변경 요청
+        if(userFromPatchDto.getNickname() != findUser.getNickname()
+                && userFromPatchDto.getIntroduction() != findUser.getIntroduction()) {
+            findUser.updateAll(userFromPatchDto.getNickname(), userFromPatchDto.getIntroduction());
+            //닉네임 변경 요청
+        }else if(userFromPatchDto.getNickname() != findUser.getNickname()
+                && userFromPatchDto.getIntroduction() == findUser.getIntroduction()) {
+            findUser.updateNickname(userFromPatchDto.getNickname());
+            //자기소개 변경 요청
+        }else if(userFromPatchDto.getNickname() == findUser.getNickname()
+                && userFromPatchDto.getIntroduction() != findUser.getIntroduction()) {
+            findUser.updateIntroduction(userFromPatchDto.getIntroduction());
+        }
+
+        if(imageFile == null && userImageId == null) {
+            return userRepository.save(findUser);
+        }else if(imageFile != null && userImageId == null) {
+            UserImage userImage = ImageUtils.parseToUserImgae(imageFile);
+            userImage.setUser(findUser);
+            userImageRepository.save(userImage);
+        }else if (imageFile == null && userImageId !=null) {
+            userImageRepository.deleteById(userImageId);
+        }else if (imageFile != null && userImageId !=null) {
+            UserImage findUserImage
+                    =userImageRepository.findById(userImageId)
+                    .orElseThrow(() ->
+                            new BusinessLogicException(ExceptionCode.IMAGE_NOT_FOUND));
+            UserImage userImage = ImageUtils.parseToUserImgae(imageFile);
+            findUserImage.updateUserImage(userImage);
+        }
         return userRepository.save(findUser);
 
     }
-    @Transactional
-    public User findUser(long id) {
-        return userRepository.findById(id).orElseThrow();
+
+    public User findUser(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                ()-> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
+        );
     }
-    @Transactional(readOnly = true)
+
     public Page<User> findUsers(int page, int size) {
         return userRepository.findAll(PageRequest.of(page, size, Sort.by("nickname").descending()));
 
     }
-    @Transactional
-    public void deleteUser(long id) {
+
+    public void deleteUser(Long id, Long loginUserId) {
+        User findUser = userRepository.findById(id).orElseThrow(
+                ()-> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
+        );
+
+        if(!findUser.getId().equals(loginUserId)) {
+            throw new BusinessLogicException(ExceptionCode.CANNOT_DELETE_USERS);
+        }
+
         userRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void logoutUser(Long id, Long loginUserId) {
+        User findUser = userRepository.findById(id).orElseThrow(
+                ()-> new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
+        );
+        String loginId = findUser.getLoginId();
+        refreshTokenRepository.deleteByLoginId(loginId);
     }
 }
 

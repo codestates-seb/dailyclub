@@ -7,8 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,12 +32,30 @@ public class Apply extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "program_id")
     private Program program;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    private Apply.ReviewStatus reviewStatus = ReviewStatus.UNREVIEWED;
+
+    @Getter
+    @AllArgsConstructor
+    public enum ReviewStatus {
+        REVIEWED("REVIEWED"), UNREVIEWED("UNREVIEWED");
+
+        private final String status;
+    }
+
+    public void updateReviewStatus() {
+        this.reviewStatus = ReviewStatus.REVIEWED;
+    }
 
 }

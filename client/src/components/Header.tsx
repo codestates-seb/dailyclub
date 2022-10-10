@@ -1,12 +1,18 @@
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleUser } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
+import { searchActions } from 'stores/searchSlice';
 import Logo from '../images/Logo.svg';
 import Pen from '../images/Pen.svg';
 import Message from '../images/Message.svg';
 import Search from '../images/Search.svg';
+import Profile from '../images/Profile.svg';
+import { logoutUser } from 'stores/userInfoSlice';
+import { removeLocalStorage } from 'apis/localStorage';
+import { byteToBase64 } from 'utils/byteToBase64';
+import axios from 'axios';
+import LevelPercent from './LevelPercent';
 
 const HeaderContainer = styled.div`
   position: fixed;
@@ -20,7 +26,8 @@ const HeaderContainer = styled.div`
   background-color: white;
 `;
 const HeaderContent = styled.div`
-  min-width: 60%;
+  min-width: 590px;
+  width: 60%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -50,7 +57,7 @@ const SearchBtn = styled.button`
   color: rgba(143, 143, 143, 0.8);
 `;
 const SearchInput = styled.input`
-  width: 300px;
+  width: 200px;
   margin: 0 0.5rem;
   border-radius: 15px;
   font-weight: 300;
@@ -85,26 +92,27 @@ const WrapChild = styled.div`
 `;
 const UserContent = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin: 1.3rem 0;
+  margin: 1.2rem 0.7rem 0 0.7rem;
+`;
+const UserInfoColumnWrap = styled.div`
+  margin-left: 1rem;
 `;
 const UserProfileImg = styled.div`
   width: 70px;
   height: 70px;
-  margin-bottom: 15px;
-  border: 1px solid grey;
-  border-radius: 50%;
   cursor: pointer;
 `;
 const UserNickName = styled.div`
   font-size: 1.1rem;
   font-weight: 600;
+  margin-bottom: 0.5rem;
 `;
 const MyPageBtn = styled.button`
   padding: 0.3rem 1rem;
-  margin-top: 15px;
-  border: 0.5px solid grey;
+  width: 88%;
+  margin: 15px;
+  border: 1px solid lightGray;
   border-radius: 5px;
   font-size: 13px;
   &:hover {
@@ -117,8 +125,9 @@ const NotificationContainer = styled.div`
   flex-direction: column;
 `;
 const NotificationLabel = styled.div`
-  padding: 0.5rem 0.7rem;
-  background-color: #e6fcf5;
+  padding: 0.4rem 0;
+  margin: 0 0.7rem;
+  border-bottom: 0.5px solid lightGray;
   color: gray;
   font-size: 0.7rem;
 `;
@@ -150,15 +159,22 @@ const NotificationTime = styled.div`
 const LogoutBtn = styled.button`
   font-size: 12px;
   text-align: center;
-  background-color: #c3fae8;
+  background-color: #fad5c3;
   border: none;
-  padding: 0.5rem 0;
+  padding: 0.4rem 0;
   &:hover {
-    background-color: #a8ddcb;
+    background-color: #ddb8a8;
   }
 `;
+const HeaderLinkText = styled.div`
+  font-weight: 300;
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
-export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
+export default function Header() {
   interface NotifyList {
     id: number;
     confirmed: boolean;
@@ -187,18 +203,50 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
   ];
 
   const [isopened, setIsOpened] = useState<boolean>(false);
+  const [InputValue, setInputValue] = useState('');
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { isLoggedIn, users, loading, loginId, userId } = useAppSelector(
+    (state) => state.userInfo
+  );
+
+  const handelSearchSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    dispatch(searchActions.getKeyword(InputValue)); //헤더 input값 전역상태에 저장
+    navigate('/programs'); // 엔터 시 질문목록 메인페이지로 이동
+    setInputValue(''); // input창 초기화
+  };
+  const handleLogoutBtn = async () => {
+    dispatch(logoutUser());
+    setIsOpened(false);
+    await axios
+      .get(`${process.env.REACT_APP_DEV_URL}/logout/${userId}`)
+      .then((res) => console.log(res))
+      .then(() => {
+        removeLocalStorage('access_token');
+        removeLocalStorage('refresh_token');
+        navigate('/');
+      });
+  };
 
   return (
     <>
       <HeaderContainer>
         <HeaderContent>
           <LogoContent>
-            <Link to="/">
+            <Link to="/programs">
               <img src={Logo} alt="logo" style={{ height: 55, width: 90 }} />
             </Link>
           </LogoContent>
           <IconContainer>
-            <SearchForm>
+            <HeaderLinkText>
+              <Link to="/programs">홈</Link>
+            </HeaderLinkText>
+            <HeaderLinkText>
+              <Link to="/">서비스 소개 </Link>
+            </HeaderLinkText>
+
+            <SearchForm onSubmit={handelSearchSubmit}>
               <SearchBtn>
                 <img
                   src={Search}
@@ -206,7 +254,11 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
                   style={{ height: 15, width: 15 }}
                 />
               </SearchBtn>
-              <SearchInput placeholder="프로그램 / 모임을 검색해보세요" />
+              <SearchInput
+                onChange={(e) => setInputValue(e.target.value)}
+                value={InputValue}
+                placeholder="프로그램 / 모임을 검색해보세요"
+              />
             </SearchForm>
             {isLoggedIn ? (
               <>
@@ -220,7 +272,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
                   </Link>
                 </Icon>
                 <Icon>
-                  <Link to="/mypage">
+                  <Link to={`/users/${userId}`}>
                     <img
                       src={Message}
                       alt="logo"
@@ -230,7 +282,25 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
                 </Icon>
                 <Icon>
                   <ProfileBtn onClick={() => setIsOpened(!isopened)}>
-                    <FontAwesomeIcon icon={faCircleUser} size="2xl" />
+                    <img
+                      src={
+                        users?.userImages?.length !== 0
+                          ? byteToBase64(
+                              users?.userImages[0]?.contentType,
+                              users?.userImages[0]?.bytes
+                            )
+                          : Profile
+                      }
+                      alt="profile"
+                      loading="lazy"
+                      style={{
+                        height: 25,
+                        width: 25,
+                        borderRadius: '50%',
+                        boxShadow:
+                          'rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px',
+                      }}
+                    />
                   </ProfileBtn>
                 </Icon>
               </>
@@ -245,16 +315,41 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
           <WrapParent>
             <WrapChild>
               <UserContent>
-                <UserProfileImg>
-                  <Link to="/mypage"></Link>
-                </UserProfileImg>
-                <UserNickName>닉네임</UserNickName>
-                <Link to="/mypage">
-                  <MyPageBtn>마이페이지</MyPageBtn>
+                <Link to={`/users/${userId}`}>
+                  <UserProfileImg onClick={() => setIsOpened(false)}>
+                    <img
+                      src={
+                        users?.userImages?.length !== 0
+                          ? byteToBase64(
+                              users?.userImages[0]?.contentType,
+                              users?.userImages[0]?.bytes
+                            )
+                          : Profile
+                      }
+                      alt="userImg"
+                      loading="lazy"
+                      style={{
+                        height: 70,
+                        width: 70,
+                        borderRadius: '50%',
+                        boxShadow:
+                          'rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px',
+                      }}
+                    />
+                  </UserProfileImg>
                 </Link>
+                <UserInfoColumnWrap>
+                  <UserNickName>{users?.nickname}</UserNickName>
+                  <LevelPercent percent={users?.kind} />
+                </UserInfoColumnWrap>
               </UserContent>
+              <Link to={`/users/${userId}`}>
+                <MyPageBtn onClick={() => setIsOpened(false)}>
+                  마이페이지
+                </MyPageBtn>
+              </Link>
               <NotificationContainer>
-                <NotificationLabel>새 알림 {1}</NotificationLabel>
+                <NotificationLabel>새로운 알림 {1}</NotificationLabel>
                 <Notifications>
                   {notificationList?.map((notification: NotifyList) => (
                     <Notification key={notification.id}>
@@ -270,7 +365,7 @@ export default function Header({ isLoggedIn }: { isLoggedIn: boolean }) {
                     </Notification>
                   ))}
                 </Notifications>
-                <LogoutBtn>로그아웃</LogoutBtn>
+                <LogoutBtn onClick={handleLogoutBtn}>로그아웃</LogoutBtn>
               </NotificationContainer>
             </WrapChild>
           </WrapParent>

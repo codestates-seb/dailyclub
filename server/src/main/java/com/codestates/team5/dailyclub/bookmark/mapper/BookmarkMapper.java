@@ -2,8 +2,7 @@ package com.codestates.team5.dailyclub.bookmark.mapper;
 
 import com.codestates.team5.dailyclub.bookmark.dto.BookmarkDto;
 import com.codestates.team5.dailyclub.bookmark.entity.Bookmark;
-import com.codestates.team5.dailyclub.program.dto.ProgramDto;
-import com.codestates.team5.dailyclub.program.entity.Program;
+import com.codestates.team5.dailyclub.common.mapper.CommonMapper;
 import org.mapstruct.Mapper;
 
 import java.util.List;
@@ -12,12 +11,13 @@ import java.util.stream.Collectors;
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
 @Mapper(componentModel = SPRING)
-public interface BookmarkMapper {
+public interface BookmarkMapper extends CommonMapper {
 
     //북마크 등록시
     default BookmarkDto.Response bookmarkToResponseDto(Bookmark bookmark) {
         return BookmarkDto.Response.builder()
                 .id(bookmark.getId())
+                .userId(bookmark.getUser().getId())
                 .programId(bookmark.getProgram().getId())
                 .build();
     }
@@ -41,10 +41,4 @@ public interface BookmarkMapper {
                 .collect(Collectors.toList());
     }
 
-    default ProgramDto.Response programToProgramResponseDto(Program program) {
-        return ProgramDto.Response.builder()
-                .id(program.getId())
-                .title(program.getTitle())
-                .build();
-    }
 }

@@ -1,12 +1,19 @@
 import axios from 'axios';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import { LoginVal } from 'types/user';
+import { API } from 'apis/api';
+import { setLocalStorage } from 'apis/localStorage';
 import Layout from 'components/Layout';
 import OauthBtn from 'components/OAuth/OauthBtn';
 import OauthGoogleBtn from 'components/OAuth/OauthGoogleBtn';
 import OauthNaverBtn from 'components/OAuth/OauthNaverBtn';
 import OauthTitle from 'components/OAuth/OauthTitle';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { Link, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import { useAppDispatch } from 'stores/hooks';
+import { fetchUserInfo, getUserId } from 'stores/userInfoSlice';
+import { parseJwt } from 'utils/parseJwt';
+import { useState } from 'react';
 
 const LoginContainer = styled.div`
   margin: 0 auto;
@@ -35,39 +42,45 @@ const FormError = styled.div`
   padding-left: 1rem;
 `;
 
-interface LoginVal {
-  loginId: string;
-  password: string;
-}
-
 export default function Login() {
   const URL = process.env.REACT_APP_DEV_URL;
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginVal>();
+  const [errMsg, setErrMsg] = useState('');
 
   const handleLoginSubmit: SubmitHandler<LoginVal> = (data) => {
-    console.log(data); // {loginId: '입력값', password: '입력값'}
-    /** 테스트 서버, api주소 나오면 밑과 URL 주석해제후 사용*/
-    axios
-      .post(
-        `${URL}/login`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          data: data,
-        },
-        { withCredentials: true } // 헤더에 Authorization 항목있거나 쿠키를 첨부할때 추가
-      )
+    API.login(data)
       .then((res) => {
-        navigate('/');
-        console.log(res);
+        let accessToken = res.headers.authorization;
+        let refreshToken = res.headers.refresh;
+        // console.log('access 토큰 :', accessToken);
+        // console.log('refresh 토큰 :', refreshToken);
+        setLocalStorage('access_token', accessToken);
+        setLocalStorage('refresh_token', refreshToken);
+        // API 요청마다 헤더에 access토큰 담아서 요청보내는 설정
+        axios.defaults.headers.common['Authorization'] = `${accessToken}`;
+        // axios.defaults.headers.common['Refresh'] = `${refreshToken}`;
+
+        //JWT디코딩해서 userId, loginId 등 전역상태
+        const decodedAccess = parseJwt(accessToken);
+        dispatch(getUserId(decodedAccess)); //JWT 내용 전역상태
+        dispatch(fetchUserInfo(decodedAccess.id)); // 로그인유저정보 전역상태에 저장
+        // console.log('토큰해부', decodedAccess);
       })
-      .catch((error) => console.log(error));
+      .then((res) => {
+        // navigate(-1);
+        navigate('/');
+      })
+      .catch((error) => {
+        if (error.response.status === 401) {
+          setErrMsg('ID 또는 비밀번호가 일치하지 않습니다.');
+        }
+      });
   };
 
   return (
@@ -84,11 +97,13 @@ export default function Login() {
           )}
           <LoginInput
             {...register('password', { required: true })}
+            type="password"
             placeholder="비밀번호"
           />
           {errors.password && errors.password.type === 'required' && (
             <FormError>비밀번호를 입력해주세요.</FormError>
           )}
+          <FormError>{errMsg && errMsg}</FormError>
           <OauthBtn type="submit">로그인</OauthBtn>
         </LoginForm>
         <WrapperColumn>

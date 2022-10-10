@@ -1,8 +1,9 @@
 import axios from 'axios';
 import Layout from 'components/Layout';
 import React, { useState, useRef, useEffect } from 'react';
-import { redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import { getToday } from 'utils/getToday';
 
 const CreateContainer = styled.div`
   width: 100%;
@@ -19,6 +20,7 @@ const CreateForm = styled.form`
 `;
 
 const ProgramInfo = styled.div`
+  min-width: 500px;
   width: 60%;
   height: 100%;
   display: flex;
@@ -26,6 +28,7 @@ const ProgramInfo = styled.div`
 `;
 
 const RecruitInfo = styled.div`
+  min-width: 350px;
   width: 40%;
   height: 100%;
   display: flex;
@@ -53,6 +56,7 @@ const Label = styled.div`
 `;
 
 const TitleInput = styled.input`
+  all: unset;
   border: 1px solid #e2e6e8;
   border-radius: 5px;
   margin-top: 10px;
@@ -70,6 +74,7 @@ const ContentsInput = styled.textarea`
   padding: 10px;
   width: 90%;
   height: 600px;
+  line-height: 20px;
   resize: none;
 `;
 
@@ -96,6 +101,7 @@ const RecruitName = styled.div`
 `;
 
 const RecruitInput = styled.input`
+  all: unset;
   height: 100%;
   width: 100%;
   padding-left: 5px;
@@ -120,6 +126,7 @@ const KindInputWrap = styled.div`
 `;
 
 const KindInput = styled.input`
+  all: unset;
   width: 80%;
   height: 3px;
   margin: 1rem;
@@ -196,14 +203,15 @@ function ProgCreate() {
   const [numOfRecruits, setNumOfRecruits] = useState<string>('');
   const [location, setLocation] = useState<string>('');
   const [programDate, setProgramDate] = useState<string>('');
-  const [imageFile, setImageFile] = useState<string | Blob>('');
+  const [imageFile, setImageFile] = useState<string | Blob>(''); //기본이미지일때 구현이 필요함
   const [minkind, setMinKind] = useState<string>('50');
   const [imagePreview, setImagePreview] = useState('');
 
-  const DevURL = process.env.REACT_APP_DEV_URL;
-
+  const DEV_URL = process.env.REACT_APP_DEV_URL;
   const firstRef = useRef<any>(null);
   const secondRef = useRef<any>(null); //focus 처리시 에러
+
+  const navigate = useNavigate();
 
   //처음 렌더링 될 때 제목인풋에 포커즈
   useEffect(() => {
@@ -224,10 +232,22 @@ function ProgCreate() {
 
     axios({
       method: 'post',
-      url: `${DevURL}/api/programs`,
+      url: `${DEV_URL}/api/programs`,
       headers: { 'Content-Type': 'multipart/form-data' },
       data: formData,
-    });
+    })
+      .then((res) => {
+        navigate(`/programs/${res.data.id}`);
+      })
+      .catch((error) => {
+        if (error.response.data.fieldErrors) {
+          alert(error.response.data.fieldErrors[0].reason);
+        } else if (error.response.data.message) {
+          alert(error.response.data.message);
+        } else {
+          alert('새로고침을 진행한 후에 로그인이 되어있다면 작성해주세요!');
+        }
+      });
   };
 
   //제목인풋에서 엔터누를시 프로그램 설명 인풋으로 포커즈
@@ -282,14 +302,15 @@ function ProgCreate() {
             {/* 제목 인풋입니다 */}
             <TitleInput
               type="text"
-              placeholder="제목을 입력해주세요."
+              placeholder="제목을 입력해주세요. (5 글자 이상 30 글자 이하)"
               name="title"
+              minLength={5}
+              maxLength={30}
               ref={firstRef}
-              onKeyUp={handleInput}
+              onKeyPress={handleInput}
               required
               onChange={handleTitle}
             />
-
             <ProgramInfoTitle>
               <Redstar>*</Redstar>
               <Label>프로그램 설명</Label>
@@ -301,6 +322,9 @@ function ProgCreate() {
               ex) 모이는 장소, 진행시간, 회비, 오픈 카카오톡 링크 등"
               ref={secondRef}
               onChange={handleText}
+              minLength={1}
+              maxLength={1000}
+              wrap="hard"
               required
             />
           </ProgramInfo>
@@ -315,7 +339,8 @@ function ProgCreate() {
               {/* 모집인원 인풋입니다 */}
               <RecruitInput
                 type="number"
-                min="2"
+                min="1"
+                max="100"
                 name="people"
                 onChange={handleNumofRecruits}
                 required
@@ -328,6 +353,7 @@ function ProgCreate() {
               <RecruitInput
                 type="date"
                 name="date"
+                min={getToday()}
                 onChange={handleProgramDate}
                 required
               />

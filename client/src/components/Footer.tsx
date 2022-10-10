@@ -5,6 +5,7 @@ const FooterBox = styled.div`
   position: absolute;
   bottom: 0;
   height: 150px;
+  min-width: 1000px;
   width: 100%;
   background-color: rgb(38, 39, 41);
   color: white;

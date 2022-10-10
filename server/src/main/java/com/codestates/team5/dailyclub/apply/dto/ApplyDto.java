@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public class ApplyDto {
@@ -20,6 +21,7 @@ public class ApplyDto {
     @Builder
     public static class Post {
         @Schema(description = "신청 프로그램 ID", example = "1")
+        @NotNull
         private Long programId;
     }
 
@@ -72,6 +74,9 @@ public class ApplyDto {
         private Long id;
 
         private Long userId;
+
+        @Schema(description = "리뷰 작성 여부", example = "REVIEWED", allowableValues = {"REVIEWED", "UNREVIEWED"})
+        private String reviewStatus;
 
         private ProgramDto.Response program;
 
