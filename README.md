@@ -5,10 +5,10 @@
   <div>
     <p>개발기간</p>
     <p>2022/09/07 ~ 2022/10/12</p>
-    <p>사이</p>
+    <p>사이트</p>
     <p><a href = "http://dailyclub.site/">Dailyclub</a></p>
     <p>화면설계</p>
-    <p><a href = "https://www.figma.com/file/PhKVqtKmKgQRNA15qba5Iw/Untitled?node-id=275%3A630">데일리 클럽 피그마</a></p>
+    <p><a href = "https://www.figma.com/file/PhKVqtKmKgQRNA15qba5Iw/Untitled?node-id=275%3A630">Figma</a></p>
   </div>
 </div>
   <hr style="border: solid 1px black;">
