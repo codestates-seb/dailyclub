@@ -52,7 +52,7 @@ const DateInput = styled.input`
     }
   }
 `;
-const LevelRange = styled.button`
+const LevelRange = styled.div`
   position: relative;
   height: 30px;
   width: 130px;
@@ -63,8 +63,8 @@ const LevelRange = styled.button`
   justify-content: space-between;
   margin-left: 0.3rem;
   padding: 0 0.4rem;
+  cursor: pointer;
 `;
-const QuestionGuide = styled.div``;
 const WrapLevel = styled.div`
   position: absolute;
   left: 0px;
@@ -76,29 +76,29 @@ const WrapLevel = styled.div`
   border-radius: 5px;
   background-color: white;
   cursor: default;
+  padding: 0.8rem 1rem;
 `;
 const WrapLevelRangeInput = styled.input`
   all: unset;
-  width: 80%;
+  width: 100%;
   height: 3px;
   background: #ff5924;
   cursor: pointer;
 `;
 const RangeValue = styled.div`
-  margin: 1rem;
+  margin: 1rem 0;
   font-size: 1.1rem;
 `;
 const WrapLevelSpan = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 1rem;
+  padding-bottom: 0.8rem;
 `;
 const WrapLevelLabel = styled.div`
   font-weight: 600;
   color: #777777;
 `;
-const LevelHoverText = styled.div``;
 const WrapLevelText = styled.div`
   color: #8f8f8f;
   font-size: 0.5rem;
@@ -164,6 +164,25 @@ const StatusDeadLine = styled(StatusIng)`
   margin-left: 1rem;
 `;
 const StatusEnd = styled(StatusDeadLine)``;
+const KindRowWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`;
+const KindResetBtn = styled.button`
+  display: flex;
+  align-items: center;
+  height: 25px;
+  padding: 0 10px;
+  margin-left: 40px;
+  border: 1px solid lightGray;
+  border-radius: 10px;
+  &:hover {
+    font-weight: 600;
+    background-color: ${(props) => props.theme.lightGrey};
+    transition: 0.15s ease-in-out;
+  }
+`;
 
 export default function Main() {
   const URL = process.env.REACT_APP_DEV_URL;
@@ -249,6 +268,14 @@ export default function Main() {
     setBookmarked(!bookmarked);
   };
 
+  const handleResetKindVal = () => {
+    const { minKind, ...rest } = paramsData;
+    setParamsData({
+      ...rest,
+    });
+    setRangeValue('');
+  };
+
   return (
     <Layout>
       <WrapContainer>
@@ -297,7 +324,12 @@ export default function Main() {
                         setParamsData({ ...paramsData, minKind: rangeValue })
                       }
                     />
-                    <RangeValue>{rangeValue}%</RangeValue>
+                    <KindRowWrapper>
+                      <RangeValue>{rangeValue}%</RangeValue>
+                      <KindResetBtn onClick={handleResetKindVal}>
+                        초기화
+                      </KindResetBtn>
+                    </KindRowWrapper>
                   </WrapLevel>
                 ) : null}
               </LevelRange>
