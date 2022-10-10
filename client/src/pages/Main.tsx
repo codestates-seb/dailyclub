@@ -11,7 +11,6 @@ import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppSelector } from 'stores/hooks';
-import { getisLoggedIn, getUserData, getUserError } from 'stores/userInfoSlice';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { FilterParamsProp, ProgramDetailVal } from 'types/programs';
@@ -30,7 +29,7 @@ const IngContainer = styled.div`
 `;
 const FilterContainer = styled.div`
   display: flex;
-  margin-bottom: 1rem;
+  margin-bottom: 30px;
   justify-content: space-between;
 `;
 const DateInput = styled.input`
@@ -102,11 +101,11 @@ const ProgContainer = styled.div`
   min-height: 36rem;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
+  grid-row-gap: 20px;
+  grid-column-gap: 10px;
   margin-bottom: 3rem;
 `;
-const ProgItem = styled.div`
-  margin: 0.7rem 0.7rem 0.7rem 0;
-`;
+const ProgItem = styled.div``;
 const ProgBanner = styled.div`
   position: relative;
 `;
