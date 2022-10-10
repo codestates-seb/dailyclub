@@ -10,5 +10,7 @@ import javax.persistence.Converter;
  */
 @Converter
 public class LocationConverter extends AbstractEnumAttributeConverter<Program.Location> {
-
+    public LocationConverter() {
+        super(Program.Location.class);
+    }
 }
