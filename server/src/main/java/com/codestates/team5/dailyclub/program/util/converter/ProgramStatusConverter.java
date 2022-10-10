@@ -7,5 +7,7 @@ import javax.persistence.Converter;
 
 @Converter
 public class ProgramStatusConverter extends AbstractEnumAttributeConverter<Program.ProgramStatus> {
-
+    public ProgramStatusConverter() {
+        super(Program.ProgramStatus.class);
+    }
 }
