@@ -67,10 +67,9 @@ function AreaFilter({ setAreaSelected, setParamsData, paramsData }: AreaProps) {
     setIsClicked(!isClicked);
     if (setAreaSelected) {
       if ((e.target as any).textContent === '전체') {
-        setAreaSelected('');
+        const { location, ...rest } = paramsData;
         setParamsData({
-          ...paramsData,
-          location: '',
+          ...rest,
         });
       } else {
         setAreaSelected((e.target as any).textContent);
