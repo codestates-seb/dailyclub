@@ -5,8 +5,8 @@
   <div>
     <p>개발기간</p>
     <p>2022/09/07 ~ 2022/10/12</p>
-    <p>배포주소</p>
-    <p><a href = "http://stackoverflow-bucket-codestates-5.s3-website.ap-northeast-2.amazonaws.com/">Daily Club</a></p>
+    <p>사이</p>
+    <p><a href = "http://dailyclub.site/">Dailyclub</a></p>
     <p>화면설계</p>
     <p><a href = "https://www.figma.com/file/PhKVqtKmKgQRNA15qba5Iw/Untitled?node-id=275%3A630">데일리 클럽 피그마</a></p>
   </div>
@@ -156,7 +156,7 @@
         <td><a href = "https://github.com/xmun74">@xmun74</a></td>
         <td><a href = "https://github.com/cjsgmail">@cjsgmail</a></td>
         <td><a href = "https://github.com/xuperxonic">@xuperxonic</a></td>
-        <td><a href = "https://www.figma.com/file/PhKVqtKmKgQRNA15qba5Iw/Untitled?node-id=275%3A630">Figma</a></td>
+        <td><a href = "https://www.behance.net/kyh17156d20">@yuheonkim</a></td>
       </tr>
     </tbody>
     </thead>
