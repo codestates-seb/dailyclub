@@ -12,6 +12,7 @@ import { logoutUser } from 'stores/userInfoSlice';
 import { removeLocalStorage } from 'apis/localStorage';
 import { byteToBase64 } from 'utils/byteToBase64';
 import axios from 'axios';
+import LevelPercent from './LevelPercent';
 
 const HeaderContainer = styled.div`
   position: fixed;
@@ -91,24 +92,27 @@ const WrapChild = styled.div`
 `;
 const UserContent = styled.div`
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin: 1.3rem 0;
+  margin: 1.2rem 0.7rem 0 0.7rem;
+`;
+const UserInfoColumnWrap = styled.div`
+  margin-left: 1rem;
 `;
 const UserProfileImg = styled.div`
   width: 70px;
   height: 70px;
-  margin-bottom: 15px;
   cursor: pointer;
 `;
 const UserNickName = styled.div`
   font-size: 1.1rem;
   font-weight: 600;
+  margin-bottom: 0.5rem;
 `;
 const MyPageBtn = styled.button`
   padding: 0.3rem 1rem;
-  margin-top: 15px;
-  border: 0.5px solid grey;
+  width: 88%;
+  margin: 15px;
+  border: 1px solid lightGray;
   border-radius: 5px;
   font-size: 13px;
   &:hover {
@@ -121,8 +125,9 @@ const NotificationContainer = styled.div`
   flex-direction: column;
 `;
 const NotificationLabel = styled.div`
-  padding: 0.4rem 0.7rem;
-  background-color: #fcede6;
+  padding: 0.4rem 0;
+  margin: 0 0.7rem;
+  border-bottom: 0.5px solid lightGray;
   color: gray;
   font-size: 0.7rem;
 `;
@@ -311,7 +316,7 @@ export default function Header() {
             <WrapChild>
               <UserContent>
                 <Link to={`/users/${userId}`}>
-                  <UserProfileImg>
+                  <UserProfileImg onClick={() => setIsOpened(false)}>
                     <img
                       src={
                         users?.userImages?.length !== 0
@@ -333,11 +338,16 @@ export default function Header() {
                     />
                   </UserProfileImg>
                 </Link>
-                <UserNickName>{users?.nickname}</UserNickName>
-                <Link to={`/users/${userId}`}>
-                  <MyPageBtn>마이페이지</MyPageBtn>
-                </Link>
+                <UserInfoColumnWrap>
+                  <UserNickName>{users?.nickname}</UserNickName>
+                  <LevelPercent percent={users?.kind} />
+                </UserInfoColumnWrap>
               </UserContent>
+              <Link to={`/users/${userId}`}>
+                <MyPageBtn onClick={() => setIsOpened(false)}>
+                  마이페이지
+                </MyPageBtn>
+              </Link>
               <NotificationContainer>
                 <NotificationLabel>새로운 알림 {1}</NotificationLabel>
                 <Notifications>
