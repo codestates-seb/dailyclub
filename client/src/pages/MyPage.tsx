@@ -11,7 +11,6 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import ProfileSvg from '../images/Profile.svg';
 import axios from 'axios';
 import { useAppSelector } from 'stores/hooks';
-import { UserVal } from 'types/user';
 import { ApplyListVal, PaginationVal, ProgramDetailVal } from 'types/programs';
 import ImgDeleteBtnSvg from '../images/ImgDeleteBtn.svg';
 import { ImgDeleteBtn } from './ProgUpdate';
@@ -243,12 +242,12 @@ function MyPage() {
   const { userId } = useAppSelector((state) => state.userInfo);
 
   // 회원정보조회
-  const [data, setData] = useState<UserVal>();
+  const [data, setData] = useState<any>();
   const [nickname, setNickname] = useState('');
   const [introduction, setIntroduction] = useState<string>('');
   const [userImages, setUserImages] = useState<string | Blob>('');
   const [orgImg, setOrgImg] = useState<string>('');
-  const [imgId, setImgId] = useState<number>();
+  const [imgId, setImgId] = useState<any>(null);
   // 신청한 프로그램 리스트
   const [pageList, setPageList] = useState<PaginationVal>();
   const [otherPageList, setOtherPageList] = useState<PaginationVal>();
@@ -266,15 +265,20 @@ function MyPage() {
         })
         .then((res) => {
           setData(res.data);
-          setNickname(res.data.nickname);
+          setNickname(res.data?.nickname);
           setIntroduction(res.data?.introduction);
 
           /** 이전이미지 있으면, 이미지 받아오기 */
-          if (res.data.userImages.length !== 0) {
+          if (res.data?.userImages.length !== 0) {
             setImgId(res.data.userImages[0].id);
+            setUserImages(
+              `data:${res.data.userImages[0].contentType};base64,${res.data.userImages[0].bytes}`
+            );
             setOrgImg(
               `data:${res.data.userImages[0].contentType};base64,${res.data.userImages[0].bytes}`
             );
+          } else {
+            setImgId(null);
           }
         });
 
@@ -660,17 +664,31 @@ function MyPage() {
   };
 
   //프로필 수정하는 함수입니다
-  const profileUpdate = async (e: React.MouseEvent) => {
-    e.preventDefault;
+  const profileUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const formData = new FormData();
 
-    formData.append('imageFile', userImages);
     formData.append('id', String(params.userId!));
     formData.append('nickname', nickname);
     formData.append('introduction', introduction!);
 
-    if (imgId) {
-      formData.append('userImageId', String(imgId));
+    if (typeof userImages === 'string' && userImages.length > 0) {
+      const byteString = window.atob((userImages as string).split(',')[1]);
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      const blob = new Blob([ia], {
+        type: `${data && data?.userImages[0].contentType}`,
+      });
+      formData.append('imageFile', blob);
+      formData.append('userImageId', imgId);
+    } else {
+      if (imgId !== null) {
+        formData.append('userImageId', imgId);
+      }
+      formData.append('imageFile', userImages);
     }
 
     await axios({
@@ -691,7 +709,13 @@ function MyPage() {
       })
       .then((res) => {
         setData(res.data);
-      });
+        if (res.data?.userImages.length !== 0) {
+          setImgId(res.data?.userImages[0].id);
+        } else {
+          setImgId(null);
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -726,7 +750,7 @@ function MyPage() {
           <Profile>
             <ProfileWrap>
               {isUpdateMode ? (
-                <>
+                <form onSubmit={profileUpdate}>
                   {orgImg ? (
                     <UpdateImageLabel htmlFor="file">
                       <OrgImage src={orgImg} alt="profile" />
@@ -763,10 +787,8 @@ function MyPage() {
                       setIntroduction(e.target.value);
                     }}
                   ></UpdateInput>
-                  <ProfileUpdateBtn onClick={profileUpdate}>
-                    수정완료
-                  </ProfileUpdateBtn>
-                </>
+                  <ProfileUpdateBtn type="submit">수정완료</ProfileUpdateBtn>
+                </form>
               ) : (
                 <>
                   <ProfileImage>

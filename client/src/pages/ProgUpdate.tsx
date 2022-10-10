@@ -111,6 +111,11 @@ const RecruitInput = styled.input`
   display: flex;
   align-items: center;
   justify-content: center;
+  &::-webkit-calendar-picker-indicator {
+    &:hover {
+      cursor: pointer;
+    }
+  }
 `;
 
 const KindInputWrap = styled.div`
@@ -196,6 +201,9 @@ const AreaSelect = styled.select`
   text-align: center;
   display: flex;
   align-items: center;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 export const ImgDeleteBtn = styled.button`
   position: absolute;
@@ -444,6 +452,7 @@ function ProgUpdate() {
                 type="date"
                 name="date"
                 min={getToday()}
+                max="2032-12-31"
                 onChange={handleProgramDate}
                 defaultValue={programDate}
               />

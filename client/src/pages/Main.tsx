@@ -46,6 +46,11 @@ const DateInput = styled.input`
   &::placeholder {
     color: black;
   }
+  &::-webkit-calendar-picker-indicator {
+    &:hover {
+      cursor: pointer;
+    }
+  }
 `;
 const LevelRange = styled.button`
   position: relative;
@@ -265,6 +270,7 @@ export default function Main() {
                 }
                 onFocus={(e) => (e.target.type = 'date')}
                 min={getToday()}
+                max="2032-12-31"
               />
               <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
                 친절도 &nbsp;{rangeValue}%

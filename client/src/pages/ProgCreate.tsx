@@ -111,6 +111,11 @@ const RecruitInput = styled.input`
   display: flex;
   align-items: center;
   justify-content: center;
+  &::-webkit-calendar-picker-indicator {
+    &:hover {
+      cursor: pointer;
+    }
+  }
 `;
 
 const KindInputWrap = styled.div`
@@ -195,6 +200,9 @@ const AreaSelect = styled.select`
   text-align: center;
   display: flex;
   align-items: center;
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 function ProgCreate() {
@@ -353,7 +361,9 @@ function ProgCreate() {
               <RecruitInput
                 type="date"
                 name="date"
+                id="date"
                 min={getToday()}
+                max="2032-12-31"
                 onChange={handleProgramDate}
                 required
               />
