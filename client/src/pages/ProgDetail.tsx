@@ -584,7 +584,13 @@ export default function ProgDetail() {
                   </>
                 ) : (
                   <>
-                    <BookmarkBtn onClick={handleBookmarkedToggle}>
+                    <BookmarkBtn
+                      onClick={() => {
+                        userId === undefined || null
+                          ? navigate('/login')
+                          : handleBookmarkedToggle();
+                      }}
+                    >
                       <Icon>
                         {detailBookmarked ? (
                           <img
@@ -605,7 +611,9 @@ export default function ProgDetail() {
                     {data?.numOfRecruits === applyList.length ? (
                       <ProgApply
                         onClick={() => {
-                          alert('신청인원이 가득 찼습니다!');
+                          userId === undefined || null
+                            ? navigate('/login')
+                            : alert('신청인원이 가득 찼습니다!');
                         }}
                       >
                         신청하기
@@ -613,7 +621,9 @@ export default function ProgDetail() {
                     ) : (
                       <ProgApply
                         onClick={() => {
-                          setIsApplyOpen(true);
+                          userId === undefined || null
+                            ? navigate('/login')
+                            : setIsApplyOpen(true);
                         }}
                       >
                         신청하기
@@ -665,7 +675,9 @@ export default function ProgDetail() {
               />
               <SendMsgBtn
                 onClick={() => {
-                  setIsMessageOpen(true);
+                  userId === undefined || null
+                    ? navigate('/login')
+                    : setIsMessageOpen(true);
                 }}
               >
                 <SendMsg>
