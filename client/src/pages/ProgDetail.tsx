@@ -23,6 +23,7 @@ import DeleteModal from 'components/DeleteModal';
 import CancelModal from 'components/CancelModal';
 import ProgressBar from 'components/ProgressBar';
 import { getToday } from 'utils/getToday';
+import { compareWithToday } from 'utils/compareWithToday';
 
 const ProgPageDetail = styled.div`
   max-width: 1200px;
@@ -51,6 +52,7 @@ const ProgDetailInfo = styled.div`
 const ProgDetailImg = styled.img`
   width: 100%;
   height: 250px;
+  object-Fit: cover;
 `;
 
 const ProgTitleSection = styled.div`
@@ -544,7 +546,8 @@ export default function ProgDetail() {
                       </ProgDeleteBtn>
                     )}
                   </>
-                ) : applyMemberfilter.length !== 0 ? (
+                ) : (compareWithToday(data?.programDate as string) === '모임종료'
+                ? (
                   <>
                     <BookmarkBtn onClick={handleBookmarkedToggle}>
                       <Icon>
@@ -563,74 +566,92 @@ export default function ProgDetail() {
                         )}
                       </Icon>
                     </BookmarkBtn>
-
-                    {data?.programDate !== getToday() ? (
-                      <ProgApply
-                        onClick={() => {
-                          setIsCancelOpen(true);
-                        }}
-                      >
-                        취소하기
-                      </ProgApply>
-                    ) : (
-                      <ProgApply
-                        onClick={() => {
-                          alert('프로그램 당일 신청 취소가 불가합니다!');
-                        }}
-                      >
-                        취소하기
-                      </ProgApply>
-                    )}
+                    <ProgApply
+                      style={{
+                        backgroundColor: 'rgba(81, 81, 81, 0.469)'
+                      }}>
+                      종료된 모임입니다
+                    </ProgApply>
                   </>
-                ) : (
-                  <>
-                    <BookmarkBtn
-                      onClick={() => {
-                        userId === undefined || null
-                          ? navigate('/login')
-                          : handleBookmarkedToggle();
-                      }}
-                    >
-                      <Icon>
-                        {detailBookmarked ? (
-                          <img
-                            src={Bookmarked}
-                            alt="logo"
-                            style={{ height: 25, width: 25 }}
-                          />
-                        ) : (
-                          <img
-                            src={Bookmark}
-                            alt="logo"
-                            style={{ height: 25, width: 25 }}
-                          />
-                        )}
-                      </Icon>
-                    </BookmarkBtn>
+                )
+                  : (applyMemberfilter.length !== 0 ? (
+                    <>
+                      <BookmarkBtn onClick={handleBookmarkedToggle}>
+                        <Icon>
+                          {detailBookmarked ? (
+                            <img
+                              src={Bookmarked}
+                              alt="logo"
+                              style={{ height: 25, width: 25 }}
+                            />
+                          ) : (
+                            <img
+                              src={Bookmark}
+                              alt="logo"
+                              style={{ height: 25, width: 25 }}
+                            />
+                          )}
+                        </Icon>
+                      </BookmarkBtn>
 
-                    {data?.numOfRecruits === applyList.length ? (
-                      <ProgApply
-                        onClick={() => {
-                          userId === undefined || null
-                            ? navigate('/login')
-                            : alert('신청인원이 가득 찼습니다!');
-                        }}
-                      >
-                        신청하기
-                      </ProgApply>
-                    ) : (
-                      <ProgApply
-                        onClick={() => {
-                          userId === undefined || null
-                            ? navigate('/login')
-                            : setIsApplyOpen(true);
-                        }}
-                      >
-                        신청하기
-                      </ProgApply>
-                    )}
+                      {data?.programDate !== getToday() ? (
+                        <ProgApply
+                          onClick={() => {
+                            setIsCancelOpen(true);
+                          }}
+                        >
+                          취소하기
+                        </ProgApply>
+                      ) : (
+                        <ProgApply
+                          onClick={() => {
+                            alert('프로그램 당일 신청 취소가 불가합니다!');
+                          }}
+                        >
+                          취소하기
+                        </ProgApply>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <BookmarkBtn onClick={handleBookmarkedToggle}>
+                        <Icon>
+                          {detailBookmarked ? (
+                            <img
+                              src={Bookmarked}
+                              alt="logo"
+                              style={{ height: 25, width: 25 }}
+                            />
+                          ) : (
+                            <img
+                              src={Bookmark}
+                              alt="logo"
+                              style={{ height: 25, width: 25 }}
+                            />
+                          )}
+                        </Icon>
+                      </BookmarkBtn>
+
+                      {data?.numOfRecruits === applyList.length ? (
+                        <ProgApply
+                          onClick={() => {
+                            alert('신청인원이 가득 찼습니다!');
+                          }}
+                        >
+                          신청하기
+                        </ProgApply>
+                      ) : (
+                        <ProgApply
+                          onClick={() => {
+                            setIsApplyOpen(true);
+                          }}
+                        >
+                          신청하기
+                        </ProgApply>
+                      )}
                   </>
-                )}
+                )))}
+                
               </BtnWrap>
             </ProglInfoWrap>
             <H2>모임장 정보</H2>
@@ -675,9 +696,7 @@ export default function ProgDetail() {
               />
               <SendMsgBtn
                 onClick={() => {
-                  userId === undefined || null
-                    ? navigate('/login')
-                    : setIsMessageOpen(true);
+                  setIsMessageOpen(true);
                 }}
               >
                 <SendMsg>

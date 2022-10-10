@@ -349,6 +349,7 @@ export default function Main() {
                           height: '180px',
                           width: '100%',
                           borderRadius: '5px',
+                          objectFit: 'cover',
                         }}
                         alt="program Image"
                         loading="lazy"
