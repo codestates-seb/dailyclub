@@ -154,16 +154,6 @@ const FilterRowWrapper = styled.div`
   display: flex;
   align-items: center;
 `;
-const StatusIng = styled.button`
-  border: none;
-  &:hover {
-    font-weight: 600;
-  }
-`;
-const StatusDeadLine = styled(StatusIng)`
-  margin-left: 1rem;
-`;
-const StatusEnd = styled(StatusDeadLine)``;
 const KindRowWrapper = styled.div`
   display: flex;
   align-items: center;
@@ -181,6 +171,23 @@ const KindResetBtn = styled.button`
     font-weight: 600;
     background-color: ${(props) => props.theme.lightGrey};
     transition: 0.15s ease-in-out;
+  }
+`;
+const CheckStatusInput = styled.input`
+  display: none;
+`;
+const CheckStatusInputContent = styled.div`
+  input + label {
+    text-align: center;
+    padding: 5px 0 0 10px;
+    color: gray;
+    cursor: pointer;
+  }
+  input:checked + label {
+    transition: 0.1s ease-in-out;
+    font-weight: 800;
+    color: black;
+    cursor: pointer;
   }
 `;
 
@@ -202,7 +209,6 @@ export default function Main() {
   const [bookmarked, setBookmarked] = useState<boolean>(false);
   const [bookmarkedId, setBookmarkedId] = useState<any>(null);
   const [paramsData, setParamsData] = useState<FilterParamsProp>({});
-  const [guideOpen, setGuideOpen] = useState(false);
 
   /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const { users, isLoggedIn } = useAppSelector((state) => state.userInfo);
@@ -212,6 +218,12 @@ export default function Main() {
   /*  useEffect(() => {
     setParamsData({ ...paramsData, keyword: searchKeyword });
   }, []); */
+
+  const STATUS_LIST = [
+    { id: 1, statusName: '모집중' },
+    { id: 2, statusName: '마감임박' },
+    { id: 3, statusName: '마감' },
+  ];
 
   useEffect(() => {
     const getProgramList = async () => {
@@ -276,6 +288,20 @@ export default function Main() {
     setRangeValue('');
   };
 
+  const handleStatusChecked = (target: any, el: any) => {
+    const checkStatus = document.getElementsByName('OnlyOneCheckedStatus');
+    if (checkStatus) {
+      checkStatus.forEach((item: any) => {
+        item.checked = false;
+      });
+      target.checked = true;
+      setParamsData({
+        ...paramsData,
+        programStatus: el.statusName,
+      });
+    }
+  };
+
   return (
     <Layout>
       <WrapContainer>
@@ -290,7 +316,6 @@ export default function Main() {
               />
               <DateInput
                 type="text"
-                required
                 placeholder="날짜 선택"
                 aria-required="true"
                 onBlur={(e) => (e.target.type = 'text')}
@@ -335,27 +360,18 @@ export default function Main() {
               </LevelRange>
             </FilterRowWrapper>
             <FilterRowWrapper>
-              <StatusIng
-                onClick={() =>
-                  setParamsData({ ...paramsData, programStatus: '모집중' })
-                }
-              >
-                • 모집중
-              </StatusIng>
-              <StatusDeadLine
-                onClick={() =>
-                  setParamsData({ ...paramsData, programStatus: '마감임박' })
-                }
-              >
-                • 마감임박
-              </StatusDeadLine>
-              <StatusEnd
-                onClick={() =>
-                  setParamsData({ ...paramsData, programStatus: '마감' })
-                }
-              >
-                • 마감
-              </StatusEnd>
+              {STATUS_LIST?.map((el) => (
+                <CheckStatusInputContent key={el.id}>
+                  <CheckStatusInput
+                    type="checkbox"
+                    id={String(el.id)}
+                    value={el?.statusName}
+                    name="OnlyOneCheckedStatus"
+                    onClick={(e) => handleStatusChecked(e.target, el)}
+                  />
+                  <label htmlFor={String(el.id)}>&nbsp; {el?.statusName}</label>
+                </CheckStatusInputContent>
+              ))}
             </FilterRowWrapper>
           </FilterContainer>
           <ProgContainer>
