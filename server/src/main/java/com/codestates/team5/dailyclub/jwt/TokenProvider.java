@@ -43,7 +43,7 @@ public class TokenProvider {
 
         return JWT.create()
                 .withSubject("JWT Access Token")
-                .withExpiresAt(new Date(System.currentTimeMillis() + (60 * 1000)))
+                .withExpiresAt(new Date(System.currentTimeMillis() + (60 * 1000 * 30)))
                 .withClaim("id", authDetails.getUser().getId())
                 .withClaim("loginId", authDetails.getUsername())
                 .sign(Algorithm.HMAC512(accessKey));

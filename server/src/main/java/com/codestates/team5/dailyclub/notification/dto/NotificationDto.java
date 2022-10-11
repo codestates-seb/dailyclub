@@ -21,6 +21,9 @@ public class NotificationDto {
         @Schema(description = "알림 ID")
         private Long id;
 
+        @Schema(description = "유저 ID")
+        private Long userId;
+
         @Schema(description = "프로그램 ID")
         private Long programId;
 
