@@ -731,7 +731,9 @@ export default function ProgDetail() {
           setPageList={setPageList}
         />
       ) : null}
-      {isMessageOpen ? <MessageModal /> : null}
+      {isMessageOpen ? (
+        <MessageModal setIsMessageOpen={setIsMessageOpen} />
+      ) : null}
       {isCancelOpen ? (
         <CancelModal
           setIsCancelOpen={setIsCancelOpen}
