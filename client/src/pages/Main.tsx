@@ -5,7 +5,6 @@ import Layout from 'components/Layout';
 import styled from 'styled-components';
 import Bookmark from '../images/Bookmark.svg';
 import Bookmarked from '../images/Bookmarked.svg';
-import QuestionMark from '../images/QuestionMark.svg';
 import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
@@ -15,6 +14,7 @@ import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { FilterParamsProp, ProgramDetailVal } from 'types/programs';
 import { getToday } from 'utils/getToday';
+import KindGuide from 'components/KindGuide';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -64,6 +64,7 @@ const LevelRange = styled.button`
   margin-left: 0.3rem;
   padding: 0 0.4rem;
 `;
+const QuestionGuide = styled.div``;
 const WrapLevel = styled.div`
   position: absolute;
   left: 0px;
@@ -182,6 +183,7 @@ export default function Main() {
   const [bookmarked, setBookmarked] = useState<boolean>(false);
   const [bookmarkedId, setBookmarkedId] = useState<any>(null);
   const [paramsData, setParamsData] = useState<FilterParamsProp>({});
+  const [guideOpen, setGuideOpen] = useState(false);
 
   /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const { users, isLoggedIn } = useAppSelector((state) => state.userInfo);
@@ -274,7 +276,7 @@ export default function Main() {
               />
               <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
                 친절도 &nbsp;{rangeValue}%
-                <img src={QuestionMark} alt="question mark" />
+                <KindGuide />
                 <img src={DownArrow} alt="down arrow" />
                 {levelOpened ? (
                   <WrapLevel>
