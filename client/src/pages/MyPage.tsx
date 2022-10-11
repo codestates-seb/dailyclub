@@ -20,6 +20,7 @@ import { compareWithToday } from '../utils/compareWithToday';
 import { byteToBase64 } from '../utils/byteToBase64';
 import { removeLocalStorage } from 'apis/localStorage';
 import KindGuide from 'components/KindGuide';
+import MessageModal from 'components/MessageModal';
 
 const MyPageContainer = styled.div`
   display: flex;
@@ -41,6 +42,14 @@ const ProfileWrap = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+`;
+
+const ProfileForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 const ProfileImage = styled.div`
@@ -82,7 +91,6 @@ const SendMsg = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: lighter;
 `;
 
 const KindWrap = styled.div`
@@ -661,6 +669,7 @@ function MyPage() {
   ));
 
   const [isUpdateMode, setIsUpdateMode] = useState<boolean>(false);
+  const [isMessageOpen, setIsMessageOpen] = useState(false);
 
   //프로필 수정모드 변경 함수입니다
   const handleUpdateMode = () => {
@@ -747,148 +756,157 @@ function MyPage() {
   };
 
   return (
-    <Layout>
-      {userId === data?.id ? (
-        <MyPageContainer>
-          {/* 프로필 부분 - 정석 */}
-          <Profile>
-            <ProfileWrap>
-              {isUpdateMode ? (
-                <form onSubmit={profileUpdate}>
-                  {orgImg ? (
-                    <UpdateImageLabel htmlFor="file">
-                      <OrgImage src={orgImg} alt="profile" />
-                      <ImgDeleteBtn onClick={handleDeleteImg}>
-                        <img src={ImgDeleteBtnSvg} alt="delete" />
-                      </ImgDeleteBtn>
-                    </UpdateImageLabel>
-                  ) : (
-                    <UpdateImageLabel htmlFor="file">
-                      프로필 사진 변경
-                      <ImgDeleteBtn onClick={handleDeleteImg}>
-                        <img src={ImgDeleteBtnSvg} alt="delete" />
-                      </ImgDeleteBtn>
-                    </UpdateImageLabel>
-                  )}
-                  <UpdateImageInput
-                    id="file"
-                    type="file"
-                    name="avatar"
-                    accept="image/*"
-                    onChange={handleImage}
-                  ></UpdateImageInput>
-                  <UpdateInput
-                    type="text"
-                    defaultValue={nickname}
-                    onChange={(e) => {
-                      setNickname(e.target.value);
-                    }}
-                  ></UpdateInput>
-                  <UpdateInput
-                    type="text"
-                    defaultValue={introduction}
-                    onChange={(e) => {
-                      setIntroduction(e.target.value);
-                    }}
-                  ></UpdateInput>
-                  <ProfileUpdateBtn type="submit">수정완료</ProfileUpdateBtn>
-                </form>
-              ) : (
-                <>
-                  <ProfileImage>
-                    {!orgImg ? (
-                      <img
-                        src={ProfileSvg}
-                        alt="profile"
-                        style={{ height: 100, width: 100 }}
-                      />
+    <>
+      <Layout>
+        {userId === data?.id ? (
+          <MyPageContainer>
+            {/* 프로필 부분 - 정석 */}
+            <Profile>
+              <ProfileWrap>
+                {isUpdateMode ? (
+                  <ProfileForm onSubmit={profileUpdate}>
+                    {orgImg ? (
+                      <UpdateImageLabel htmlFor="file">
+                        <OrgImage src={orgImg} alt="profile" />
+                        <ImgDeleteBtn onClick={handleDeleteImg}>
+                          <img src={ImgDeleteBtnSvg} alt="delete" />
+                        </ImgDeleteBtn>
+                      </UpdateImageLabel>
                     ) : (
-                      <img
-                        src={orgImg}
-                        style={{ height: 100, width: 100, borderRadius: 50 }}
-                      />
+                      <UpdateImageLabel htmlFor="file">
+                        프로필 사진 변경
+                        <ImgDeleteBtn onClick={handleDeleteImg}>
+                          <img src={ImgDeleteBtnSvg} alt="delete" />
+                        </ImgDeleteBtn>
+                      </UpdateImageLabel>
                     )}
-                  </ProfileImage>
-                  <ProfileNickname>{data?.nickname}</ProfileNickname>
-                  <ProfileIntro>{data?.introduction}</ProfileIntro>
-                  <ProfileUpdateBtn onClick={handleUpdateMode}>
-                    프로필 수정
-                  </ProfileUpdateBtn>
-                </>
-              )}
-              <KindWrap>
-                <KindRowWrap>
-                  친절도 &nbsp;
-                  <KindGuide />
-                </KindRowWrap>
-                <LevelPercent percent={data?.kind}></LevelPercent>
-              </KindWrap>
-              <ProgressBar
-                currentPerson={data?.kind}
-                totalPerson={100}
-              ></ProgressBar>
-              <UserWrapBtn>
-                <WithdrawalBtn onClick={handleUserDelete}>
-                  회원탈퇴
-                </WithdrawalBtn>
-                <LogoutBtn onClick={handleMyPageLogout}>로그아웃</LogoutBtn>
-              </UserWrapBtn>
-            </ProfileWrap>
-          </Profile>
-
-          {/* 탭 모임목록부분 - 태경 */}
-          <TabContainer>
-            <TabMenu>{menuTab}</TabMenu>
-            <TabContent>
-              <div>{menuArr[currentTab].content}</div>
-            </TabContent>
-          </TabContainer>
-        </MyPageContainer>
-      ) : (
-        <MyPageContainer>
-          <Profile>
-            <ProfileWrap>
-              <ProfileImage>
-                {!orgImg ? (
-                  <img
-                    src={ProfileSvg}
-                    alt="profile"
-                    style={{ height: 100, width: 100 }}
-                  />
+                    <UpdateImageInput
+                      id="file"
+                      type="file"
+                      name="avatar"
+                      accept="image/*"
+                      onChange={handleImage}
+                    ></UpdateImageInput>
+                    <UpdateInput
+                      type="text"
+                      defaultValue={nickname}
+                      onChange={(e) => {
+                        setNickname(e.target.value);
+                      }}
+                    ></UpdateInput>
+                    <UpdateInput
+                      type="text"
+                      defaultValue={introduction}
+                      onChange={(e) => {
+                        setIntroduction(e.target.value);
+                      }}
+                    ></UpdateInput>
+                    <ProfileUpdateBtn type="submit">수정완료</ProfileUpdateBtn>
+                  </ProfileForm>
                 ) : (
-                  <img
-                    src={orgImg}
-                    style={{ height: 100, width: 100, borderRadius: 50 }}
-                  />
+                  <>
+                    <ProfileImage>
+                      {!orgImg ? (
+                        <img
+                          src={ProfileSvg}
+                          alt="profile"
+                          style={{ height: 100, width: 100 }}
+                        />
+                      ) : (
+                        <img
+                          src={orgImg}
+                          style={{ height: 100, width: 100, borderRadius: 50 }}
+                        />
+                      )}
+                    </ProfileImage>
+                    <ProfileNickname>{data?.nickname}</ProfileNickname>
+                    <ProfileIntro>{data?.introduction}</ProfileIntro>
+                    <ProfileUpdateBtn onClick={handleUpdateMode}>
+                      프로필 수정
+                    </ProfileUpdateBtn>
+                  </>
                 )}
-              </ProfileImage>
-              <ProfileNickname>{data?.nickname}</ProfileNickname>
-              <ProfileIntro>{data?.introduction}</ProfileIntro>
-              <SendMsgBtn onClick={() => {}}>
-                <SendMsg>메시지 보내기</SendMsg>
-              </SendMsgBtn>
-              <KindWrap>
-                <KindRowWrap>
-                  친절도 &nbsp;
-                  <KindGuide />
-                </KindRowWrap>
-                <LevelPercent percent={data?.kind}></LevelPercent>
-              </KindWrap>
-              <ProgressBar
-                currentPerson={data?.kind}
-                totalPerson={100}
-              ></ProgressBar>
-            </ProfileWrap>
-          </Profile>
-          <TabContainer>
-            <TabMenu>{menuTab2}</TabMenu>
-            <TabContent>
-              <div>{menuArr2[currentTab].content}</div>
-            </TabContent>
-          </TabContainer>
-        </MyPageContainer>
-      )}
-    </Layout>
+                <KindWrap>
+                  <KindRowWrap>
+                    친절도 &nbsp;
+                    <KindGuide />
+                  </KindRowWrap>
+                  <LevelPercent percent={data?.kind}></LevelPercent>
+                </KindWrap>
+                <ProgressBar
+                  currentPerson={data?.kind}
+                  totalPerson={100}
+                ></ProgressBar>
+                <UserWrapBtn>
+                  <WithdrawalBtn onClick={handleUserDelete}>
+                    회원탈퇴
+                  </WithdrawalBtn>
+                  <LogoutBtn onClick={handleMyPageLogout}>로그아웃</LogoutBtn>
+                </UserWrapBtn>
+              </ProfileWrap>
+            </Profile>
+
+            {/* 탭 모임목록부분 - 태경 */}
+            <TabContainer>
+              <TabMenu>{menuTab}</TabMenu>
+              <TabContent>
+                <div>{menuArr[currentTab].content}</div>
+              </TabContent>
+            </TabContainer>
+          </MyPageContainer>
+        ) : (
+          <MyPageContainer>
+            <Profile>
+              <ProfileWrap>
+                <ProfileImage>
+                  {!orgImg ? (
+                    <img
+                      src={ProfileSvg}
+                      alt="profile"
+                      style={{ height: 100, width: 100 }}
+                    />
+                  ) : (
+                    <img
+                      src={orgImg}
+                      style={{ height: 100, width: 100, borderRadius: 50 }}
+                    />
+                  )}
+                </ProfileImage>
+                <ProfileNickname>{data?.nickname}</ProfileNickname>
+                <ProfileIntro>{data?.introduction}</ProfileIntro>
+                <SendMsgBtn
+                  onClick={() => {
+                    setIsMessageOpen(true);
+                  }}
+                >
+                  <SendMsg>메시지 보내기</SendMsg>
+                </SendMsgBtn>
+                <KindWrap>
+                  <KindRowWrap>
+                    친절도 &nbsp;
+                    <KindGuide />
+                  </KindRowWrap>
+                  <LevelPercent percent={data?.kind}></LevelPercent>
+                </KindWrap>
+                <ProgressBar
+                  currentPerson={data?.kind}
+                  totalPerson={100}
+                ></ProgressBar>
+              </ProfileWrap>
+            </Profile>
+            <TabContainer>
+              <TabMenu>{menuTab2}</TabMenu>
+              <TabContent>
+                <div>{menuArr2[currentTab].content}</div>
+              </TabContent>
+            </TabContainer>
+          </MyPageContainer>
+        )}
+      </Layout>
+      {isMessageOpen ? (
+        <MessageModal setIsMessageOpen={setIsMessageOpen} />
+      ) : null}
+    </>
   );
 }
 

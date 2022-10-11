@@ -78,16 +78,34 @@ const ModalTitle = styled.h2`
   height: 10%;
 `;
 
-function MessageModal() {
+interface MessageModalProps {
+  setIsMessageOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function MessageModal({ setIsMessageOpen }: MessageModalProps) {
   return (
     <ModalBackDrop>
       <ModalView>
         <ModalTitle>문의내용</ModalTitle>
         <MessageForm>
-          <MessageInput></MessageInput>
+          <MessageInput value="아직 준비 중인 기능입니다"></MessageInput>
           <BtnGroup>
-            <SendBtn>보내기</SendBtn>
-            <SendCancelBtn>취소하기</SendCancelBtn>
+            <SendBtn
+              onClick={(e) => {
+                e.preventDefault();
+                setIsMessageOpen(false);
+              }}
+            >
+              보내기
+            </SendBtn>
+            <SendCancelBtn
+              onClick={(e) => {
+                e.preventDefault();
+                setIsMessageOpen(false);
+              }}
+            >
+              취소하기
+            </SendCancelBtn>
           </BtnGroup>
         </MessageForm>
       </ModalView>
