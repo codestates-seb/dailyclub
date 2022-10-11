@@ -5,6 +5,8 @@ import com.codestates.team5.dailyclub.apply.repository.ApplyRepository;
 import com.codestates.team5.dailyclub.image.entity.ProgramImage;
 import com.codestates.team5.dailyclub.image.repository.ProgramImageRepository;
 import com.codestates.team5.dailyclub.image.util.ImageUtils;
+import com.codestates.team5.dailyclub.notification.entity.Notification;
+import com.codestates.team5.dailyclub.notification.event.NotificationEventPublisher;
 import com.codestates.team5.dailyclub.program.dto.SearchFilterDto;
 import com.codestates.team5.dailyclub.program.entity.Program;
 import com.codestates.team5.dailyclub.program.repository.ProgramRepository;
@@ -26,6 +28,15 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.codestates.team5.dailyclub.notification.entity.Notification.NotificationType.UPDATE;
+import static com.codestates.team5.dailyclub.throwable.entity.ExceptionCode.CANNOT_DELETE_DDAY;
+import static com.codestates.team5.dailyclub.throwable.entity.ExceptionCode.CANNOT_DELETE_OTHERS;
+import static com.codestates.team5.dailyclub.throwable.entity.ExceptionCode.CANNOT_UPDATE_DDAY;
+import static com.codestates.team5.dailyclub.throwable.entity.ExceptionCode.CANNOT_UPDATE_OTHERS;
+import static com.codestates.team5.dailyclub.throwable.entity.ExceptionCode.IMAGE_NOT_FOUND;
+import static com.codestates.team5.dailyclub.throwable.entity.ExceptionCode.PROGRAM_NOT_FOUND;
+import static com.codestates.team5.dailyclub.throwable.entity.ExceptionCode.USER_NOT_FOUND;
+
 @Service
 @Transactional
 @Slf4j
@@ -36,6 +47,7 @@ public class ProgramService {
     private final UserRepository userRepository;
     private final ProgramImageRepository programImageRepository;
     private final ApplyRepository applyRepository;
+    private final NotificationEventPublisher notificationEventPublisher;
 
     /**
      * 1. loginUserId로 User 엔티티 Proxy 조회
@@ -46,7 +58,7 @@ public class ProgramService {
         //User를 DB 조회 (영속성 컨텍스트에 저장)
         User user = userRepository.findById(loginUserId)
                         .orElseThrow(() ->
-                            new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
+                            new BusinessLogicException(USER_NOT_FOUND)
                         );
 
         log.info("user(findById) : {}", user.getClass());
@@ -80,65 +92,69 @@ public class ProgramService {
 
         //유저 존재 확인
         User userById = userRepository.findById(loginUserId).orElseThrow(() ->
-            new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
+            new BusinessLogicException(USER_NOT_FOUND)
         );
 
         //program persistence context 등록
-        Program findProgram
+        Program programById
             = programRepository.findById(programFromPatchDto.getId())
                     .orElseThrow(() ->
-                        new BusinessLogicException(ExceptionCode.PROGRAM_NOT_FOUND)
+                        new BusinessLogicException(PROGRAM_NOT_FOUND)
                     );
 
         //로그인 유저가 작성자인지 확인
-        if (!findProgram.getUser().getId().equals(loginUserId)) {
-            throw new BusinessLogicException(ExceptionCode.CANNOT_UPDATE_OTHERS);
+        if (!programById.getUser().getId().equals(loginUserId)) {
+            throw new BusinessLogicException(CANNOT_UPDATE_OTHERS);
         }
 
         //신청 인원 있을 시 당일 변경 불가능
-        if (findProgram.getProgramDate().isEqual(LocalDate.now())
-            && applyRepository.existsByProgram(findProgram)) {
-            throw new BusinessLogicException(ExceptionCode.CANNOT_UPDATE_DDAY);
+        if (programById.getProgramDate().isEqual(LocalDate.now())
+            && applyRepository.existsByProgram(programById)) {
+            throw new BusinessLogicException(CANNOT_UPDATE_DDAY);
         }
 
         //programStatus 체크 (numOfRecruits 값이 변경되었을 때만)
-        if (!programFromPatchDto.getNumOfRecruits().equals(findProgram.getNumOfRecruits())) {
+        if (!programFromPatchDto.getNumOfRecruits().equals(programById.getNumOfRecruits())) {
             Program.ProgramStatus programStatus
-                = checkProgramStatus(findProgram.getId(), programFromPatchDto.getNumOfRecruits());
+                = checkProgramStatus(programById.getId(), programFromPatchDto.getNumOfRecruits());
 
-            findProgram.updateProgramStatus(programStatus);
+            programById.updateProgramStatus(programStatus);
         }
 
-        findProgram.updateProgram(programFromPatchDto);
+        programById.updateProgram(programFromPatchDto);
 
         //programImage 처리
         log.info("[수정] imageFile is null : {}", imageFile == null);
-        processProgramImage(programImageId, imageFile, findProgram);
+        processProgramImage(programImageId, imageFile, programById);
 
-        return findProgram;
+        //신청자들에게 update 알림 보내기
+        publishNotificationEventToApplicants(programById.getId(), UPDATE);
+
+        return programById;
     }
+
 
     public void deleteProgram(Long loginUserId, Long programId) {
         Program findProgram
             = programRepository.findById(programId)
             .orElseThrow(() ->
-                new BusinessLogicException(ExceptionCode.PROGRAM_NOT_FOUND)
+                new BusinessLogicException(PROGRAM_NOT_FOUND)
             );
 
         //유저 존재 확인
         User userById = userRepository.findById(loginUserId).orElseThrow(() ->
-            new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
+            new BusinessLogicException(USER_NOT_FOUND)
         );
 
         //본인이 삭제하는지 확인
         if (!findProgram.getUser().getId().equals(loginUserId)) {
-            throw new BusinessLogicException(ExceptionCode.CANNOT_DELETE_OTHERS);
+            throw new BusinessLogicException(CANNOT_DELETE_OTHERS);
         }
 
         //신청 인원 있을 경우 당일 삭제 불가
         if (findProgram.getProgramDate().isEqual(LocalDate.now())
             && applyRepository.existsByProgram(findProgram)) {
-            throw new BusinessLogicException(ExceptionCode.CANNOT_DELETE_DDAY);
+            throw new BusinessLogicException(CANNOT_DELETE_DDAY);
         }
 
         programRepository.deleteById(programId);
@@ -147,7 +163,7 @@ public class ProgramService {
     public Program findProgram(Long programId) {
         return programRepository.findById(programId)
             .orElseThrow(() ->
-                new BusinessLogicException(ExceptionCode.PROGRAM_NOT_FOUND)
+                new BusinessLogicException(PROGRAM_NOT_FOUND)
             );
     }
 
@@ -161,7 +177,7 @@ public class ProgramService {
     public Page<Program> findPrograms(int page, int size, Long userId) {
         //유저 존재 확인
         User userById = userRepository.findById(userId).orElseThrow(() ->
-            new BusinessLogicException(ExceptionCode.USER_NOT_FOUND)
+            new BusinessLogicException(USER_NOT_FOUND)
         );
         
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
@@ -174,13 +190,12 @@ public class ProgramService {
         List<Apply> appliesByProgramId = applyRepository.findByProgramId(programId);
 
         int numOfApplicants = appliesByProgramId.size();
-        long ratio = (long) numOfApplicants / numOfRecruits;
 
-        if (ratio > 1) {
+        if (numOfRecruits<numOfApplicants) {
             throw new BusinessLogicException(ExceptionCode.FULL_OF_APPLY);
-        } else if (ratio == 1) {
+        } else if (numOfRecruits==numOfApplicants) {
             return Program.ProgramStatus.IMPOSSIBLE;
-        } else if (ratio >= 0.8 && ratio < 1) {
+        } else if (numOfRecruits-numOfApplicants==1) {
             return Program.ProgramStatus.IMMINENT;
         } else {
             return Program.ProgramStatus.POSSIBLE;
@@ -213,7 +228,7 @@ public class ProgramService {
             ProgramImage findProgramImage
                 = programImageRepository.findById(programImageId)
                 .orElseThrow(() ->
-                    new BusinessLogicException(ExceptionCode.IMAGE_NOT_FOUND)
+                    new BusinessLogicException(IMAGE_NOT_FOUND)
                 );
             ProgramImage programImage = ImageUtils.parseToProgramImage(imageFile);
 
@@ -221,4 +236,17 @@ public class ProgramService {
             findProgramImage.updateProgramImage(programImage);
         }
     }
+
+    private void publishNotificationEventToApplicants(Long programId, Notification.NotificationType type) {
+        List<Apply> applies = applyRepository.findByProgramId(programId);
+        applies.stream()
+            .map(apply -> apply.getUser().getId())
+            .forEach(userId ->
+                {
+                    notificationEventPublisher.publish(userId, programId, type);
+                }
+            );
+
+    }
+
 }

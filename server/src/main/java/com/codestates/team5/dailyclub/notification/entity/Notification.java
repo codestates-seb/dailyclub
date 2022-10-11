@@ -38,6 +38,7 @@ public class Notification extends Auditable {
     @NotNull
     private NotificationType notificationType;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @NotNull
     private StatusRead statusRead = StatusRead.UNREAD;
@@ -67,7 +68,9 @@ public class Notification extends Auditable {
      */
     @Getter
     public enum NotificationType {
-        UPDATE("UPDATE"), DDAY("DDAY"), APPLY_COMPLETE("APPLY_COMPLETE");
+        UPDATE("UPDATE"),
+        DDAY("DDAY"),
+        APPLY_COMPLETE("APPLY_COMPLETE");
 
         private String type;
 
