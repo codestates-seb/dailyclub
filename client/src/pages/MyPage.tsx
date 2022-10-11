@@ -3,7 +3,6 @@ import Layout from 'components/Layout';
 import styled from 'styled-components';
 import ProgressBar from 'components/ProgressBar';
 import LevelPercent from 'components/LevelPercent';
-import QuestionMark from '../images/QuestionMark.svg';
 import BookMarkTab, { DoneMsg } from 'components/Tab/BookMarkTab';
 import MessageTab from 'components/Tab/MessageTab';
 import Pagination from 'pagination/Pagination';
@@ -20,6 +19,7 @@ import BasicImg from '../images/BasicImg.jpg';
 import { compareWithToday } from '../utils/compareWithToday';
 import { byteToBase64 } from '../utils/byteToBase64';
 import { removeLocalStorage } from 'apis/localStorage';
+import KindGuide from 'components/KindGuide';
 
 const MyPageContainer = styled.div`
   display: flex;
@@ -90,6 +90,10 @@ const KindWrap = styled.div`
   display: flex;
   justify-content: space-between;
   margin-bottom: 0.5rem;
+`;
+const KindRowWrap = styled.div`
+  display: flex;
+  align-items: center;
 `;
 
 const UpdateInput = styled.input`
@@ -813,10 +817,10 @@ function MyPage() {
                 </>
               )}
               <KindWrap>
-                <div>
+                <KindRowWrap>
                   친절도 &nbsp;
-                  <img src={QuestionMark} alt="question mark" />
-                </div>
+                  <KindGuide />
+                </KindRowWrap>
                 <LevelPercent percent={data?.kind}></LevelPercent>
               </KindWrap>
               <ProgressBar
@@ -864,10 +868,10 @@ function MyPage() {
                 <SendMsg>메시지 보내기</SendMsg>
               </SendMsgBtn>
               <KindWrap>
-                <div>
+                <KindRowWrap>
                   친절도 &nbsp;
-                  <img src={QuestionMark} alt="question mark" />
-                </div>
+                  <KindGuide />
+                </KindRowWrap>
                 <LevelPercent percent={data?.kind}></LevelPercent>
               </KindWrap>
               <ProgressBar

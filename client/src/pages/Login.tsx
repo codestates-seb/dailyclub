@@ -83,6 +83,19 @@ export default function Login() {
       });
   };
 
+  const getOAuthLogin = () => {
+    const getAccessToken = async () => {
+      const data = await axios.get(`${URL}/oauth2/authorization/{provider-id}`);
+    };
+  };
+
+  const handleOAuthLoginGoogle = () => {
+    axios
+      .get(`${URL}/oauth2/authorization/{provider-id}`)
+      .then((res) => console.log(res));
+  };
+  const handleOAuthLoginNaver = () => {};
+
   return (
     <Layout>
       <LoginContainer>
@@ -114,8 +127,8 @@ export default function Login() {
             <Link to="/signup">회원가입</Link>
           </SignUpText>
         </WrapperColumn>
-        <OauthGoogleBtn loginText="로그인" />
-        <OauthNaverBtn loginText="로그인" />
+        <OauthGoogleBtn onClick={handleOAuthLoginGoogle} loginText="로그인" />
+        <OauthNaverBtn onClick={handleOAuthLoginNaver} loginText="로그인" />
       </LoginContainer>
     </Layout>
   );

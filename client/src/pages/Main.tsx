@@ -5,16 +5,22 @@ import Layout from 'components/Layout';
 import styled from 'styled-components';
 import Bookmark from '../images/Bookmark.svg';
 import Bookmarked from '../images/Bookmarked.svg';
-import QuestionMark from '../images/QuestionMark.svg';
 import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAppSelector } from 'stores/hooks';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { FilterParamsProp, ProgramDetailVal } from 'types/programs';
 import { getToday } from 'utils/getToday';
+import KindGuide from 'components/KindGuide';
+import {
+  filterActions,
+  getDate,
+  getLocation,
+  getMinKind,
+} from 'stores/filterSlice';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -52,7 +58,7 @@ const DateInput = styled.input`
     }
   }
 `;
-const LevelRange = styled.button`
+const LevelRange = styled.div`
   position: relative;
   height: 30px;
   width: 130px;
@@ -63,6 +69,7 @@ const LevelRange = styled.button`
   justify-content: space-between;
   margin-left: 0.3rem;
   padding: 0 0.4rem;
+  cursor: pointer;
 `;
 const WrapLevel = styled.div`
   position: absolute;
@@ -75,29 +82,29 @@ const WrapLevel = styled.div`
   border-radius: 5px;
   background-color: white;
   cursor: default;
+  padding: 0.8rem 1rem;
 `;
 const WrapLevelRangeInput = styled.input`
   all: unset;
-  width: 80%;
+  width: 100%;
   height: 3px;
   background: #ff5924;
   cursor: pointer;
 `;
 const RangeValue = styled.div`
-  margin: 1rem;
+  margin: 1rem 0;
   font-size: 1.1rem;
 `;
 const WrapLevelSpan = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 1rem;
+  padding-bottom: 0.8rem;
 `;
 const WrapLevelLabel = styled.div`
   font-weight: 600;
   color: #777777;
 `;
-const LevelHoverText = styled.div``;
 const WrapLevelText = styled.div`
   color: #8f8f8f;
   font-size: 0.5rem;
@@ -153,74 +160,102 @@ const FilterRowWrapper = styled.div`
   display: flex;
   align-items: center;
 `;
-const StatusIng = styled.button`
-  border: none;
+const KindRowWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+`;
+const KindResetBtn = styled.button`
+  display: flex;
+  align-items: center;
+  height: 25px;
+  padding: 0 10px;
+  margin-left: 40px;
+  border: 1px solid lightGray;
+  border-radius: 10px;
   &:hover {
     font-weight: 600;
+    background-color: ${(props) => props.theme.lightGrey};
+    transition: 0.15s ease-in-out;
   }
 `;
-const StatusDeadLine = styled(StatusIng)`
-  margin-left: 1rem;
+const CheckStatusInput = styled.input`
+  display: none;
 `;
-const StatusEnd = styled(StatusDeadLine)``;
+const CheckStatusInputContent = styled.div`
+  input + label {
+    text-align: center;
+    padding: 5px 0 0 10px;
+    color: gray;
+    cursor: pointer;
+  }
+  input:checked + label {
+    transition: 0.1s ease-in-out;
+    font-weight: 800;
+    color: black;
+    cursor: pointer;
+  }
+`;
 
 export default function Main() {
   const URL = process.env.REACT_APP_DEV_URL;
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const searchKeyword = useAppSelector((state) => state.search.keyword);
   const [levelOpened, setLevelOpened] = useState(false);
   const [areaSelected, setAreaSelected] = useState('');
   const [rangeValue, setRangeValue] = useState('');
-  const [dateSelected, setDateSelected] = useState('');
   const [programs, setPrograms] = useState<Array<ProgramDetailVal>>([]);
   const [pageList, setPageList] = useState();
   const [page, setPage] = useState<number>(1);
-  const [programStatus, setProgramStatus] = useState('');
-  const [minKindVal, setMinKindVal] = useState('');
-  const [donePrograms, setDonePrograms] = useState<Array<ProgramDetailVal>>([]);
   const [bookmarked, setBookmarked] = useState<boolean>(false);
   const [bookmarkedId, setBookmarkedId] = useState<any>(null);
   const [paramsData, setParamsData] = useState<FilterParamsProp>({});
 
   /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const { users, isLoggedIn } = useAppSelector((state) => state.userInfo);
-  // console.log('유저 전역정보: ', users, isLoggedIn); // 확인용
+  const getFilterLocation = useAppSelector(getLocation);
+  const getFilterDate = useAppSelector(getDate);
+  const getMinKinds = useAppSelector(getMinKind);
+  // console.log('필터 전역정보: ', getFilterLocation, getFilterDate, getMinKinds); // 확인용
+
+  const STATUS_LIST = [
+    { id: 1, statusName: '모집중' },
+    { id: 2, statusName: '마감임박' },
+    { id: 3, statusName: '마감' },
+  ];
 
   /** 필터 조회api - 키워드,지역,날짜,친절도*/
-  /*  useEffect(() => {
-    setParamsData({ ...paramsData, keyword: searchKeyword });
-  }, []); */
+  useEffect(() => {
+    setParamsData({ ...paramsData, location: getFilterLocation });
+    setParamsData({ ...paramsData, programDate: getFilterDate });
+    setParamsData({ ...paramsData, minKind: getMinKinds });
+    // setParamsData({ ...paramsData, keyword: searchKeyword });
+  }, []);
+  // console.log('param :', paramsData && paramsData);
 
   useEffect(() => {
     const getProgramList = async () => {
       await axios
         .get(`${URL}/api/programs?page=${page}&size=12`, {
-          params: { ...paramsData, keyword: searchKeyword },
+          params: {
+            ...paramsData,
+            keyword: searchKeyword,
+            // location: getFilterLocation,
+            // programDate: getFilterDate,
+            // minKind: getMinKinds,
+          },
         })
         .then(({ data }) => {
           // console.log(data?.data);
           setPrograms(data?.data?.reverse());
           setPageList(data?.pageInfo);
-          const doneFilter = data?.data.map((el: ProgramDetailVal) => {
-            el.programStatus === '마감';
-          });
-          setDonePrograms(doneFilter);
         })
         .catch((err) => console.log(err.message));
     };
-
     getProgramList();
-  }, [
-    searchKeyword,
-    areaSelected,
-    dateSelected,
-    programStatus,
-    minKindVal,
-    bookmarked,
-    paramsData,
-    page,
-  ]);
+  }, [searchKeyword, areaSelected, bookmarked, paramsData, page]);
 
   const handleBookedToggle = async (id: number, bookmarkId: number) => {
     if (bookmarkId === null) {
@@ -247,6 +282,29 @@ export default function Main() {
     setBookmarked(!bookmarked);
   };
 
+  const handleResetKindVal = () => {
+    const { minKind, ...rest } = paramsData;
+    setParamsData({
+      ...rest,
+    });
+    setRangeValue('');
+    dispatch(filterActions.setMinKind(''));
+  };
+
+  const handleStatusChecked = (target: any, el: any) => {
+    const checkStatus = document.getElementsByName('OnlyOneCheckedStatus');
+    if (checkStatus) {
+      checkStatus.forEach((item: any) => {
+        item.checked = false;
+      });
+      target.checked = true;
+      setParamsData({
+        ...paramsData,
+        programStatus: el.statusName,
+      });
+    }
+  };
+
   return (
     <Layout>
       <WrapContainer>
@@ -261,20 +319,22 @@ export default function Main() {
               />
               <DateInput
                 type="text"
-                required
                 placeholder="날짜 선택"
                 aria-required="true"
                 onBlur={(e) => (e.target.type = 'text')}
-                onChange={(e) =>
-                  setParamsData({ ...paramsData, programDate: e.target.value })
-                }
+                // defaultValue={getFilterDate ? getFilterDate : null}
+                onChange={(e) => {
+                  // dispatch(filterActions.setDate(e.target.value));
+                  setParamsData({ ...paramsData, programDate: e.target.value });
+                }}
                 onFocus={(e) => (e.target.type = 'date')}
                 min={getToday()}
                 max="2032-12-31"
               />
               <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
                 친절도 &nbsp;{rangeValue}%
-                <img src={QuestionMark} alt="question mark" />
+                {/* 친절도 &nbsp;{getMinKinds ? getMinKinds : rangeValue}% */}
+                <KindGuide />
                 <img src={DownArrow} alt="down arrow" />
                 {levelOpened ? (
                   <WrapLevel>
@@ -289,39 +349,42 @@ export default function Main() {
                       min={0}
                       max={100}
                       step={1}
-                      onChange={(e) => setRangeValue(e.target.value)}
+                      onChange={(e) => {
+                        dispatch(filterActions.setMinKind(e.target.value));
+                        setRangeValue(e.target.value);
+                      }}
                       defaultValue={rangeValue}
+                      // defaultValue={getMinKinds ? getMinKinds : rangeValue}
                       onMouseUp={() =>
                         setParamsData({ ...paramsData, minKind: rangeValue })
                       }
                     />
-                    <RangeValue>{rangeValue}%</RangeValue>
+                    <KindRowWrapper>
+                      <RangeValue>
+                        {rangeValue}%
+                        {/* {getMinKinds ? getMinKinds : rangeValue}% */}
+                      </RangeValue>
+                      <KindResetBtn onClick={handleResetKindVal}>
+                        초기화
+                      </KindResetBtn>
+                    </KindRowWrapper>
                   </WrapLevel>
                 ) : null}
               </LevelRange>
             </FilterRowWrapper>
             <FilterRowWrapper>
-              <StatusIng
-                onClick={() =>
-                  setParamsData({ ...paramsData, programStatus: '모집중' })
-                }
-              >
-                • 모집중
-              </StatusIng>
-              <StatusDeadLine
-                onClick={() =>
-                  setParamsData({ ...paramsData, programStatus: '마감임박' })
-                }
-              >
-                • 마감임박
-              </StatusDeadLine>
-              <StatusEnd
-                onClick={() =>
-                  setParamsData({ ...paramsData, programStatus: '마감' })
-                }
-              >
-                • 마감
-              </StatusEnd>
+              {STATUS_LIST?.map((el) => (
+                <CheckStatusInputContent key={el.id}>
+                  <CheckStatusInput
+                    type="checkbox"
+                    id={String(el.id)}
+                    value={el?.statusName}
+                    name="OnlyOneCheckedStatus"
+                    onClick={(e) => handleStatusChecked(e.target, el)}
+                  />
+                  <label htmlFor={String(el.id)}>&nbsp; {el?.statusName}</label>
+                </CheckStatusInputContent>
+              ))}
             </FilterRowWrapper>
           </FilterContainer>
           <ProgContainer>
