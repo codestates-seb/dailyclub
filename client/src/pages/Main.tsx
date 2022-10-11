@@ -9,12 +9,18 @@ import DownArrow from '../images/DownArrow.svg';
 import LevelPercent from 'components/LevelPercent';
 import ProgressBar from 'components/ProgressBar';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAppSelector } from 'stores/hooks';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import BasicImg from '../images/BasicImg.jpg';
 import Pagination from 'pagination/Pagination';
 import { FilterParamsProp, ProgramDetailVal } from 'types/programs';
 import { getToday } from 'utils/getToday';
 import KindGuide from 'components/KindGuide';
+import {
+  filterActions,
+  getDate,
+  getLocation,
+  getMinKind,
+} from 'stores/filterSlice';
 
 const WrapContainer = styled.div`
   margin-bottom: 5rem;
@@ -194,30 +200,25 @@ const CheckStatusInputContent = styled.div`
 export default function Main() {
   const URL = process.env.REACT_APP_DEV_URL;
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const searchKeyword = useAppSelector((state) => state.search.keyword);
   const [levelOpened, setLevelOpened] = useState(false);
   const [areaSelected, setAreaSelected] = useState('');
   const [rangeValue, setRangeValue] = useState('');
-  const [dateSelected, setDateSelected] = useState('');
   const [programs, setPrograms] = useState<Array<ProgramDetailVal>>([]);
   const [pageList, setPageList] = useState();
   const [page, setPage] = useState<number>(1);
-  const [programStatus, setProgramStatus] = useState('');
-  const [minKindVal, setMinKindVal] = useState('');
-  const [donePrograms, setDonePrograms] = useState<Array<ProgramDetailVal>>([]);
   const [bookmarked, setBookmarked] = useState<boolean>(false);
   const [bookmarkedId, setBookmarkedId] = useState<any>(null);
   const [paramsData, setParamsData] = useState<FilterParamsProp>({});
 
   /** 유저 전역상태 전체 - users, isLoggedIn, loading, error  */
   const { users, isLoggedIn } = useAppSelector((state) => state.userInfo);
-  // console.log('유저 전역정보: ', users, isLoggedIn); // 확인용
-
-  /** 필터 조회api - 키워드,지역,날짜,친절도*/
-  /*  useEffect(() => {
-    setParamsData({ ...paramsData, keyword: searchKeyword });
-  }, []); */
+  const getFilterLocation = useAppSelector(getLocation);
+  const getFilterDate = useAppSelector(getDate);
+  const getMinKinds = useAppSelector(getMinKind);
+  // console.log('필터 전역정보: ', getFilterLocation, getFilterDate, getMinKinds); // 확인용
 
   const STATUS_LIST = [
     { id: 1, statusName: '모집중' },
@@ -225,35 +226,36 @@ export default function Main() {
     { id: 3, statusName: '마감' },
   ];
 
+  /** 필터 조회api - 키워드,지역,날짜,친절도*/
+  useEffect(() => {
+    setParamsData({ ...paramsData, location: getFilterLocation });
+    setParamsData({ ...paramsData, programDate: getFilterDate });
+    setParamsData({ ...paramsData, minKind: getMinKinds });
+    // setParamsData({ ...paramsData, keyword: searchKeyword });
+  }, []);
+  // console.log('param :', paramsData && paramsData);
+
   useEffect(() => {
     const getProgramList = async () => {
       await axios
         .get(`${URL}/api/programs?page=${page}&size=12`, {
-          params: { ...paramsData, keyword: searchKeyword },
+          params: {
+            ...paramsData,
+            keyword: searchKeyword,
+            // location: getFilterLocation,
+            // programDate: getFilterDate,
+            // minKind: getMinKinds,
+          },
         })
         .then(({ data }) => {
           // console.log(data?.data);
           setPrograms(data?.data?.reverse());
           setPageList(data?.pageInfo);
-          const doneFilter = data?.data.map((el: ProgramDetailVal) => {
-            el.programStatus === '마감';
-          });
-          setDonePrograms(doneFilter);
         })
         .catch((err) => console.log(err.message));
     };
-
     getProgramList();
-  }, [
-    searchKeyword,
-    areaSelected,
-    dateSelected,
-    programStatus,
-    minKindVal,
-    bookmarked,
-    paramsData,
-    page,
-  ]);
+  }, [searchKeyword, areaSelected, bookmarked, paramsData, page]);
 
   const handleBookedToggle = async (id: number, bookmarkId: number) => {
     if (bookmarkId === null) {
@@ -286,6 +288,7 @@ export default function Main() {
       ...rest,
     });
     setRangeValue('');
+    dispatch(filterActions.setMinKind(''));
   };
 
   const handleStatusChecked = (target: any, el: any) => {
@@ -319,15 +322,18 @@ export default function Main() {
                 placeholder="날짜 선택"
                 aria-required="true"
                 onBlur={(e) => (e.target.type = 'text')}
-                onChange={(e) =>
-                  setParamsData({ ...paramsData, programDate: e.target.value })
-                }
+                // defaultValue={getFilterDate ? getFilterDate : null}
+                onChange={(e) => {
+                  // dispatch(filterActions.setDate(e.target.value));
+                  setParamsData({ ...paramsData, programDate: e.target.value });
+                }}
                 onFocus={(e) => (e.target.type = 'date')}
                 min={getToday()}
                 max="2032-12-31"
               />
               <LevelRange onClick={() => setLevelOpened(!levelOpened)}>
                 친절도 &nbsp;{rangeValue}%
+                {/* 친절도 &nbsp;{getMinKinds ? getMinKinds : rangeValue}% */}
                 <KindGuide />
                 <img src={DownArrow} alt="down arrow" />
                 {levelOpened ? (
@@ -343,14 +349,21 @@ export default function Main() {
                       min={0}
                       max={100}
                       step={1}
-                      onChange={(e) => setRangeValue(e.target.value)}
+                      onChange={(e) => {
+                        dispatch(filterActions.setMinKind(e.target.value));
+                        setRangeValue(e.target.value);
+                      }}
                       defaultValue={rangeValue}
+                      // defaultValue={getMinKinds ? getMinKinds : rangeValue}
                       onMouseUp={() =>
                         setParamsData({ ...paramsData, minKind: rangeValue })
                       }
                     />
                     <KindRowWrapper>
-                      <RangeValue>{rangeValue}%</RangeValue>
+                      <RangeValue>
+                        {rangeValue}%
+                        {/* {getMinKinds ? getMinKinds : rangeValue}% */}
+                      </RangeValue>
                       <KindResetBtn onClick={handleResetKindVal}>
                         초기화
                       </KindResetBtn>
