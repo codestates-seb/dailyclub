@@ -13,6 +13,9 @@ import { removeLocalStorage } from 'apis/localStorage';
 import { byteToBase64 } from 'utils/byteToBase64';
 import axios from 'axios';
 import LevelPercent from './LevelPercent';
+import { timeForToday } from 'utils/timeForToday';
+import { useEffect } from 'react';
+import Pagination from 'pagination/Pagination';
 
 const HeaderContainer = styled.div`
   position: fixed;
@@ -142,17 +145,30 @@ const Notification = styled.div`
 
   margin-bottom: 0.4rem;
 `;
-const NotificationConfirm = styled.div`
+const NotificationRead = styled.div`
   width: 7px;
   height: 7px;
   background-color: grey;
   border-radius: 50%;
   margin-right: 0.5rem;
 `;
+
+const NotificationUnRead = styled.div`
+  width: 7px;
+  height: 7px;
+  background-color: #ff5924;
+  border-radius: 50%;
+  margin-right: 0.5rem;
+`;
+
 const NotificationContent = styled.span`
   font-size: 11px;
   margin-right: 0.5rem;
   flex: 2;
+  &:hover {
+    cursor: pointer;
+    font-weight: bold;
+  }
 `;
 const NotificationTime = styled.div`
   color: grey;
@@ -174,34 +190,28 @@ const HeaderLinkText = styled.div`
   align-items: center;
   justify-content: center;
 `;
+const NotiCounter = styled.div`
+  display: inline-block;
+  background-color: #ff5924;
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  text-align: center;
+  vertical-align: text-top;
+  line-height: 1.2rem;
+`;
 
 export default function Header() {
   interface NotifyList {
     id: number;
-    confirmed: boolean;
-    content: string;
-    receivedTime: string;
+    userId: number;
+    programId: number;
+    title: string;
+    status: string;
+    type: string;
+    createdDate: string;
   }
-  const notificationList: NotifyList[] = [
-    {
-      id: 1,
-      confirmed: false,
-      content: '[서울] 아이유 콘서트..에 변경사항이 있습니다',
-      receivedTime: '1분전',
-    },
-    {
-      id: 2,
-      confirmed: true,
-      content: '[영국] 손흥민 직관... 까지 1일 남았습니다',
-      receivedTime: '1분전',
-    },
-    {
-      id: 3,
-      confirmed: true,
-      content: '[서울] 홍대 라멘투어... 에 변경사항이 있습니다',
-      receivedTime: '3일전',
-    },
-  ];
 
   const [isopened, setIsOpened] = useState<boolean>(false);
   const [InputValue, setInputValue] = useState('');
@@ -210,6 +220,10 @@ export default function Header() {
   const { isLoggedIn, users, loading, loginId, userId } = useAppSelector(
     (state) => state.userInfo
   );
+  const [notiData, setNotiData] = useState<Array<NotifyList>>([]);
+  const [unReadNum, setUnReadNum] = useState<number>(0);
+  const [notiPageList, setNotiPageList] = useState();
+  const [notiPage, setNotiPage] = useState<number>(1);
 
   const handelSearchSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -228,6 +242,48 @@ export default function Header() {
         removeLocalStorage('refresh_token');
         navigate('/');
       });
+  };
+
+  const getNotification = async () => {
+    await axios
+      .get(
+        `${process.env.REACT_APP_DEV_URL}/api/notifications?page=${notiPage}&size=3`
+      )
+      .then((res) => {
+        setNotiData(res.data.data);
+        setNotiPageList(res.data.pageInfo);
+      });
+  };
+
+  const coutNum = async () => {
+    await axios
+      .get(`${process.env.REACT_APP_DEV_URL}/api/notifications/count`)
+      .then((res) => {
+        setUnReadNum(res.data);
+      });
+  };
+
+  const checkNotification = async (
+    programId: number,
+    notificationId: number
+  ) => {
+    await axios
+      .patch(
+        `${process.env.REACT_APP_DEV_URL}/api/notifications/${notificationId}`
+      )
+      .then((res) => navigate(`/programs/${programId}`));
+  };
+
+  useEffect(() => {
+    getNotification();
+    coutNum();
+  }, [notiPage]);
+
+  //헤더 프로필 버튼 누를때 알림 조회
+  const handleProfileBtn = () => {
+    setIsOpened(!isopened);
+    getNotification();
+    coutNum();
   };
 
   return (
@@ -282,7 +338,7 @@ export default function Header() {
                   </Link>
                 </Icon>
                 <Icon>
-                  <ProfileBtn onClick={() => setIsOpened(!isopened)}>
+                  <ProfileBtn onClick={handleProfileBtn}>
                     <img
                       src={
                         users?.userImages?.length !== 0
@@ -302,6 +358,9 @@ export default function Header() {
                           'rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px',
                       }}
                     />
+                    {unReadNum !== 0 ? (
+                      <NotiCounter>{unReadNum}</NotiCounter>
+                    ) : null}
                   </ProfileBtn>
                 </Icon>
               </>
@@ -350,22 +409,43 @@ export default function Header() {
                 </MyPageBtn>
               </Link>
               <NotificationContainer>
-                <NotificationLabel>새로운 알림 {1}</NotificationLabel>
+                <NotificationLabel>새로운 알림 {unReadNum}</NotificationLabel>
                 <Notifications>
-                  {notificationList?.map((notification: NotifyList) => (
-                    <Notification key={notification.id}>
-                      <NotificationConfirm>
-                        {notification.confirmed}
-                      </NotificationConfirm>
-                      <NotificationContent>
-                        {notification.content}
-                      </NotificationContent>
-                      <NotificationTime>
-                        {notification.receivedTime}
-                      </NotificationTime>
-                    </Notification>
-                  ))}
+                  {notiData
+                    ? notiData.map((notification: NotifyList) => (
+                        <Notification key={notification.id}>
+                          {notification.status === 'UNREAD' ? (
+                            <NotificationUnRead />
+                          ) : (
+                            <NotificationRead />
+                          )}
+                          <NotificationContent
+                            onClick={() => {
+                              setIsOpened(false);
+                              checkNotification(
+                                notification.programId,
+                                notification.id
+                              );
+                            }}
+                          >
+                            {notification.type === 'APPLY_COMPLETE'
+                              ? notification.title.slice(0, 10) +
+                                '...에 대한 신청이 완료되었습니다'
+                              : notification.title.slice(0, 10) +
+                                '...프로그램의 모집정보가 변경되었습니다'}
+                          </NotificationContent>
+                          <NotificationTime>
+                            {timeForToday(notification.createdDate)}
+                          </NotificationTime>
+                        </Notification>
+                      ))
+                    : null}
                 </Notifications>
+                <Pagination
+                  list={notiPageList}
+                  page={notiPage}
+                  setPage={setNotiPage}
+                />
                 <LogoutBtn onClick={handleLogoutBtn}>로그아웃</LogoutBtn>
               </NotificationContainer>
             </WrapChild>
