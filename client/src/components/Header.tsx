@@ -8,6 +8,7 @@ import Pen from '../images/Pen.svg';
 import Message from '../images/Message.svg';
 import Search from '../images/Search.svg';
 import Profile from '../images/Profile.svg';
+import MenuBar from '../images/MenuBar.svg';
 import { logoutUser } from 'stores/userInfoSlice';
 import { removeLocalStorage } from 'apis/localStorage';
 import { byteToBase64 } from 'utils/byteToBase64';
@@ -16,6 +17,7 @@ import LevelPercent from './LevelPercent';
 import { timeForToday } from 'utils/timeForToday';
 import { useEffect } from 'react';
 import Pagination from 'pagination/Pagination';
+import { useMediaQuery } from 'react-responsive';
 
 const HeaderContainer = styled.div`
   position: fixed;
@@ -27,6 +29,9 @@ const HeaderContainer = styled.div`
   display: flex;
   justify-content: center;
   background-color: white;
+  @media screen and (max-width: 767px) {
+    display: block;
+  }
 `;
 const HeaderContent = styled.div`
   min-width: 590px;
@@ -35,15 +40,34 @@ const HeaderContent = styled.div`
   align-items: center;
   justify-content: space-between;
   background-color: white;
+  @media screen and (max-width: 767px) {
+    min-width: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
 `;
 const IconContainer = styled.div`
   display: flex;
 `;
-const LogoContent = styled.div``;
+const LogoContent = styled.div`
+  @media screen and (max-width: 767px) {
+    display: flex;
+    justify-content: center;
+  }
+`;
+const MenuBarBtn = styled.div`
+  margin-left: 1rem;
+  cursor: pointer;
+`;
 const Icon = styled.div`
   margin-left: 1rem;
   display: flex;
   align-items: center;
+  &:not(:last-child) {
+    @media screen and (max-width: 767px) {
+      display: none;
+    }
+  }
 `;
 const SearchForm = styled.form`
   height: 35px;
@@ -52,12 +76,18 @@ const SearchForm = styled.form`
   border-radius: 15px;
   display: flex;
   align-items: center;
+  @media screen and (max-width: 767px) {
+    background-color: transparent;
+  }
 `;
 const SearchBtn = styled.button`
   background-color: #f4f4f4;
   border: none;
   margin-left: 0.5rem;
   color: rgba(143, 143, 143, 0.8);
+  @media screen and (max-width: 767px) {
+    background-color: transparent;
+  }
 `;
 const SearchInput = styled.input`
   width: 200px;
@@ -68,6 +98,9 @@ const SearchInput = styled.input`
   &::placeholder {
     font-weight: 300;
     color: rgba(143, 143, 143, 0.8);
+  }
+  @media screen and (max-width: 767px) {
+    display: none;
   }
 `;
 const LoginText = styled.div`
@@ -189,6 +222,9 @@ const HeaderLinkText = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  @media screen and (max-width: 767px) {
+    display: none;
+  }
 `;
 const NotiCounter = styled.div`
   display: inline-block;
@@ -201,6 +237,36 @@ const NotiCounter = styled.div`
   vertical-align: text-top;
   line-height: 1.2rem;
 `;
+const MenuBoxBackDrop = styled.div`
+  background: rgba(93, 93, 93, 0.831);
+  position: absolute;
+  left: 0;
+  top: -1px;
+  width: 100%;
+  height: 100vh;
+`;
+const MenuBox = styled.div`
+  background-color: white;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 60%;
+  height: 100vh;
+`;
+const MenuBoxLink = styled.div`
+  font-size: 1.2rem;
+  margin: 10px 10px;
+`;
+const MenuBoxCloseBtn = styled.div``;
+
+const Mobile = ({ children }: { children?: any }) => {
+  const isMobile = useMediaQuery({ maxWidth: 767 });
+  return isMobile ? children : null;
+};
+const Default = ({ children }: { children: any }) => {
+  const isNotMobile = useMediaQuery({ minWidth: 768 });
+  return isNotMobile ? children : null;
+};
 
 export default function Header() {
   interface NotifyList {
@@ -224,6 +290,7 @@ export default function Header() {
   const [unReadNum, setUnReadNum] = useState<number>(0);
   const [notiPageList, setNotiPageList] = useState();
   const [notiPage, setNotiPage] = useState<number>(1);
+  const [isOpenMenu, setIsOpenMenu] = useState(false);
 
   const handelSearchSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -275,8 +342,10 @@ export default function Header() {
   };
 
   useEffect(() => {
-    getNotification();
-    coutNum();
+    if (isLoggedIn) {
+      getNotification();
+      coutNum();
+    }
   }, [notiPage]);
 
   //헤더 프로필 버튼 누를때 알림 조회
@@ -286,15 +355,59 @@ export default function Header() {
     coutNum();
   };
 
+  const handleOpenMenuBar = () => {
+    setIsOpenMenu(!isOpenMenu);
+  };
+
   return (
     <>
       <HeaderContainer>
         <HeaderContent>
-          <LogoContent>
-            <Link to="/programs">
-              <img src={Logo} alt="logo" style={{ height: 55, width: 90 }} />
-            </Link>
-          </LogoContent>
+          <Default>
+            <LogoContent>
+              <Link to="/programs">
+                <img src={Logo} alt="logo" style={{ height: 55, width: 90 }} />
+              </Link>
+            </LogoContent>
+          </Default>
+          <Mobile>
+            <MenuBarBtn onClick={handleOpenMenuBar}>
+              <img src={MenuBar} alt="menu" style={{ height: 35, width: 25 }} />
+            </MenuBarBtn>
+            <LogoContent>
+              <Link to="/programs">
+                <img src={Logo} alt="logo" style={{ height: 55, width: 45 }} />
+              </Link>
+            </LogoContent>
+            {isOpenMenu ? (
+              <MenuBoxBackDrop>
+                <MenuBox>
+                  <MenuBoxCloseBtn></MenuBoxCloseBtn>
+                  <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
+                    <Link to="/">서비스 소개</Link>
+                  </MenuBoxLink>
+                  {isLoggedIn ? (
+                    <>
+                      <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
+                        <Link to="/programs/create">글쓰기</Link>
+                      </MenuBoxLink>
+                      <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
+                        <Link to={`/users/${userId}`}>마이페이지</Link>
+                      </MenuBoxLink>
+                      <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
+                        <Link to={`/users/${userId}`}>메시지함</Link>
+                      </MenuBoxLink>
+                    </>
+                  ) : (
+                    <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
+                      <Link to="/login">로그인</Link>
+                    </MenuBoxLink>
+                  )}
+                </MenuBox>
+              </MenuBoxBackDrop>
+            ) : null}
+          </Mobile>
+
           <IconContainer>
             <HeaderLinkText>
               <Link to="/programs">홈</Link>
@@ -452,6 +565,8 @@ export default function Header() {
           </WrapParent>
         ) : null}
       </HeaderContainer>
+
+      <Mobile></Mobile>
     </>
   );
 }
