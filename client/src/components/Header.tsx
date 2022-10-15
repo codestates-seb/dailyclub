@@ -9,6 +9,7 @@ import Message from '../images/Message.svg';
 import Search from '../images/Search.svg';
 import Profile from '../images/Profile.svg';
 import MenuBar from '../images/MenuBar.svg';
+import MenuBarClose from '../images/MenuBarClose.svg';
 import { logoutUser } from 'stores/userInfoSlice';
 import { removeLocalStorage } from 'apis/localStorage';
 import { byteToBase64 } from 'utils/byteToBase64';
@@ -31,6 +32,7 @@ const HeaderContainer = styled.div`
   background-color: white;
   @media screen and (max-width: 767px) {
     display: block;
+    /* width: 100vw; */
   }
 `;
 const HeaderContent = styled.div`
@@ -55,10 +57,6 @@ const LogoContent = styled.div`
     justify-content: center;
   }
 `;
-const MenuBarBtn = styled.div`
-  margin-left: 1rem;
-  cursor: pointer;
-`;
 const Icon = styled.div`
   margin-left: 1rem;
   display: flex;
@@ -77,7 +75,7 @@ const SearchForm = styled.form`
   display: flex;
   align-items: center;
   @media screen and (max-width: 767px) {
-    background-color: transparent;
+    display: none;
   }
 `;
 const SearchBtn = styled.button`
@@ -86,7 +84,7 @@ const SearchBtn = styled.button`
   margin-left: 0.5rem;
   color: rgba(143, 143, 143, 0.8);
   @media screen and (max-width: 767px) {
-    background-color: transparent;
+    display: none;
   }
 `;
 const SearchInput = styled.input`
@@ -126,6 +124,9 @@ const WrapChild = styled.div`
   background-color: white;
   border-radius: 3px;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
+  @media screen and (max-width: 767px) {
+    top: -5px;
+  }
 `;
 const UserContent = styled.div`
   display: flex;
@@ -238,26 +239,105 @@ const NotiCounter = styled.div`
   line-height: 1.2rem;
 `;
 const MenuBoxBackDrop = styled.div`
-  background: rgba(93, 93, 93, 0.831);
-  position: absolute;
-  left: 0;
-  top: -1px;
-  width: 100%;
-  height: 100vh;
+  &.active {
+    background: rgba(28, 28, 28, 0.607);
+    position: absolute;
+    left: 0;
+    top: -1px;
+    width: 100%;
+    height: 100vh;
+  }
 `;
-const MenuBox = styled.div`
-  background-color: white;
+const MenuBarBtn = styled.button`
+  border: none;
+  padding: 10px 15px;
+  background-color: transparent;
   position: absolute;
-  left: 0;
   top: 0;
-  width: 60%;
-  height: 100vh;
+  right: 1px;
+  transform: translateX(100%);
+  &:focus {
+    outline: none;
+  }
 `;
 const MenuBoxLink = styled.div`
   font-size: 1.2rem;
-  margin: 10px 10px;
+  margin: 15px 15px;
+  &:hover {
+    font-weight: 700;
+  }
 `;
-const MenuBoxCloseBtn = styled.div``;
+const SideNavBar = styled.div`
+  background-color: #fff;
+  padding: 20px 20px;
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 200px;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+  &.active {
+    transform: translateX(0);
+  }
+`;
+const MemuImg = styled.img`
+  display: block;
+  &.active {
+    display: none;
+  }
+`;
+const MemuCloseImg = styled.img`
+  display: none;
+  &.active {
+    display: block;
+  }
+`;
+const MobileSearchBtn = styled.button`
+  border: none;
+  position: absolute;
+  right: 60px;
+  background-color: transparent;
+  z-index: 1;
+`;
+const MobileSearchContainer = styled.div`
+  position: absolute;
+  top: 59px;
+  left: 0;
+  height: 100vh; //// 이상 수정해야함
+  width: 100%; // 이상 수정해야함
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+`;
+const MobileForm = styled.form`
+  height: 35px;
+  width: 75%;
+  padding: 10px;
+  margin: 20px;
+  background-color: #f4f4f4;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+`;
+const MobileButton = styled.button`
+  background-color: #f4f4f4;
+  border: none;
+  margin-left: 0.5rem;
+  color: rgba(143, 143, 143, 0.8);
+`;
+const MobileInput = styled.input`
+  width: 200px;
+  height: 35px;
+  margin: 0 0.5rem;
+  border-radius: 15px;
+  font-weight: 300;
+  &::placeholder {
+    font-weight: 300;
+    color: rgba(143, 143, 143, 0.8);
+  }
+`;
 
 const Mobile = ({ children }: { children?: any }) => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -291,12 +371,14 @@ export default function Header() {
   const [notiPageList, setNotiPageList] = useState();
   const [notiPage, setNotiPage] = useState<number>(1);
   const [isOpenMenu, setIsOpenMenu] = useState(false);
+  const [isOpenSearch, setIsOpenSearch] = useState(false);
 
   const handelSearchSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     dispatch(searchActions.getKeyword(InputValue)); //헤더 input값 전역상태에 저장
     navigate('/programs'); // 엔터 시 질문목록 메인페이지로 이동
     setInputValue(''); // input창 초기화
+    setIsOpenSearch(false);
   };
   const handleLogoutBtn = async () => {
     dispatch(logoutUser());
@@ -371,40 +453,77 @@ export default function Header() {
             </LogoContent>
           </Default>
           <Mobile>
-            <MenuBarBtn onClick={handleOpenMenuBar}>
-              <img src={MenuBar} alt="menu" style={{ height: 35, width: 25 }} />
-            </MenuBarBtn>
+            <MenuBoxBackDrop className={`${isOpenMenu ? 'active' : ''}`}>
+              <SideNavBar className={`${isOpenMenu ? 'active' : ''}`}>
+                <MenuBarBtn onClick={handleOpenMenuBar}>
+                  <MemuImg
+                    className={`${isOpenMenu ? 'active' : ''}`}
+                    src={MenuBar}
+                    alt="menu"
+                    style={{ height: 35, width: 25 }}
+                  />
+                  <MemuCloseImg
+                    className={`${isOpenMenu ? 'active' : ''}`}
+                    src={MenuBarClose}
+                    alt="menu close button"
+                    style={{ height: 35, width: 25 }}
+                  />
+                </MenuBarBtn>
+                <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
+                  <Link to="/programs">홈</Link>
+                </MenuBoxLink>
+                <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
+                  <Link to="/">서비스 소개</Link>
+                </MenuBoxLink>
+                {isLoggedIn ? (
+                  <>
+                    <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
+                      <Link to="/programs/create">글쓰기</Link>
+                    </MenuBoxLink>
+                    <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
+                      <Link to={`/users/${userId}`}>마이페이지</Link>
+                    </MenuBoxLink>
+                    <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
+                      <Link to={`/users/${userId}`}>메시지함</Link>
+                    </MenuBoxLink>
+                  </>
+                ) : (
+                  <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
+                    <Link to="/login">로그인</Link>
+                  </MenuBoxLink>
+                )}
+              </SideNavBar>
+            </MenuBoxBackDrop>
+            <div></div>
             <LogoContent>
               <Link to="/programs">
-                <img src={Logo} alt="logo" style={{ height: 55, width: 45 }} />
+                <img
+                  src={Logo}
+                  alt="logo"
+                  style={{ height: 55, width: 45, marginLeft: '1rem' }}
+                />
               </Link>
             </LogoContent>
-            {isOpenMenu ? (
-              <MenuBoxBackDrop>
-                <MenuBox>
-                  <MenuBoxCloseBtn></MenuBoxCloseBtn>
-                  <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
-                    <Link to="/">서비스 소개</Link>
-                  </MenuBoxLink>
-                  {isLoggedIn ? (
-                    <>
-                      <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
-                        <Link to="/programs/create">글쓰기</Link>
-                      </MenuBoxLink>
-                      <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
-                        <Link to={`/users/${userId}`}>마이페이지</Link>
-                      </MenuBoxLink>
-                      <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
-                        <Link to={`/users/${userId}`}>메시지함</Link>
-                      </MenuBoxLink>
-                    </>
-                  ) : (
-                    <MenuBoxLink onClick={() => setIsOpenMenu(false)}>
-                      <Link to="/login">로그인</Link>
-                    </MenuBoxLink>
-                  )}
-                </MenuBox>
-              </MenuBoxBackDrop>
+            <MobileSearchBtn onClick={() => setIsOpenSearch(!isOpenSearch)}>
+              <img src={Search} alt="logo" style={{ height: 15, width: 15 }} />
+            </MobileSearchBtn>
+            {isOpenSearch ? (
+              <MobileSearchContainer>
+                <MobileForm onSubmit={handelSearchSubmit}>
+                  <MobileButton>
+                    <img
+                      src={Search}
+                      alt="logo"
+                      style={{ height: 15, width: 15 }}
+                    />
+                  </MobileButton>
+                  <MobileInput
+                    onChange={(e) => setInputValue(e.target.value)}
+                    value={InputValue}
+                    placeholder="프로그램 / 모임을 검색해보세요"
+                  />
+                </MobileForm>
+              </MobileSearchContainer>
             ) : null}
           </Mobile>
 
