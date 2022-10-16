@@ -19,6 +19,9 @@ const LoginContainer = styled.div`
   margin: 0 auto;
   width: 360px;
   height: 100vh;
+  @media screen and (max-width: 767px) {
+    width: 80%;
+  }
 `;
 const LoginForm = styled.form`
   display: flex;
@@ -30,6 +33,9 @@ const SignUpText = styled.div`
 const WrapperColumn = styled.div`
   display: flex;
   justify-content: space-between;
+  @media screen and (max-width: 767px) {
+    font-size: 12px;
+  }
 `;
 const LoginInput = styled.input`
   margin: 1rem 0;

@@ -12,6 +12,9 @@ const Content = styled.main`
   left: 50%;
   transform: translate(-50%, 0);
   padding: 4rem 0;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+  }
 `;
 function Layout({ children }: PropsWithChildren) {
   return <Content>{children}</Content>;

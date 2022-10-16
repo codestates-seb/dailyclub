@@ -18,6 +18,9 @@ const NaverText = styled.div`
   margin: 0 8px;
   color: white;
   font-size: 0.9rem;
+  @media screen and (max-width: 767px) {
+    font-size: 12px;
+  }
 `;
 
 interface NaverBtnProps {
