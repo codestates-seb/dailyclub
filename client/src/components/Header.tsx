@@ -30,10 +30,6 @@ const HeaderContainer = styled.div`
   display: flex;
   justify-content: center;
   background-color: white;
-  @media screen and (max-width: 767px) {
-    display: block;
-    /* width: 100vw; */
-  }
 `;
 const HeaderContent = styled.div`
   min-width: 590px;
@@ -45,6 +41,8 @@ const HeaderContent = styled.div`
   @media screen and (max-width: 767px) {
     min-width: 0;
     width: 100%;
+    position: absolute;
+    top: 0;
     justify-content: space-between;
   }
 `;
@@ -274,7 +272,7 @@ const SideNavBar = styled.div`
   z-index: 2;
   top: 0;
   left: 0;
-  height: 100vh;
+  height: 100%;
   width: 200px;
   transform: translateX(-100%);
   transition: transform 0.3s ease;
@@ -306,7 +304,7 @@ const MobileSearchContainer = styled.div`
   top: 59px;
   left: 0;
   height: 100vh; //// 이상 수정해야함
-  width: 100%; // 이상 수정해야함
+  width: 101%; // 이상 수정해야함
   background-color: #fff;
   display: flex;
   justify-content: center;
@@ -454,7 +452,10 @@ export default function Header() {
           </Default>
           <Mobile>
             <MenuBoxBackDrop className={`${isOpenMenu ? 'active' : ''}`}>
-              <SideNavBar className={`${isOpenMenu ? 'active' : ''}`}>
+              <SideNavBar
+                className={`${isOpenMenu ? 'active' : ''}`}
+                onBlur={() => setIsOpenMenu(false)}
+              >
                 <MenuBarBtn onClick={handleOpenMenuBar}>
                   <MemuImg
                     className={`${isOpenMenu ? 'active' : ''}`}
