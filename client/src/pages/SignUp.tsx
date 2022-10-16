@@ -14,6 +14,10 @@ const SignUpContainer = styled.div`
   margin: 0 auto;
   width: 360px;
   height: 100vh;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    margin-bottom: 50px;
+  }
 `;
 const SignUpForm = styled.form`
   display: flex;
@@ -32,6 +36,9 @@ const FormError = styled.div`
 const LoginLink = styled.div`
   display: flex;
   justify-content: center;
+  @media screen and (max-width: 767px) {
+    font-size: 12px;
+  }
 `;
 const LoginText = styled.div`
   color: #1ebd8e;
@@ -151,11 +158,11 @@ export default function SignUp() {
           <OauthBtn type="submit">회원가입</OauthBtn>
         </SignUpForm>
         <LoginLink>
-          이미 아이디가 있다면&nbsp;
+          이미 아이디가 있다면?&nbsp;
           <LoginText>
             <Link to="/login">로그인</Link>
           </LoginText>
-          하세요
+          &nbsp;하러가기
         </LoginLink>
         <OauthGoogleBtn signupText="가입" />
         <OauthNaverBtn signupText="가입" />

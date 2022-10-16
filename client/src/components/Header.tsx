@@ -104,7 +104,7 @@ const LoginText = styled.div`
   align-items: center;
   font-weight: 300;
   font-size: 1.1rem;
-  margin-left: 1rem;
+  padding: 0 15px;
   color: #ff5924;
 `;
 const ProfileBtn = styled.div`
@@ -295,7 +295,7 @@ const MemuCloseImg = styled.img`
 const MobileSearchBtn = styled.button`
   border: none;
   position: absolute;
-  right: 60px;
+  right: 75px;
   background-color: transparent;
   z-index: 1;
 `;
@@ -498,11 +498,7 @@ export default function Header() {
             <div></div>
             <LogoContent>
               <Link to="/programs">
-                <img
-                  src={Logo}
-                  alt="logo"
-                  style={{ height: 55, width: 45, marginLeft: '1rem' }}
-                />
+                <img src={Logo} alt="logo" style={{ height: 55, width: 45 }} />
               </Link>
             </LogoContent>
             <MobileSearchBtn onClick={() => setIsOpenSearch(!isOpenSearch)}>
