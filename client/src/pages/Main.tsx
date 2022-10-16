@@ -32,11 +32,18 @@ const RecruitText = styled.div`
 `;
 const IngContainer = styled.div`
   min-width: 600px;
+  @media screen and (max-width: 767px) {
+    min-width: 100%;
+    padding: 0 20px;
+  }
 `;
 const FilterContainer = styled.div`
   display: flex;
   margin-bottom: 30px;
   justify-content: space-between;
+  @media screen and (max-width: 767px) {
+    flex-direction: column;
+  }
 `;
 const DateInput = styled.input`
   all: unset;
@@ -70,6 +77,9 @@ const LevelRange = styled.div`
   margin-left: 0.3rem;
   padding: 0 0.4rem;
   cursor: pointer;
+  @media screen and (max-width: 448px) {
+    margin: 0.3rem 0;
+  }
 `;
 const WrapLevel = styled.div`
   position: absolute;
@@ -116,6 +126,9 @@ const ProgContainer = styled.div`
   grid-row-gap: 20px;
   grid-column-gap: 10px;
   margin-bottom: 3rem;
+  @media screen and (max-width: 767px) {
+    grid-template-columns: 1fr;
+  }
 `;
 const ProgItem = styled.div``;
 const ProgBanner = styled.div`
@@ -159,6 +172,10 @@ const ProgDate = styled.div``;
 const FilterRowWrapper = styled.div`
   display: flex;
   align-items: center;
+  @media screen and (max-width: 767px) {
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
 `;
 const KindRowWrapper = styled.div`
   display: flex;
@@ -188,6 +205,10 @@ const CheckStatusInputContent = styled.div`
     padding: 5px 0 0 10px;
     color: gray;
     cursor: pointer;
+    @media screen and (max-width: 767px) {
+      padding: 0;
+      margin-top: 10px;
+    }
   }
   input:checked + label {
     transition: 0.1s ease-in-out;
@@ -228,9 +249,9 @@ export default function Main() {
 
   /** 필터 조회api - 키워드,지역,날짜,친절도*/
   useEffect(() => {
-    setParamsData({ ...paramsData, location: getFilterLocation });
-    setParamsData({ ...paramsData, programDate: getFilterDate });
-    setParamsData({ ...paramsData, minKind: getMinKinds });
+    // setParamsData({ ...paramsData, location: getFilterLocation });
+    // setParamsData({ ...paramsData, programDate: getFilterDate });
+    // setParamsData({ ...paramsData, minKind: getMinKinds });
     // setParamsData({ ...paramsData, keyword: searchKeyword });
   }, []);
   // console.log('param :', paramsData && paramsData);
@@ -350,7 +371,7 @@ export default function Main() {
                       max={100}
                       step={1}
                       onChange={(e) => {
-                        dispatch(filterActions.setMinKind(e.target.value));
+                        // dispatch(filterActions.setMinKind(e.target.value));
                         setRangeValue(e.target.value);
                       }}
                       defaultValue={rangeValue}
@@ -382,7 +403,7 @@ export default function Main() {
                     name="OnlyOneCheckedStatus"
                     onClick={(e) => handleStatusChecked(e.target, el)}
                   />
-                  <label htmlFor={String(el.id)}>&nbsp; {el?.statusName}</label>
+                  <label htmlFor={String(el.id)}>&nbsp;{el?.statusName}</label>
                 </CheckStatusInputContent>
               ))}
             </FilterRowWrapper>

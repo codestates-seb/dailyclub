@@ -109,21 +109,27 @@ const LoginText = styled.div`
 `;
 const ProfileBtn = styled.div`
   cursor: pointer;
+  @media screen and (max-width: 767px) {
+    margin: 0 15px;
+  }
 `;
 /* 프로필 클릭 시 나오는 Wrapper */
 const WrapParent = styled.div`
   position: relative;
+  @media screen and (max-width: 767px) {
+    position: static;
+  }
 `;
 const WrapChild = styled.div`
   position: absolute;
-  top: 42px;
+  top: 22px;
   right: 0px;
   width: 270px;
   background-color: white;
   border-radius: 3px;
   box-shadow: rgba(0, 0, 0, 0.15) 0px 2px 8px;
   @media screen and (max-width: 767px) {
-    top: -5px;
+    top: 52px;
   }
 `;
 const UserContent = styled.div`
@@ -450,6 +456,7 @@ export default function Header() {
               </Link>
             </LogoContent>
           </Default>
+
           <Mobile>
             <MenuBoxBackDrop className={`${isOpenMenu ? 'active' : ''}`}>
               <SideNavBar
@@ -591,6 +598,90 @@ export default function Header() {
                       <NotiCounter>{unReadNum}</NotiCounter>
                     ) : null}
                   </ProfileBtn>
+                  {isopened ? (
+                    <WrapParent>
+                      <WrapChild>
+                        <UserContent>
+                          <Link to={`/users/${userId}`}>
+                            <UserProfileImg onClick={() => setIsOpened(false)}>
+                              <img
+                                src={
+                                  users?.userImages?.length !== 0
+                                    ? byteToBase64(
+                                        users?.userImages[0]?.contentType,
+                                        users?.userImages[0]?.bytes
+                                      )
+                                    : Profile
+                                }
+                                alt="userImg"
+                                loading="lazy"
+                                style={{
+                                  height: 70,
+                                  width: 70,
+                                  borderRadius: '50%',
+                                  boxShadow:
+                                    'rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px',
+                                }}
+                              />
+                            </UserProfileImg>
+                          </Link>
+                          <UserInfoColumnWrap>
+                            <UserNickName>{users?.nickname}</UserNickName>
+                            <LevelPercent percent={users?.kind} />
+                          </UserInfoColumnWrap>
+                        </UserContent>
+                        <Link to={`/users/${userId}`}>
+                          <MyPageBtn onClick={() => setIsOpened(false)}>
+                            마이페이지
+                          </MyPageBtn>
+                        </Link>
+                        <NotificationContainer>
+                          <NotificationLabel>
+                            새로운 알림 {unReadNum}
+                          </NotificationLabel>
+                          <Notifications>
+                            {notiData
+                              ? notiData.map((notification: NotifyList) => (
+                                  <Notification key={notification.id}>
+                                    {notification.status === 'UNREAD' ? (
+                                      <NotificationUnRead />
+                                    ) : (
+                                      <NotificationRead />
+                                    )}
+                                    <NotificationContent
+                                      onClick={() => {
+                                        setIsOpened(false);
+                                        checkNotification(
+                                          notification.programId,
+                                          notification.id
+                                        );
+                                      }}
+                                    >
+                                      {notification.type === 'APPLY_COMPLETE'
+                                        ? notification.title.slice(0, 10) +
+                                          '...에 대한 신청이 완료되었습니다'
+                                        : notification.title.slice(0, 10) +
+                                          '...프로그램의 모집정보가 변경되었습니다'}
+                                    </NotificationContent>
+                                    <NotificationTime>
+                                      {timeForToday(notification.createdDate)}
+                                    </NotificationTime>
+                                  </Notification>
+                                ))
+                              : null}
+                          </Notifications>
+                          <Pagination
+                            list={notiPageList}
+                            page={notiPage}
+                            setPage={setNotiPage}
+                          />
+                          <LogoutBtn onClick={handleLogoutBtn}>
+                            로그아웃
+                          </LogoutBtn>
+                        </NotificationContainer>
+                      </WrapChild>
+                    </WrapParent>
+                  ) : null}
                 </Icon>
               </>
             ) : (
@@ -600,89 +691,7 @@ export default function Header() {
             )}
           </IconContainer>
         </HeaderContent>
-        {isopened ? (
-          <WrapParent>
-            <WrapChild>
-              <UserContent>
-                <Link to={`/users/${userId}`}>
-                  <UserProfileImg onClick={() => setIsOpened(false)}>
-                    <img
-                      src={
-                        users?.userImages?.length !== 0
-                          ? byteToBase64(
-                              users?.userImages[0]?.contentType,
-                              users?.userImages[0]?.bytes
-                            )
-                          : Profile
-                      }
-                      alt="userImg"
-                      loading="lazy"
-                      style={{
-                        height: 70,
-                        width: 70,
-                        borderRadius: '50%',
-                        boxShadow:
-                          'rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px',
-                      }}
-                    />
-                  </UserProfileImg>
-                </Link>
-                <UserInfoColumnWrap>
-                  <UserNickName>{users?.nickname}</UserNickName>
-                  <LevelPercent percent={users?.kind} />
-                </UserInfoColumnWrap>
-              </UserContent>
-              <Link to={`/users/${userId}`}>
-                <MyPageBtn onClick={() => setIsOpened(false)}>
-                  마이페이지
-                </MyPageBtn>
-              </Link>
-              <NotificationContainer>
-                <NotificationLabel>새로운 알림 {unReadNum}</NotificationLabel>
-                <Notifications>
-                  {notiData
-                    ? notiData.map((notification: NotifyList) => (
-                        <Notification key={notification.id}>
-                          {notification.status === 'UNREAD' ? (
-                            <NotificationUnRead />
-                          ) : (
-                            <NotificationRead />
-                          )}
-                          <NotificationContent
-                            onClick={() => {
-                              setIsOpened(false);
-                              checkNotification(
-                                notification.programId,
-                                notification.id
-                              );
-                            }}
-                          >
-                            {notification.type === 'APPLY_COMPLETE'
-                              ? notification.title.slice(0, 10) +
-                                '...에 대한 신청이 완료되었습니다'
-                              : notification.title.slice(0, 10) +
-                                '...프로그램의 모집정보가 변경되었습니다'}
-                          </NotificationContent>
-                          <NotificationTime>
-                            {timeForToday(notification.createdDate)}
-                          </NotificationTime>
-                        </Notification>
-                      ))
-                    : null}
-                </Notifications>
-                <Pagination
-                  list={notiPageList}
-                  page={notiPage}
-                  setPage={setNotiPage}
-                />
-                <LogoutBtn onClick={handleLogoutBtn}>로그아웃</LogoutBtn>
-              </NotificationContainer>
-            </WrapChild>
-          </WrapParent>
-        ) : null}
       </HeaderContainer>
-
-      <Mobile></Mobile>
     </>
   );
 }

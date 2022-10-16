@@ -20,7 +20,7 @@ const LoginContainer = styled.div`
   width: 360px;
   height: 100vh;
   @media screen and (max-width: 767px) {
-    width: 100%;
+    width: 80%;
   }
 `;
 const LoginForm = styled.form`
