@@ -13,6 +13,9 @@ import {
 export const CheckMessage = styled.div`
   margin-bottom: 10px;
   font-size: 30px;
+  @media screen and (max-width: 767px) {
+    font-size: 20px;
+  }
 `;
 
 interface ApplyModalProps {
