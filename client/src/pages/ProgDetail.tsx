@@ -116,6 +116,12 @@ const MemberSection = styled.div`
   }
 `;
 
+
+const NoMember = styled.div`
+  text-align: center;
+  padding: 50px 0 25px 0;
+`;
+
 const ProglInfoWrap = styled.div`
   flex-direction: column;
   border: 1px solid #ddd;
@@ -428,7 +434,10 @@ export default function ProgDetail() {
                 <ProgText>{data?.text}</ProgText>
               </ProgTxtSection>
               <ProgMemberContent>
-                <H2>함께하는 멤버(신청자)</H2>
+              <H2>함께하는 멤버(신청자)</H2>
+              {!applyList.length ? (
+              <NoMember>신청자가 없습니다</NoMember>)
+              : (
                 <MemberSection>
                   {applyList?.map((el) => (
                     <MemItem key={el.id}>
@@ -487,6 +496,7 @@ export default function ProgDetail() {
                     </MemItem>
                   ))}
                 </MemberSection>
+              )}
                 {applyList ? (
                   <Pagination list={pageList} page={page} setPage={setPage} />
                 ) : null}
@@ -903,7 +913,10 @@ export default function ProgDetail() {
                 <ProgText>{data?.text}</ProgText>
               </ProgTxtSection>
               <ProgMemberContent>
-                <H2>함께하는 멤버(신청자)</H2>
+              <H2>함께하는 멤버(신청자)</H2>
+              {!applyList.length ? (
+              <NoMember>신청자가 없습니다</NoMember>)
+              : (
                 <MemberSection>
                   {applyList?.map((el) => (
                     <MemItem key={el.id}>
@@ -962,6 +975,7 @@ export default function ProgDetail() {
                     </MemItem>
                   ))}
                 </MemberSection>
+              )}
                 {applyList ? (
                   <Pagination list={pageList} page={page} setPage={setPage} />
                 ) : null}

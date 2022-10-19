@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useMediaQuery } from 'react-responsive';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -8,6 +9,9 @@ import { useAppSelector } from 'stores/hooks';
 const ReviewContainer = styled.div`
   height: 100vh;
   margin-bottom: 15rem;
+  @media screen and (max-width: 767px) {
+    padding: 1rem;
+  }
 `;
 const ReviewHead = styled.div`
   color: ${(props) => props.theme.accent};
@@ -30,6 +34,10 @@ const ProgSurveyWrap = styled.div`
 const ReviewBtnWrap = styled.div`
   margin-top: 20px;
   float: right;
+  @media screen and (max-width: 767px) {
+    float: none;
+    text-align: center;
+  }
 `;
 const CreateBtn = styled.button`
   border-radius: 5px;
@@ -38,6 +46,9 @@ const CreateBtn = styled.button`
   background-color: ${(props) => props.theme.accent};
   color: white;
   font-weight: 600;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+  }
 `;
 const MemberRowWapper = styled.div`
   display: flex;
