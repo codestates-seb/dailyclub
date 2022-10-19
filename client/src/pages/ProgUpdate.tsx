@@ -5,11 +5,15 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import ImgDeleteBtnSvg from '../images/ImgDeleteBtn.svg';
 import { getToday } from 'utils/getToday';
+import { useMediaQuery } from 'react-responsive';
 
 const CreateContainer = styled.div`
   width: 100%;
   height: 100vh;
   margin-bottom: 10rem;
+  @media screen and (max-width: 767px) {
+    height: 100%;
+  }
 `;
 
 const CreateForm = styled.form`
@@ -18,6 +22,9 @@ const CreateForm = styled.form`
   display: flex;
   justify-content: center;
   align-items: center;
+  @media screen and (max-width: 767px) {
+    flex-direction: column;
+  }
 `;
 
 const ProgramInfo = styled.div`
@@ -26,6 +33,12 @@ const ProgramInfo = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    max-width: 350px;
+    min-width: 250px;
+    padding: 10px;
+  }
 `;
 
 const RecruitInfo = styled.div`
@@ -34,10 +47,20 @@ const RecruitInfo = styled.div`
   height: 100%;
   display: flex;
   flex-direction: column;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    max-width: 350px;
+    min-width: 250px;
+    padding: 10px;
+  }
 `;
 
 const ProgramInfoTitle = styled.div`
   display: flex;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    min-width: 250px;
+  }
 `;
 
 const Redstar = styled.div`
@@ -65,6 +88,10 @@ const TitleInput = styled.input`
   padding: 10px;
   width: 90%;
   height: 30px;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    padding: 0;
+  }
 `;
 
 const ContentsInput = styled.textarea`
@@ -76,6 +103,10 @@ const ContentsInput = styled.textarea`
   width: 90%;
   height: 600px;
   resize: none;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    padding: 0;
+  }
 `;
 
 const RecruitInfoTitle = styled.div`
@@ -89,6 +120,9 @@ const RecruitContents = styled.div`
   height: 40px;
   width: 100%;
   margin-bottom: 20px;
+  @media screen and (max-width: 767px) {
+    flex-direction: column;
+  }
 `;
 
 const RecruitName = styled.div`
@@ -212,6 +246,19 @@ export const ImgDeleteBtn = styled.button`
   right: -1rem;
   border: none;
   background-color: transparent;
+`;
+
+const MobileTextGrp = styled.div`
+  display: flex;
+  width: 100%;
+  margin-bottom: 10px;
+`;
+
+const MobileImgTextGrp = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  margin-top: 25px;
 `;
 
 interface PrevProgramProps {
@@ -392,6 +439,15 @@ function ProgUpdate() {
     setImagePreview('');
   };
 
+  const Mobile = ({ children }: { children?: any }) => {
+    const isMobile = useMediaQuery({ maxWidth: 767 });
+    return isMobile ? children : null;
+  };
+  const Default = ({ children }: { children: any }) => {
+    const isNotMobile = useMediaQuery({ minWidth: 768 });
+    return isNotMobile ? children : null;
+  };
+
   return (
     <Layout>
       <CreateContainer>
@@ -431,77 +487,163 @@ function ProgUpdate() {
               <Label>모집정보</Label>
               <Redstar>* 필수 입력</Redstar>
             </RecruitInfoTitle>
-            <RecruitContents>
-              <Redstar>*</Redstar>
-              <RecruitName>모집인원</RecruitName>
-              {/* 모집인원 인풋입니다 */}
-              <RecruitInput
-                type="number"
-                min={numOfRecruits}
-                max="100"
-                name="people"
-                onChange={handleNumofRecruits}
-                defaultValue={numOfRecruits}
-              />
-            </RecruitContents>
-            <RecruitContents>
-              <Redstar>*</Redstar>
-              <RecruitName>진행날짜</RecruitName>
-              {/* 진행날짜 인풋입니다 */}
-              <RecruitInput
-                type="date"
-                name="date"
-                min={getToday()}
-                max="2032-12-31"
-                onChange={handleProgramDate}
-                defaultValue={programDate}
-              />
-            </RecruitContents>
-            <RecruitContents>
-              <Redstar>*</Redstar>
-              <RecruitName>모집지역</RecruitName>
-              <AreaSelect
-                name="area"
-                onChange={handleLocation}
-                key={location}
-                defaultValue={location}
-              >
-                <option value="지역">지역</option>
-                <option value="서울">서울</option>
-                <option value="경기">경기</option>
-                <option value="강원">강원</option>
-                <option value="인천">인천</option>
-                <option value="대전/충청">대전/충청</option>
-                <option value="대구/경북">대구/경북</option>
-                <option value="부산/울산/경남">부산/울산/경남</option>
-                <option value="광주/전라">광주/전라</option>
-                <option value="제주">제주</option>
-              </AreaSelect>
-            </RecruitContents>
-            <RecruitContents>
-              <Redstar>*</Redstar>
-              <RecruitName>친절도</RecruitName>
-              {/* 친절도 인풋입니다 */}
-              <KindInputWrap>
-                <KindInput
-                  type="range"
-                  min="0"
+            <Default>
+              <RecruitContents>
+                <Redstar>*</Redstar>
+                <RecruitName>모집인원</RecruitName>
+                {/* 모집인원 인풋입니다 */}
+                <RecruitInput
+                  type="number"
+                  min={numOfRecruits}
                   max="100"
-                  step="1"
-                  name="kind"
-                  onChange={handleMinKindValue}
-                  key={prev && prev?.minKind}
-                  defaultValue={minkind}
+                  name="people"
+                  onChange={handleNumofRecruits}
+                  defaultValue={numOfRecruits}
                 />
-                <KindValue>{minkind}%</KindValue>
-              </KindInputWrap>
-            </RecruitContents>
-            <RecruitContents>
-              <ImageAdd>이미지 첨부</ImageAdd>
-              <ImageRule>
-                저작권에 위배되지 않는 파일을 업로드 해주세요.
-              </ImageRule>
-            </RecruitContents>
+              </RecruitContents>
+              <RecruitContents>
+                <Redstar>*</Redstar>
+                <RecruitName>진행날짜</RecruitName>
+                {/* 진행날짜 인풋입니다 */}
+                <RecruitInput
+                  type="date"
+                  name="date"
+                  min={getToday()}
+                  max="2032-12-31"
+                  onChange={handleProgramDate}
+                  defaultValue={programDate}
+                />
+              </RecruitContents>
+              <RecruitContents>
+                <Redstar>*</Redstar>
+                <RecruitName>모집지역</RecruitName>
+                <AreaSelect
+                  name="area"
+                  onChange={handleLocation}
+                  key={location}
+                  defaultValue={location}
+                >
+                  <option value="지역">지역</option>
+                  <option value="서울">서울</option>
+                  <option value="경기">경기</option>
+                  <option value="강원">강원</option>
+                  <option value="인천">인천</option>
+                  <option value="대전/충청">대전/충청</option>
+                  <option value="대구/경북">대구/경북</option>
+                  <option value="부산/울산/경남">부산/울산/경남</option>
+                  <option value="광주/전라">광주/전라</option>
+                  <option value="제주">제주</option>
+                </AreaSelect>
+              </RecruitContents>
+              <RecruitContents>
+                <Redstar>*</Redstar>
+                <RecruitName>친절도</RecruitName>
+                {/* 친절도 인풋입니다 */}
+                <KindInputWrap>
+                  <KindInput
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    name="kind"
+                    onChange={handleMinKindValue}
+                    key={prev && prev?.minKind}
+                    defaultValue={minkind}
+                  />
+                  <KindValue>{minkind}%</KindValue>
+                </KindInputWrap>
+              </RecruitContents>
+              <RecruitContents>
+                <ImageAdd>이미지 첨부</ImageAdd>
+                <ImageRule>
+                  저작권에 위배되지 않는 파일을 업로드 해주세요.
+                </ImageRule>
+              </RecruitContents>
+            </Default>
+
+            <Mobile>
+              <RecruitContents>
+                <MobileTextGrp>
+                  <Redstar>*</Redstar>
+                  <RecruitName>모집인원</RecruitName>
+                </MobileTextGrp>
+                {/* 모집인원 인풋입니다 */}
+                <RecruitInput
+                  type="number"
+                  min={numOfRecruits}
+                  max="100"
+                  name="people"
+                  onChange={handleNumofRecruits}
+                  defaultValue={numOfRecruits}
+                />
+              </RecruitContents>
+              <RecruitContents>
+                <MobileTextGrp>
+                  <Redstar>*</Redstar>
+                  <RecruitName>진행날짜</RecruitName>
+                </MobileTextGrp>
+                {/* 진행날짜 인풋입니다 */}
+                <RecruitInput
+                  type="date"
+                  name="date"
+                  min={getToday()}
+                  max="2032-12-31"
+                  onChange={handleProgramDate}
+                  defaultValue={programDate}
+                />
+              </RecruitContents>
+              <RecruitContents>
+                <MobileTextGrp>
+                  <Redstar>*</Redstar>
+                  <RecruitName>모집지역</RecruitName>
+                </MobileTextGrp>
+                <AreaSelect
+                  name="area"
+                  onChange={handleLocation}
+                  key={location}
+                  defaultValue={location}
+                >
+                  <option value="지역">지역</option>
+                  <option value="서울">서울</option>
+                  <option value="경기">경기</option>
+                  <option value="강원">강원</option>
+                  <option value="인천">인천</option>
+                  <option value="대전/충청">대전/충청</option>
+                  <option value="대구/경북">대구/경북</option>
+                  <option value="부산/울산/경남">부산/울산/경남</option>
+                  <option value="광주/전라">광주/전라</option>
+                  <option value="제주">제주</option>
+                </AreaSelect>
+              </RecruitContents>
+              <RecruitContents>
+                <MobileTextGrp>
+                  <Redstar>*</Redstar>
+                  <RecruitName>친절도</RecruitName>
+                </MobileTextGrp>
+                {/* 친절도 인풋입니다 */}
+                <KindInputWrap>
+                  <KindInput
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="1"
+                    name="kind"
+                    onChange={handleMinKindValue}
+                    key={prev && prev?.minKind}
+                    defaultValue={minkind}
+                  />
+                  <KindValue>{minkind}%</KindValue>
+                </KindInputWrap>
+              </RecruitContents>
+              <RecruitContents>
+                <MobileImgTextGrp>
+                  <ImageAdd>이미지 첨부</ImageAdd>
+                  <ImageRule>
+                    저작권에 위배되지 않는 파일을 업로드 해주세요.
+                  </ImageRule>
+                </MobileImgTextGrp>
+              </RecruitContents>
+            </Mobile>
             {!picture ? (
               <ImageLabel htmlFor="file">
                 우리 모임을 소개할 이미지를 첨부해주세요.

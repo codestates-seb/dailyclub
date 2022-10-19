@@ -1,3 +1,4 @@
+import { useMediaQuery } from 'react-responsive';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import BannerImg from '../images/BannerImg.svg';
@@ -62,6 +63,11 @@ const MainBannerImg = styled.img`
   display: flex;
   align-items: center;
   justify-content: center;
+  @media screen and (max-width: 767px) {
+    min-width: 0;
+    width: 90%;
+    height: 50%;
+  }
 `;
 
 const IntroService = styled.div`
@@ -73,6 +79,10 @@ const IntroService = styled.div`
   align-items: center;
   justify-content: center;
   padding: 4rem 0;
+  @media screen and (max-width: 767px) {
+    min-width: 0;
+    width: 100%;
+  }
 `;
 
 const IntroWrap = styled.div`
@@ -82,11 +92,22 @@ const IntroWrap = styled.div`
   align-items: center;
   justify-content: center;
   padding: 4rem;
+  @media screen and (max-width: 767px) {
+    min-width: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 `;
 
 const IntroTextGroup = styled.div`
   height: 100%;
   width: 50%;
+  @media screen and (max-width: 767px) {
+    margin: 10px;
+    width: 100%;
+    min-width: 220px;
+  }
 `;
 
 const IntroH2 = styled.h2`
@@ -102,16 +123,32 @@ const IntroText = styled.div`
 `;
 
 const IntroTextGroupEnd = styled(IntroTextGroup)`
-  padding-left: 3rem;
+  padding-left: 2rem;
+  @media screen and (max-width: 767px) {
+    padding-left: 0;
+  }
 `;
 
 const IntroImg = styled.img`
   width: 50%;
   height: 100%;
   box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    min-width: 220px;
+  }
 `;
 
 function Hero() {
+  const Mobile = ({ children }: { children?: any }) => {
+    const isMobile = useMediaQuery({ maxWidth: 767 });
+    return isMobile ? children : null;
+  };
+  const Default = ({ children }: { children: any }) => {
+    const isNotMobile = useMediaQuery({ minWidth: 768 });
+    return isNotMobile ? children : null;
+  };
+
   return (
     <HeroContainer>
       <MainBannerWrap>
@@ -126,29 +163,62 @@ function Hero() {
         <IntroWrap>
           <IntroTextGroup>
             <IntroH2>누구나 만들 수 있는 모임</IntroH2>
-            <IntroText>
-              이용자 누구나 모임을 개설하고 관리할 수 있어요.
-            </IntroText>
-            <IntroText>간편하게 모임을 업로드 해보세요!</IntroText>
+            <Default>
+              <IntroText>
+                이용자 누구나 모임을 개설하고 관리할 수 있어요.
+              </IntroText>
+              <IntroText>간편하게 모임을 업로드 해보세요!</IntroText>
+            </Default>
+            <Mobile>
+              <IntroText>이용자 누구나 모임을</IntroText>
+              <IntroText>개설하고 관리할 수 있어요.</IntroText>
+              <IntroText>간편하게 모임을 업로드 해보세요!</IntroText>
+            </Mobile>
           </IntroTextGroup>
           <IntroImg src={IntroImg1}></IntroImg>
         </IntroWrap>
-        <IntroWrap>
-          <IntroImg src={IntroImg2}></IntroImg>
-          <IntroTextGroupEnd>
-            <IntroH2>친절도 기능</IntroH2>
-            <IntroText>리뷰 기능을 통해 평가된 친절도를 모임 생성시</IntroText>
-            <IntroText>
-              {' '}
-              반영할 수 있어요. 건전한 모임 문화를 만들어요!
-            </IntroText>
-          </IntroTextGroupEnd>
-        </IntroWrap>
+
+        <Default>
+          <IntroWrap>
+            <IntroImg src={IntroImg2}></IntroImg>
+            <IntroTextGroupEnd>
+              <IntroH2>친절도 기능</IntroH2>
+              <IntroText>
+                리뷰 기능을 통해 평가된 친절도를 모임 생성시
+              </IntroText>
+              <IntroText>
+                {' '}
+                반영할 수 있어요. 건전한 모임 문화를 만들어요!
+              </IntroText>
+            </IntroTextGroupEnd>
+          </IntroWrap>
+        </Default>
+
+        <Mobile>
+          <IntroWrap>
+            <IntroTextGroupEnd>
+              <IntroH2>친절도 기능</IntroH2>
+              <IntroText>리뷰 기능을 통해 </IntroText>
+              <IntroText>평가된 친절도를 모임 생성시 </IntroText>
+              <IntroText>반영할 수 있어요.</IntroText>
+              <IntroText>건전한 모임 문화를 만들어요!</IntroText>
+            </IntroTextGroupEnd>
+            <IntroImg src={IntroImg2}></IntroImg>
+          </IntroWrap>
+        </Mobile>
+
         <IntroWrap>
           <IntroTextGroup>
             <IntroH2>메시지 연락</IntroH2>
-            <IntroText>다이렉트 메시지 기능을 통해 다양한 모임의</IntroText>
-            <IntroText>연락을 사이트에서 관리할 수 있어요.</IntroText>
+            <Default>
+              <IntroText>다이렉트 메시지 기능을 통해 다양한 모임의</IntroText>
+              <IntroText>연락을 사이트에서 관리할 수 있어요.</IntroText>
+            </Default>
+            <Mobile>
+              <IntroText>다이렉트 메시지 기능을 통해</IntroText>
+              <IntroText> 다양한 모임의 연락을</IntroText>
+              <IntroText> 사이트에서 관리할 수 있어요.</IntroText>
+            </Mobile>
           </IntroTextGroup>
           <IntroImg src={IntroImg3}></IntroImg>
         </IntroWrap>

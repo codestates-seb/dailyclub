@@ -24,6 +24,7 @@ import ProgressBar from 'components/ProgressBar';
 import { getToday } from 'utils/getToday';
 import { compareWithToday } from 'utils/compareWithToday';
 import KindGuide from 'components/KindGuide';
+import { useMediaQuery } from 'react-responsive';
 
 const ProgPageDetail = styled.div`
   max-width: 1200px;
@@ -32,6 +33,13 @@ const ProgPageDetail = styled.div`
   flex-direction: row;
   justify-content: space-between;
   margin-bottom: 50px;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    min-width: 260px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 const ProgDetailWrap = styled.div`
   position: relative;
@@ -40,6 +48,9 @@ const ProgDetailWrap = styled.div`
   box-sizing: border-box;
   overflow: hidden;
   padding: 0 20px;
+  @media screen and (max-width: 767px) {
+    min-width: 0;
+  }
 `;
 
 const ProgDetailInfo = styled.div`
@@ -47,12 +58,19 @@ const ProgDetailInfo = styled.div`
   width: 35%;
   margin-bottom: 10px;
   box-sizing: border-box;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+    padding: 0 20px;
+  }
 `;
 
 const ProgDetailImg = styled.img`
   width: 100%;
   height: 250px;
   object-fit: cover;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+  }
 `;
 
 const ProgTitleSection = styled.div`
@@ -61,6 +79,10 @@ const ProgTitleSection = styled.div`
   font-size: 30px;
   font-weight: 700;
   line-height: 34px;
+  @media screen and (max-width: 767px) {
+    font-size: 20px;
+    line-height: 25px;
+  }
 `;
 
 const ProgTxtSection = styled.div`
@@ -75,6 +97,11 @@ const ProgText = styled.div`
   font-size: 18px;
   font-weight: 500;
   white-space: pre-line;
+  @media screen and (max-width: 767px) {
+    font-size: 15px;
+    line-height: 20px;
+    font-weight: lighter;
+  }
 `;
 
 const ProgMemberContent = styled.div`
@@ -84,6 +111,9 @@ const ProgMemberContent = styled.div`
 const MemberSection = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
+  @media screen and (max-width: 767px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const ProglInfoWrap = styled.div`
@@ -94,6 +124,10 @@ const ProglInfoWrap = styled.div`
   border-radius: 5px;
   padding: 0 20px;
   margin-top: 10px;
+  @media screen and (max-width: 767px) {
+    border: 0;
+    padding: 0;
+  }
 `;
 
 const ProgInfoText = styled.div`
@@ -188,11 +222,17 @@ const SendMsgBtn = styled.button`
 
 const H2 = styled.h2`
   font-size: 24px;
+  @media screen and (max-width: 767px) {
+    font-size: 20px;
+  }
 `;
 
 const H3 = styled.h3`
   margin-left: 10px;
   font-size: 18px;
+  @media screen and (max-width: 767px) {
+    font-size: 15px;
+  }
 `;
 const ProfileIntro = styled.div`
   font-weight: lighter;
@@ -365,130 +405,567 @@ export default function ProgDetail() {
     }
   };
 
+  const Mobile = ({ children }: { children?: any }) => {
+    const isMobile = useMediaQuery({ maxWidth: 767 });
+    return isMobile ? children : null;
+  };
+  const Default = ({ children }: { children: any }) => {
+    const isNotMobile = useMediaQuery({ minWidth: 768 });
+    return isNotMobile ? children : null;
+  };
+
   return (
     <>
       <Layout>
         <ProgPageDetail>
-          <ProgDetailWrap>
-            <ProgDetailImg src={progImg}></ProgDetailImg>
-            <ProgTitleSection>
-              [{data?.location}]{data?.title}
-            </ProgTitleSection>
-            <ProgTxtSection>
-              <ProgText>{data?.text}</ProgText>
-            </ProgTxtSection>
-            <ProgMemberContent>
-              <H2>함께하는 멤버(신청자)</H2>
-              <MemberSection>
-                {applyList?.map((el) => (
-                  <MemItem key={el.id}>
-                    <MemItemWrap1>
-                      {el.user.userImages.length !== 0 ? (
-                        <ProfileImg
-                          src={
-                            'data:' +
-                            //@ts-ignore
-                            el.user.userImages[0].contentType +
-                            ';base64,' +
-                            //@ts-ignore
-                            el.user.userImages[0].bytes
-                          }
-                          alt="profile"
-                          style={{ height: 40, width: 40, borderRadius: 50 }}
-                          onClick={() => {
-                            navigate(`/users/${el.user.id}`);
-                          }}
+          <Default>
+            <ProgDetailWrap>
+              <ProgDetailImg src={progImg}></ProgDetailImg>
+              <ProgTitleSection>
+                [{data?.location}]{data?.title}
+              </ProgTitleSection>
+              <ProgTxtSection>
+                <ProgText>{data?.text}</ProgText>
+              </ProgTxtSection>
+              <ProgMemberContent>
+                <H2>함께하는 멤버(신청자)</H2>
+                <MemberSection>
+                  {applyList?.map((el) => (
+                    <MemItem key={el.id}>
+                      <MemItemWrap1>
+                        {el.user.userImages.length !== 0 ? (
+                          <ProfileImg
+                            src={
+                              'data:' +
+                              //@ts-ignore
+                              el.user.userImages[0].contentType +
+                              ';base64,' +
+                              //@ts-ignore
+                              el.user.userImages[0].bytes
+                            }
+                            alt="profile"
+                            style={{ height: 40, width: 40, borderRadius: 50 }}
+                            onClick={() => {
+                              navigate(`/users/${el.user.id}`);
+                            }}
+                          />
+                        ) : (
+                          <ProfileImg
+                            src={Profile}
+                            alt="profile"
+                            style={{ height: 40, width: 40 }}
+                            onClick={() => {
+                              navigate(`/users/${el.user.id}`);
+                            }}
+                          />
+                        )}
+                        <MemInfo>
+                          <MemName
+                            onClick={() => {
+                              navigate(el.user.id);
+                            }}
+                          >
+                            {el.user.nickname}
+                          </MemName>
+                          <MemIntro>{el.user.introduction}</MemIntro>
+                        </MemInfo>
+                      </MemItemWrap1>
+                      <MemItemWrap2>
+                        <KindWrap>
+                          <KindRowWrap>
+                            친절도 &nbsp;
+                            <KindGuide />
+                          </KindRowWrap>
+                          <LevelPercent percent={el.user.kind}></LevelPercent>
+                        </KindWrap>
+                        <ProgressBar
+                          currentPerson={el.user.kind}
+                          totalPerson={100}
                         />
-                      ) : (
-                        <ProfileImg
-                          src={Profile}
-                          alt="profile"
-                          style={{ height: 40, width: 40 }}
+                        <ApplyDate>{el.createdTime} 신청</ApplyDate>
+                      </MemItemWrap2>
+                    </MemItem>
+                  ))}
+                </MemberSection>
+                {applyList ? (
+                  <Pagination list={pageList} page={page} setPage={setPage} />
+                ) : null}
+              </ProgMemberContent>
+            </ProgDetailWrap>
+            <ProgDetailInfo>
+              <H2>모집정보</H2>
+              <ProglInfoWrap>
+                <ProgPeople>
+                  <Icon>
+                    <img
+                      src={User}
+                      alt="logo"
+                      style={{ height: 25, width: 25 }}
+                    />
+
+                    <H3>모집인원</H3>
+                  </Icon>
+                  <ProgInfoText>
+                    {pageList?.totalElements} / {data?.numOfRecruits}
+                  </ProgInfoText>
+                </ProgPeople>
+                <ProgDate>
+                  <Icon>
+                    <img
+                      src={Calendar}
+                      alt="logo"
+                      style={{ height: 25, width: 25 }}
+                    />
+
+                    <H3>진행날짜</H3>
+                  </Icon>
+                  <ProgInfoText>{data?.programDate}</ProgInfoText>
+                </ProgDate>
+                <ProgRegion>
+                  <Icon>
+                    <img
+                      src={Loc}
+                      alt="logo"
+                      style={{ height: 25, width: 25 }}
+                    />
+                    <H3>모집지역</H3>
+                  </Icon>
+                  <ProgInfoText>{data?.location}</ProgInfoText>
+                </ProgRegion>
+                <ProgMessage>
+                  <Icon>
+                    <img
+                      src={Info}
+                      alt="logo"
+                      style={{ height: 25, width: 25 }}
+                    />
+                    <H3>최소 친절도</H3>
+                  </Icon>
+                  <ProgInfoText>{data?.minKind}% 이상</ProgInfoText>
+                </ProgMessage>
+                <BtnWrap>
+                  {userId === data?.writer.id ? (
+                    <>
+                      <BookmarkBtn onClick={handleBookmarkedToggle}>
+                        <Icon>
+                          {detailBookmarked ? (
+                            <img
+                              src={Bookmarked}
+                              alt="logo"
+                              style={{ height: 25, width: 25 }}
+                            />
+                          ) : (
+                            <img
+                              src={Bookmark}
+                              alt="logo"
+                              style={{ height: 25, width: 25 }}
+                            />
+                          )}
+                        </Icon>
+                      </BookmarkBtn>
+                      {applyList.length !== 0 &&
+                      data?.programDate === getToday() ? (
+                        <ProgUpdateBtn
                           onClick={() => {
-                            navigate(`/users/${el.user.id}`);
-                          }}
-                        />
-                      )}
-                      <MemInfo>
-                        <MemName
-                          onClick={() => {
-                            navigate(el.user.id);
+                            alert(
+                              '함께하는 멤버가 있으므로 당일 수정이 불가합니다!'
+                            );
                           }}
                         >
-                          {el.user.nickname}
-                        </MemName>
-                        <MemIntro>{el.user.introduction}</MemIntro>
-                      </MemInfo>
-                    </MemItemWrap1>
-                    <MemItemWrap2>
-                      <KindWrap>
-                        <KindRowWrap>
-                          친절도 &nbsp;
-                          <KindGuide />
-                        </KindRowWrap>
-                        <LevelPercent percent={el.user.kind}></LevelPercent>
-                      </KindWrap>
-                      <ProgressBar
-                        currentPerson={el.user.kind}
-                        totalPerson={100}
-                      />
-                      <ApplyDate>{el.createdTime} 신청</ApplyDate>
-                    </MemItemWrap2>
-                  </MemItem>
-                ))}
-              </MemberSection>
-              {applyList ? (
-                <Pagination list={pageList} page={page} setPage={setPage} />
-              ) : null}
-            </ProgMemberContent>
-          </ProgDetailWrap>
-          <ProgDetailInfo>
-            <H2>모집정보</H2>
-            <ProglInfoWrap>
-              <ProgPeople>
-                <Icon>
-                  <img
-                    src={User}
-                    alt="logo"
-                    style={{ height: 25, width: 25 }}
-                  />
+                          수정하기
+                        </ProgUpdateBtn>
+                      ) : (
+                        <ProgUpdateBtn
+                          onClick={() => {
+                            navigate(`/programs/${params.programId}/update`);
+                          }}
+                        >
+                          수정하기
+                        </ProgUpdateBtn>
+                      )}
+                      {applyList.length !== 0 &&
+                      data?.programDate === getToday() ? (
+                        <ProgDeleteBtn
+                          onClick={() => {
+                            alert(
+                              '함께하는 멤버가 있으므로 당일 삭제가 불가합니다!'
+                            );
+                          }}
+                        >
+                          삭제하기
+                        </ProgDeleteBtn>
+                      ) : (
+                        <ProgDeleteBtn
+                          onClick={() => {
+                            setIsDeleteOpen(true);
+                          }}
+                        >
+                          삭제하기
+                        </ProgDeleteBtn>
+                      )}
+                    </>
+                  ) : compareWithToday(data?.programDate as string) ===
+                    '모임종료' ? (
+                    <>
+                      <BookmarkBtn onClick={handleBookmarkedToggle}>
+                        <Icon>
+                          {detailBookmarked ? (
+                            <img
+                              src={Bookmarked}
+                              alt="logo"
+                              style={{ height: 25, width: 25 }}
+                            />
+                          ) : (
+                            <img
+                              src={Bookmark}
+                              alt="logo"
+                              style={{ height: 25, width: 25 }}
+                            />
+                          )}
+                        </Icon>
+                      </BookmarkBtn>
+                      <ProgApply
+                        style={{
+                          backgroundColor: 'rgba(81, 81, 81, 0.469)',
+                        }}
+                      >
+                        종료된 모임입니다
+                      </ProgApply>
+                    </>
+                  ) : applyMemberfilter.length !== 0 ? (
+                    <>
+                      <BookmarkBtn onClick={handleBookmarkedToggle}>
+                        <Icon>
+                          {detailBookmarked ? (
+                            <img
+                              src={Bookmarked}
+                              alt="logo"
+                              style={{ height: 25, width: 25 }}
+                            />
+                          ) : (
+                            <img
+                              src={Bookmark}
+                              alt="logo"
+                              style={{ height: 25, width: 25 }}
+                            />
+                          )}
+                        </Icon>
+                      </BookmarkBtn>
 
-                  <H3>모집인원</H3>
-                </Icon>
-                <ProgInfoText>
-                  {pageList?.totalElements} / {data?.numOfRecruits}
-                </ProgInfoText>
-              </ProgPeople>
-              <ProgDate>
-                <Icon>
-                  <img
-                    src={Calendar}
-                    alt="logo"
-                    style={{ height: 25, width: 25 }}
-                  />
+                      {data?.programDate !== getToday() ? (
+                        <ProgApply
+                          onClick={() => {
+                            setIsCancelOpen(true);
+                          }}
+                        >
+                          취소하기
+                        </ProgApply>
+                      ) : (
+                        <ProgApply
+                          onClick={() => {
+                            alert('프로그램 당일 신청 취소가 불가합니다!');
+                          }}
+                        >
+                          취소하기
+                        </ProgApply>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <BookmarkBtn
+                        onClick={() => {
+                          userId === undefined || null
+                            ? navigate('/login')
+                            : handleBookmarkedToggle();
+                        }}
+                      >
+                        <Icon>
+                          {detailBookmarked ? (
+                            <img
+                              src={Bookmarked}
+                              alt="logo"
+                              style={{ height: 25, width: 25 }}
+                            />
+                          ) : (
+                            <img
+                              src={Bookmark}
+                              alt="logo"
+                              style={{ height: 25, width: 25 }}
+                            />
+                          )}
+                        </Icon>
+                      </BookmarkBtn>
 
-                  <H3>진행날짜</H3>
-                </Icon>
-                <ProgInfoText>{data?.programDate}</ProgInfoText>
-              </ProgDate>
-              <ProgRegion>
-                <Icon>
-                  <img src={Loc} alt="logo" style={{ height: 25, width: 25 }} />
-                  <H3>모집지역</H3>
-                </Icon>
-                <ProgInfoText>{data?.location}</ProgInfoText>
-              </ProgRegion>
-              <ProgMessage>
-                <Icon>
-                  <img
-                    src={Info}
-                    alt="logo"
-                    style={{ height: 25, width: 25 }}
-                  />
-                  <H3>최소 친절도</H3>
-                </Icon>
-                <ProgInfoText>{data?.minKind}% 이상</ProgInfoText>
-              </ProgMessage>
+                      {data?.numOfRecruits === applyList.length ? (
+                        <ProgApply
+                          onClick={() => {
+                            userId === undefined || null
+                              ? navigate('/login')
+                              : alert('신청인원이 가득 찼습니다!');
+                          }}
+                        >
+                          신청하기
+                        </ProgApply>
+                      ) : (
+                        <ProgApply
+                          onClick={() => {
+                            userId === undefined || null
+                              ? navigate('/login')
+                              : setIsApplyOpen(true);
+                          }}
+                        >
+                          신청하기
+                        </ProgApply>
+                      )}
+                    </>
+                  )}
+                </BtnWrap>
+              </ProglInfoWrap>
+              <H2>모임장 정보</H2>
+              <LeaderInfo>
+                <MemName
+                  onClick={() => {
+                    navigate(`/users/${data?.writer.id}`);
+                  }}
+                >
+                  {writerImg ? (
+                    <ProfileImg
+                      src={writerImg}
+                      alt="profile"
+                      style={{ height: 40, width: 40, borderRadius: 50 }}
+                    />
+                  ) : (
+                    <ProfileImg
+                      src={Profile}
+                      alt="profile"
+                      style={{ height: 40, width: 40 }}
+                    />
+                  )}
+                  <MemInfo>
+                    <ProfileNickname>{data?.writer.nickname}</ProfileNickname>
+                    <ProfileIntro>{data?.writer.introduction}</ProfileIntro>
+                  </MemInfo>
+                </MemName>
+                <KindWrap>
+                  <KindRowWrap>
+                    친절도 &nbsp;
+                    <KindGuide />
+                  </KindRowWrap>
+                  <LevelPercent
+                    //@ts-ignore
+                    percent={data?.writer.kind}
+                  ></LevelPercent>
+                </KindWrap>
+                <ProgressBar
+                  //@ts-ignore
+                  currentPerson={data?.writer.kind}
+                  totalPerson={100}
+                />
+                <SendMsgBtn
+                  onClick={() => {
+                    userId === undefined || null
+                      ? navigate('/login')
+                      : setIsMessageOpen(true);
+                  }}
+                >
+                  <SendMsg>
+                    <img
+                      src={Msg}
+                      alt="logo"
+                      style={{ height: 20, width: 20 }}
+                    />{' '}
+                    메시지 보내기
+                  </SendMsg>
+                </SendMsgBtn>
+              </LeaderInfo>
+            </ProgDetailInfo>
+          </Default>
+
+          {/* 모바일 버전 */}
+
+          <Mobile>
+            <ProgDetailWrap>
+              <ProgDetailImg src={progImg}></ProgDetailImg>
+              <ProgTitleSection>
+                [{data?.location}]{data?.title}
+              </ProgTitleSection>
+            </ProgDetailWrap>
+            <ProgDetailInfo>
+              <ProglInfoWrap>
+                <ProgPeople>
+                  <Icon>
+                    <img
+                      src={User}
+                      alt="logo"
+                      style={{ height: 25, width: 25 }}
+                    />
+
+                    <H3>모집인원</H3>
+                  </Icon>
+                  <ProgInfoText>
+                    {pageList?.totalElements} / {data?.numOfRecruits}
+                  </ProgInfoText>
+                </ProgPeople>
+                <ProgDate>
+                  <Icon>
+                    <img
+                      src={Calendar}
+                      alt="logo"
+                      style={{ height: 25, width: 25 }}
+                    />
+
+                    <H3>진행날짜</H3>
+                  </Icon>
+                  <ProgInfoText>{data?.programDate}</ProgInfoText>
+                </ProgDate>
+                <ProgRegion>
+                  <Icon>
+                    <img
+                      src={Loc}
+                      alt="logo"
+                      style={{ height: 25, width: 25 }}
+                    />
+                    <H3>모집지역</H3>
+                  </Icon>
+                  <ProgInfoText>{data?.location}</ProgInfoText>
+                </ProgRegion>
+                <ProgMessage>
+                  <Icon>
+                    <img
+                      src={Info}
+                      alt="logo"
+                      style={{ height: 25, width: 25 }}
+                    />
+                    <H3>최소 친절도</H3>
+                  </Icon>
+                  <ProgInfoText>{data?.minKind}% 이상</ProgInfoText>
+                </ProgMessage>
+              </ProglInfoWrap>
+              <H2>모임장 정보</H2>
+              <LeaderInfo>
+                <MemName
+                  onClick={() => {
+                    navigate(`/users/${data?.writer.id}`);
+                  }}
+                >
+                  {writerImg ? (
+                    <ProfileImg
+                      src={writerImg}
+                      alt="profile"
+                      style={{ height: 40, width: 40, borderRadius: 50 }}
+                    />
+                  ) : (
+                    <ProfileImg
+                      src={Profile}
+                      alt="profile"
+                      style={{ height: 40, width: 40 }}
+                    />
+                  )}
+                  <MemInfo>
+                    <ProfileNickname>{data?.writer.nickname}</ProfileNickname>
+                    <ProfileIntro>{data?.writer.introduction}</ProfileIntro>
+                  </MemInfo>
+                </MemName>
+                <KindWrap>
+                  <KindRowWrap>
+                    친절도 &nbsp;
+                    <KindGuide />
+                  </KindRowWrap>
+                  <LevelPercent
+                    //@ts-ignore
+                    percent={data?.writer.kind}
+                  ></LevelPercent>
+                </KindWrap>
+                <ProgressBar
+                  //@ts-ignore
+                  currentPerson={data?.writer.kind}
+                  totalPerson={100}
+                />
+                <SendMsgBtn
+                  onClick={() => {
+                    userId === undefined || null
+                      ? navigate('/login')
+                      : setIsMessageOpen(true);
+                  }}
+                >
+                  <SendMsg>
+                    <img
+                      src={Msg}
+                      alt="logo"
+                      style={{ height: 20, width: 20 }}
+                    />{' '}
+                    메시지 보내기
+                  </SendMsg>
+                </SendMsgBtn>
+              </LeaderInfo>
+              <H2>소개글</H2>
+              <ProgTxtSection>
+                <ProgText>{data?.text}</ProgText>
+              </ProgTxtSection>
+              <ProgMemberContent>
+                <H2>함께하는 멤버(신청자)</H2>
+                <MemberSection>
+                  {applyList?.map((el) => (
+                    <MemItem key={el.id}>
+                      <MemItemWrap1>
+                        {el.user.userImages.length !== 0 ? (
+                          <ProfileImg
+                            src={
+                              'data:' +
+                              //@ts-ignore
+                              el.user.userImages[0].contentType +
+                              ';base64,' +
+                              //@ts-ignore
+                              el.user.userImages[0].bytes
+                            }
+                            alt="profile"
+                            style={{ height: 40, width: 40, borderRadius: 50 }}
+                            onClick={() => {
+                              navigate(`/users/${el.user.id}`);
+                            }}
+                          />
+                        ) : (
+                          <ProfileImg
+                            src={Profile}
+                            alt="profile"
+                            style={{ height: 40, width: 40 }}
+                            onClick={() => {
+                              navigate(`/users/${el.user.id}`);
+                            }}
+                          />
+                        )}
+                        <MemInfo>
+                          <MemName
+                            onClick={() => {
+                              navigate(el.user.id);
+                            }}
+                          >
+                            {el.user.nickname}
+                          </MemName>
+                          <MemIntro>{el.user.introduction}</MemIntro>
+                        </MemInfo>
+                      </MemItemWrap1>
+                      <MemItemWrap2>
+                        <KindWrap>
+                          <KindRowWrap>
+                            친절도 &nbsp;
+                            <KindGuide />
+                          </KindRowWrap>
+                          <LevelPercent percent={el.user.kind}></LevelPercent>
+                        </KindWrap>
+                        <ProgressBar
+                          currentPerson={el.user.kind}
+                          totalPerson={100}
+                        />
+                        <ApplyDate>{el.createdTime} 신청</ApplyDate>
+                      </MemItemWrap2>
+                    </MemItem>
+                  ))}
+                </MemberSection>
+                {applyList ? (
+                  <Pagination list={pageList} page={page} setPage={setPage} />
+                ) : null}
+              </ProgMemberContent>
               <BtnWrap>
                 {userId === data?.writer.id ? (
                   <>
@@ -666,61 +1143,8 @@ export default function ProgDetail() {
                   </>
                 )}
               </BtnWrap>
-            </ProglInfoWrap>
-            <H2>모임장 정보</H2>
-            <LeaderInfo>
-              <MemName
-                onClick={() => {
-                  navigate(`/users/${data?.writer.id}`);
-                }}
-              >
-                {writerImg ? (
-                  <ProfileImg
-                    src={writerImg}
-                    alt="profile"
-                    style={{ height: 40, width: 40, borderRadius: 50 }}
-                  />
-                ) : (
-                  <ProfileImg
-                    src={Profile}
-                    alt="profile"
-                    style={{ height: 40, width: 40 }}
-                  />
-                )}
-                <MemInfo>
-                  <ProfileNickname>{data?.writer.nickname}</ProfileNickname>
-                  <ProfileIntro>{data?.writer.introduction}</ProfileIntro>
-                </MemInfo>
-              </MemName>
-              <KindWrap>
-                <KindRowWrap>
-                  친절도 &nbsp;
-                  <KindGuide />
-                </KindRowWrap>
-                <LevelPercent
-                  //@ts-ignore
-                  percent={data?.writer.kind}
-                ></LevelPercent>
-              </KindWrap>
-              <ProgressBar
-                //@ts-ignore
-                currentPerson={data?.writer.kind}
-                totalPerson={100}
-              />
-              <SendMsgBtn
-                onClick={() => {
-                  userId === undefined || null
-                    ? navigate('/login')
-                    : setIsMessageOpen(true);
-                }}
-              >
-                <SendMsg>
-                  <img src={Msg} alt="logo" style={{ height: 20, width: 20 }} />{' '}
-                  메시지 보내기
-                </SendMsg>
-              </SendMsgBtn>
-            </LeaderInfo>
-          </ProgDetailInfo>
+            </ProgDetailInfo>
+          </Mobile>
         </ProgPageDetail>
       </Layout>
       {isApplyOpen ? (

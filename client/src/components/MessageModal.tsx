@@ -27,6 +27,11 @@ export const ModalView = styled.div`
   justify-content: center;
   border-radius: 5px;
   z-index: 9999;
+  @media screen and (max-width: 767px) {
+    width: 90%;
+    min-width: 220px;
+    max-width: 360px;
+  }
 `;
 
 const MessageInput = styled.textarea`
