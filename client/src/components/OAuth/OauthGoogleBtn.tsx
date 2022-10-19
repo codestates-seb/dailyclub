@@ -18,6 +18,9 @@ const GoogleImg = styled.img`
 const GoogleText = styled.div`
   margin: 0 8px;
   font-size: 0.9rem;
+  @media screen and (max-width: 767px) {
+    font-size: 12px;
+  }
 `;
 
 interface GoogleBtnProps {

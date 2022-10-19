@@ -15,10 +15,12 @@ public interface NotificationMapper {
     default NotificationDto.Response notificationToNotificationResponseDto(Notification notification) {
         return NotificationDto.Response.builder()
                 .id(notification.getId())
+                .userId(notification.getUser().getId())
                 .programId(notification.getProgram().getId())
                 .title(notification.getProgram().getTitle())
                 .status(notification.getStatusRead().getStatus())
                 .type(notification.getNotificationType().getType())
+                .createdDate(notification.getCreatedDate())
                 .build();
     }
 

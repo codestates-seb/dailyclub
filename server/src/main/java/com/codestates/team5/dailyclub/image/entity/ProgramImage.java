@@ -1,11 +1,11 @@
 package com.codestates.team5.dailyclub.image.entity;
 
 import com.codestates.team5.dailyclub.program.entity.Program;
+import com.codestates.team5.dailyclub.validator.annotation.Image;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,6 +32,7 @@ public class ProgramImage {
 
     private Long size;
 
+    @Image
     private String contentType;
 
     private String originalName;
@@ -50,4 +51,11 @@ public class ProgramImage {
         program.getProgramImages().add(this);
     }
 
+    //비즈니스 메소드
+    public void updateProgramImage(ProgramImage programImage) {
+        this.size = programImage.getSize();
+        this.contentType = programImage.getContentType();
+        this.originalName = programImage.getOriginalName();
+        this.bytes = programImage.getBytes();
+    }
 }

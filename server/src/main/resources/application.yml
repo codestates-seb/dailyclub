@@ -16,9 +16,9 @@ spring:
   h2:
     console:
       enabled: true
-      path: /h2 # ~/h2? console ??
+      path: /h2
       settings:
-        web-allow-others: true # ?? ip? ??
+        web-allow-others: true
   datasource:
     url: jdbc:h2:mem:test
     driver-class-name: org.h2.Driver
@@ -29,3 +29,10 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+        use_sql_comments: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  messages:
+    basename: errors

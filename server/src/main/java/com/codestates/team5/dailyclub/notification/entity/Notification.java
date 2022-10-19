@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -22,6 +24,7 @@ public class Notification extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -35,6 +38,7 @@ public class Notification extends Auditable {
     @NotNull
     private NotificationType notificationType;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @NotNull
     private StatusRead statusRead = StatusRead.UNREAD;
@@ -64,7 +68,9 @@ public class Notification extends Auditable {
      */
     @Getter
     public enum NotificationType {
-        UPDATE("UPDATE"), DDAY("DDAY"), APPLY_COMPLETE("APPLY_COMPLETE");
+        UPDATE("UPDATE"),
+        DDAY("DDAY"),
+        APPLY_COMPLETE("APPLY_COMPLETE");
 
         private String type;
 

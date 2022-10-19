@@ -2,7 +2,9 @@ package com.codestates.team5.dailyclub.common.mapper;
 
 import com.codestates.team5.dailyclub.common.util.EnumValueConvertUtils;
 import com.codestates.team5.dailyclub.image.dto.ProgramImageDto;
+import com.codestates.team5.dailyclub.image.dto.UserImageDto;
 import com.codestates.team5.dailyclub.image.entity.ProgramImage;
+import com.codestates.team5.dailyclub.image.entity.UserImage;
 import com.codestates.team5.dailyclub.program.dto.ProgramDto;
 import com.codestates.team5.dailyclub.program.entity.Program;
 import com.codestates.team5.dailyclub.user.dto.UserDto;
@@ -12,7 +14,20 @@ import java.util.stream.Collectors;
 
 public interface CommonMapper {
 
-    UserDto.Response userToUserResponseDto (User User);
+    //User -> UserResponseDto
+    default UserDto.Response userToUserResponseDto(User user) {
+        return UserDto.Response.builder()
+                .id(user.getId())
+                .loginId(user.getLoginId())
+                .introduction(user.getIntroduction())
+                .kind(user.getKind())
+                .nickname(user.getNickname())
+                .role(user.getRole().getRole())
+                .userImages(user.getUserImages().stream()
+                        .map(this::userImageToUserImageResponseDto)
+                        .collect(Collectors.toList()))
+                .build();
+    }
 
     //Program -> ProgramResponseDTO
     default ProgramDto.Response programToProgramResponseDto(Program program) {
@@ -42,6 +57,17 @@ public interface CommonMapper {
                 .contentType(programImage.getContentType())
                 .originalName(programImage.getOriginalName())
                 .bytes(programImage.getBytes())
+                .build();
+    }
+
+    default UserImageDto.Response userImageToUserImageResponseDto(UserImage userImage) {
+        return UserImageDto.Response.builder()
+                .id(userImage.getId())
+                .userId(userImage.getUser().getId())
+                .size(userImage.getSize())
+                .contentType(userImage.getContentType())
+                .originalName(userImage.getOriginalName())
+                .bytes(userImage.getBytes())
                 .build();
     }
 

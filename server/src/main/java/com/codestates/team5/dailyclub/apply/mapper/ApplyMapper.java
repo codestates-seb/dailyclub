@@ -46,6 +46,7 @@ public interface ApplyMapper extends CommonMapper {
         return ApplyDto.ResponseWithProgram.builder()
                                     .id(apply.getId())
                                     .userId(apply.getUser().getId())
+                                    .reviewStatus(apply.getReviewStatus().getStatus())
                                     .program(programToProgramResponseDto(apply.getProgram()))
                                     .createdTime(apply.getCreatedDate())
                                     .build();

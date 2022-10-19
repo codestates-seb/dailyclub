@@ -26,7 +26,12 @@ export default function ProgressBar({
 }: ProgressProps) {
   return (
     <>
-      <ProgressContent value={(currentPerson / totalPerson) * 100} max="100" />
+      <ProgressContent
+        value={
+          currentPerson && totalPerson && (currentPerson / totalPerson) * 100
+        }
+        max="100"
+      />
     </>
   );
 }

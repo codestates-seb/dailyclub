@@ -14,7 +14,9 @@ export const GlobalStyles = createGlobalStyle`
     height: 100%;
   }
   input {
-    all:unset;
+    border:none;
+    outline: none;
+    background-color: transparent;
   }
   textarea {
     all:unset;

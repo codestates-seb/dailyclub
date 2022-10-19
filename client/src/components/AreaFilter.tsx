@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { filterActions, getLocation } from 'stores/filterSlice';
+import { useAppDispatch, useAppSelector } from 'stores/hooks';
 import styled from 'styled-components';
 import DownArrow from '../images/DownArrow.svg';
 
@@ -49,11 +51,15 @@ export const DropDouwnList = styled.li`
 
 interface AreaProps {
   setAreaSelected?: React.Dispatch<React.SetStateAction<string>>;
+  setParamsData?: any;
+  paramsData?: any;
 }
 
-function AreaFilter({ setAreaSelected }: AreaProps) {
+function AreaFilter({ setAreaSelected, setParamsData, paramsData }: AreaProps) {
   const [isClicked, setIsClicked] = useState<boolean>(false);
   const [area, setArea] = useState<string>('지역');
+  const dispatch = useAppDispatch();
+  const getFilterLocation = useAppSelector(getLocation);
 
   const handleClickFilterButton = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
@@ -63,13 +69,31 @@ function AreaFilter({ setAreaSelected }: AreaProps) {
   const handleClickArea = (e: React.MouseEvent<HTMLElement>) => {
     setArea((e.target as any).textContent);
     setIsClicked(!isClicked);
-    if (setAreaSelected) setAreaSelected((e.target as any).textContent);
+
+    if (setAreaSelected) {
+      if ((e.target as any).textContent === '전체') {
+        const { location, programDate, minKind, ...rest } = paramsData;
+        setAreaSelected('');
+        setParamsData({
+          ...rest,
+        });
+        dispatch(filterActions.setLocation(''));
+      } else {
+        setAreaSelected((e.target as any).textContent);
+        setParamsData({
+          ...paramsData,
+          location: (e.target as any).textContent,
+        });
+        dispatch(filterActions.setLocation((e.target as any).textContent));
+      }
+    }
   };
 
   const areaList: string[] = [
-    '지역',
+    '전체',
     '서울',
-    '경기/강원',
+    '경기',
+    '강원',
     '인천',
     '대전/충청',
     '대구/경북',
@@ -82,6 +106,7 @@ function AreaFilter({ setAreaSelected }: AreaProps) {
     <WrapLocationParent>
       <FilterButton onClick={handleClickFilterButton}>
         {area}
+        {/* {getFilterLocation.length > 0 ? getFilterLocation : area} */}
         <img src={DownArrow} alt="down arrow" />
       </FilterButton>
       {isClicked ? (
