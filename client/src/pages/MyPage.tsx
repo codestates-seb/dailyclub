@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMediaQuery } from 'react-responsive';
 import Layout from 'components/Layout';
 import styled from 'styled-components';
 import ProgressBar from 'components/ProgressBar';
@@ -27,12 +28,23 @@ const MyPageContainer = styled.div`
   margin-bottom: 23rem;
 `;
 
+const ResMypageContainer = styled.div`
+  margin-bottom: 23rem;
+  align-items: center;
+`;
+
 /* 프로필 부분 */
 const Profile = styled.div`
   min-width: 210px;
   width: 30%;
   height: 100%;
   margin: 1rem;
+`;
+
+const ResProfile = styled.div`
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
 `;
 
 const ProfileWrap = styled.div`
@@ -45,11 +57,28 @@ const ProfileWrap = styled.div`
   justify-content: center;
 `;
 
+const ResProfileWrap = styled.div`
+  align-items: center;
+`;
+
+
 const ProfileForm = styled.form`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+`;
+
+const ResForm = styled.form`
+`;
+
+const ResImgInfoWrap = styled.div`
+  display: flex;
+  flex-direction: row;
+`;
+const MyInfo = styled.div`
+  font-weight: bold;
+  margin-bottom: 1rem;
 `;
 
 const ProfileImage = styled.div`
@@ -58,15 +87,35 @@ const ProfileImage = styled.div`
   border-radius: 50%;
 `;
 
+const ResProfileImage = styled.div`
+`
+
 const ProfileNickname = styled.div`
   font-weight: bold;
   font-size: 18px;
   margin-bottom: 1rem;
 `;
 
+const NicknameNIntro = styled.div`
+  margin-left: 1rem;
+  margin-top: 1rem;
+  width: 200px;
+`;
+
 const ProfileIntro = styled.div`
   font-weight: lighter;
   margin-bottom: 1rem;
+`;
+
+const ResNickname = styled.div`
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 1rem;
+`;
+
+const ResIntro = styled.div`
+  font-weight: lighter;
+  margin-top: 1rem;
 `;
 
 const ProfileUpdateBtn = styled.button`
@@ -76,6 +125,11 @@ const ProfileUpdateBtn = styled.button`
   border-radius: 5px;
   color: #ff5924;
   margin-bottom: 1rem;
+  @media screen and (max-width: 767px) {
+    margin-top: 1rem;
+    width: 100%;
+    height: 2.5rem;
+  }
 `;
 
 const SendMsgBtn = styled.button`
@@ -85,6 +139,11 @@ const SendMsgBtn = styled.button`
   border-radius: 5px;
   color: #ff5924;
   margin-bottom: 1rem;
+  @media screen and (max-width: 767px) {
+    margin-top: 1rem;
+    width: 95%;
+    height: 2.5rem;
+  }
 `;
 
 const SendMsg = styled.div`
@@ -99,9 +158,11 @@ const KindWrap = styled.div`
   justify-content: space-between;
   margin-bottom: 0.5rem;
 `;
+
 const KindRowWrap = styled.div`
   display: flex;
-  align-items: center;
+  text-align: center;
+  
 `;
 
 const UpdateInput = styled.input`
@@ -112,9 +173,20 @@ const UpdateInput = styled.input`
   margin-bottom: 1rem;
 `;
 
+const ResInput = styled.input`
+  width: 10rem;
+  height: 2rem;
+  border: 1px solid #e2e6e8;
+  border-radius: 5px;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  flex-direction: column;
+`;
+
 const UpdateImageInput = styled.input`
   display: none;
 `;
+
 const UpdateImageLabel = styled.label`
   position: relative;
   width: 7rem;
@@ -131,6 +203,11 @@ const UpdateImageLabel = styled.label`
     color: white;
     background-color: #9d9d9d;
   }
+  @media screen and (max-width: 767px) {
+    width: 4.5rem;
+    height: 4.5rem;
+    margin: 0;
+  }
 `;
 
 const OrgImage = styled.img`
@@ -140,10 +217,13 @@ const OrgImage = styled.img`
 `;
 /* 탭 부분 */
 const TabContainer = styled.div`
-  min-width: 650px;
   width: 70%;
   height: 100%;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+  }
 `;
+
 const TabMenu = styled.ul`
   color: #bdbdbd;
   font-weight: bold;
@@ -162,18 +242,28 @@ const TabMenu = styled.ul`
     border-bottom: 2px solid #e84118;
     color: black;
   }
+  @media screen and (max-width: 767px) {
+
+  }
 `;
+
+
 const TabContent = styled.div`
   margin: 1rem;
+`;
+
+const NoProg = styled.div`
+  text-align: center;
 `;
 
 export const ClubContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  @media screen and (max-width: 500px) {
+  @media screen and (max-width: 767px) {
     grid-template-columns: 1fr;
   }
 `;
+
 export const ClubTabTitle = styled.div`
   font-weight: 500;
   font-size: 1rem;
@@ -188,7 +278,11 @@ export const ClubItem = styled.div`
   padding: 1.2rem;
   border: 1px solid #e2e6e8;
   border-radius: 5px;
+  @media screen and (max-width: 767px) {
+    width: 100%;
+  }
 `;
+
 export const ClubImg = styled.div`
   border-radius: 50%;
   width: 35px;
@@ -217,6 +311,7 @@ export const ClubDate = styled.div`
 `;
 const UserWrapBtn = styled.div`
   margin-top: 2rem;
+  text-align: center;
 `;
 const WithdrawalBtn = styled.button`
   border: none;
@@ -225,7 +320,8 @@ const WithdrawalBtn = styled.button`
     font-weight: 600;
   }
 `;
-const LogoutBtn = styled(WithdrawalBtn)``;
+const LogoutBtn = styled(WithdrawalBtn)`
+`;
 const CardLeftWrapper = styled.div`
   display: flex;
 `;
@@ -241,6 +337,15 @@ const ReviewBtn = styled.button`
     transition: 0.1s ease-in-out;
   }
 `;
+
+const Mobile = ({ children }: { children?: any }) => {
+  const isMobile = useMediaQuery({ maxWidth: 767 });
+  return isMobile ? children : null;
+};
+const Default = ({ children }: { children: any }) => {
+  const isNotMobile = useMediaQuery({ minWidth: 768 });
+  return isNotMobile ? children : null;
+};
 
 function MyPage() {
   const DEV_URL = process.env.REACT_APP_DEV_URL;
@@ -352,6 +457,9 @@ function MyPage() {
       content: (
         <div>
           <ClubTabTitle>참여 중인 모임</ClubTabTitle>
+          {!programs.length ? (
+          <NoProg>참여 중인 모임이 없습니다.</NoProg>)
+          : (
           <ClubContainer>
             {programs?.map((el: any) => (
               <ClubItem key={el?.id}>
@@ -426,8 +534,12 @@ function MyPage() {
               </ClubItem>
             ))}
           </ClubContainer>
+          )}
           <Pagination list={pageList} page={page} setPage={setPage} />
           <ClubTabTitle>개설한 모임</ClubTabTitle>
+          {!opens.length ? (
+            <NoProg>개설한 모임이 없습니다.</NoProg>)
+            : (
           <ClubContainer>
             {opens?.map((el: any) => (
               <ClubItem key={el?.id}>
@@ -485,6 +597,7 @@ function MyPage() {
               </ClubItem>
             ))}
           </ClubContainer>
+            )}
           <Pagination
             list={openList}
             page={openListPage}
@@ -517,6 +630,9 @@ function MyPage() {
       content: (
         <div>
           <ClubTabTitle>참여 중인 모임</ClubTabTitle>
+          {!programs.length ? (
+            <NoProg>참여 중인 모임이 없습니다.</NoProg>)
+            : (
           <ClubContainer>
             {programs?.map((el: any) => (
               <ClubItem key={el?.id}>
@@ -575,9 +691,14 @@ function MyPage() {
               </ClubItem>
             ))}
           </ClubContainer>
+          )}
           <Pagination list={otherPageList} page={page} setPage={setPage} />
           <ClubTabTitle>개설한 모임</ClubTabTitle>
+          {!opens.length ? (
+            <NoProg>개설한 모임이 없습니다.</NoProg>)
+            : (
           <ClubContainer>
+
             {opens?.map((el: any) => (
               <ClubItem key={el?.id}>
                 <Link to={`/programs/${el?.id}`} key={el?.id}>
@@ -633,7 +754,8 @@ function MyPage() {
                 </Link>
               </ClubItem>
             ))}
-          </ClubContainer>
+            </ClubContainer>
+            )}
           <Pagination
             list={otherOpenList}
             page={openListPage}
@@ -757,6 +879,164 @@ function MyPage() {
 
   return (
     <>
+    <Mobile>
+    <Layout>
+        {userId === data?.id ? (
+          <ResMypageContainer>
+            {/* 프로필 부분 - 정석 */}
+            <ResProfile>
+              <MyInfo>회원 정보</MyInfo>
+              <ResProfileWrap>
+                {isUpdateMode ? (
+                  <ResForm onSubmit={profileUpdate}>
+                    <ResImgInfoWrap>
+                    {orgImg ? (
+                      <UpdateImageLabel htmlFor="file">
+                        <OrgImage src={orgImg} alt="profile" />
+                        <ImgDeleteBtn onClick={handleDeleteImg}>
+                          <img src={ImgDeleteBtnSvg} alt="delete" />
+                        </ImgDeleteBtn>
+                      </UpdateImageLabel>
+                    ) : (
+                      <UpdateImageLabel htmlFor="file">
+                        프로필 사진 변경
+                        <ImgDeleteBtn onClick={handleDeleteImg}>
+                          <img src={ImgDeleteBtnSvg} alt="delete" />
+                        </ImgDeleteBtn>
+                      </UpdateImageLabel>
+                    )}
+                    <UpdateImageInput
+                      id="file"
+                      type="file"
+                      name="avatar"
+                      accept="image/*"
+                      onChange={handleImage}
+                    ></UpdateImageInput>
+                    <NicknameNIntro>
+                    <ResInput
+                      type="text"
+                      defaultValue={nickname}
+                      onChange={(e) => {
+                        setNickname(e.target.value);
+                      }}
+                    ></ResInput>
+                    <ResInput
+                      type="text"
+                      defaultValue={introduction}
+                      onChange={(e) => {
+                        setIntroduction(e.target.value);
+                      }}
+                    ></ResInput>
+                    </NicknameNIntro>
+                    </ResImgInfoWrap>
+                    <ProfileUpdateBtn type="submit">수정완료</ProfileUpdateBtn>
+                  </ResForm>
+                ) : (
+                  <>
+                  <ResImgInfoWrap>
+                    <ResProfileImage>
+                      {!orgImg ? (
+                        <img
+                          src={ProfileSvg}
+                          alt="profile"
+                          style={{ height: 75, width: 75 }}
+                        />
+                      ) : (
+                        <img
+                          src={orgImg}
+                          style={{ height: 75, width: 75, borderRadius: 50 }}
+                        />
+                      )}
+                    </ResProfileImage>
+                    <NicknameNIntro>
+                    <ResNickname>{data?.nickname}</ResNickname>
+                    <ResIntro>{data?.introduction}</ResIntro>
+                    </NicknameNIntro>
+                    </ResImgInfoWrap>
+                    <ProfileUpdateBtn onClick={handleUpdateMode}>
+                      프로필 수정
+                    </ProfileUpdateBtn>
+                  </>
+                )}
+                <KindWrap>
+                  <KindRowWrap>
+                    친절도 &nbsp;
+                    <KindGuide />
+                  </KindRowWrap>
+                  <LevelPercent percent={data?.kind}></LevelPercent>
+                </KindWrap>
+                <ProgressBar
+                  currentPerson={data?.kind}
+                  totalPerson={100}
+                ></ProgressBar>
+                <UserWrapBtn>
+                  <WithdrawalBtn onClick={handleUserDelete}>
+                    회원탈퇴
+                  </WithdrawalBtn>
+                  <LogoutBtn onClick={handleMyPageLogout}>로그아웃</LogoutBtn>
+                </UserWrapBtn>
+              </ResProfileWrap>
+            </ResProfile>
+
+            {/* 탭 모임목록부분 - 태경 */}
+            <TabContainer>
+              <TabMenu>{menuTab}</TabMenu>
+              <TabContent>
+                <div>{menuArr[currentTab].content}</div>
+              </TabContent>
+            </TabContainer>
+          </ResMypageContainer>
+        ) : (
+          <ResMypageContainer>
+            <ResProfile>
+              <ResProfileWrap>
+                <ResProfileImage>
+                  {!orgImg ? (
+                    <img
+                      src={ProfileSvg}
+                      alt="profile"
+                      style={{ height: 75, width: 75 }}
+                    />
+                  ) : (
+                    <img
+                      src={orgImg}
+                      style={{ height: 75, width: 75, borderRadius: 50 }}
+                    />
+                  )}
+                </ResProfileImage>
+                <ResNickname>{data?.nickname}</ResNickname>
+                <ResIntro>{data?.introduction}</ResIntro>
+                <SendMsgBtn
+                  onClick={() => {
+                    setIsMessageOpen(true);
+                  }}
+                >
+                  <SendMsg>메시지 보내기</SendMsg>
+                </SendMsgBtn>
+                <KindWrap>
+                  <KindRowWrap>
+                    친절도 &nbsp;
+                    <KindGuide />
+                  </KindRowWrap>
+                  <LevelPercent percent={data?.kind}></LevelPercent>
+                </KindWrap>
+                <ProgressBar
+                  currentPerson={data?.kind}
+                  totalPerson={100}
+                ></ProgressBar>
+              </ResProfileWrap>
+            </ResProfile>
+            <TabContainer>
+              <TabMenu>{menuTab2}</TabMenu>
+              <TabContent>
+                <div>{menuArr2[currentTab].content}</div>
+              </TabContent>
+            </TabContainer>
+          </ResMypageContainer>
+        )}
+      </Layout>
+    </Mobile>
+    <Default>
       <Layout>
         {userId === data?.id ? (
           <MyPageContainer>
@@ -903,6 +1183,7 @@ function MyPage() {
           </MyPageContainer>
         )}
       </Layout>
+      </Default>
       {isMessageOpen ? (
         <MessageModal setIsMessageOpen={setIsMessageOpen} />
       ) : null}
