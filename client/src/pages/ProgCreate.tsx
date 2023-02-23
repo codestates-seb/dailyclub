@@ -409,6 +409,7 @@ function ProgCreate() {
                   max="100"
                   name="people"
                   onChange={handleNumofRecruits}
+                  value={numOfRecruits}
                   required
                 />
               </RecruitContents>
@@ -423,13 +424,18 @@ function ProgCreate() {
                   min={getToday()}
                   max="2032-12-31"
                   onChange={handleProgramDate}
+                  value={programDate}
                   required
                 />
               </RecruitContents>
               <RecruitContents>
                 <Redstar>*</Redstar>
                 <RecruitName>모집지역</RecruitName>
-                <AreaSelect name="area" onChange={handleLocation}>
+                <AreaSelect
+                  name="area"
+                  onChange={handleLocation}
+                  value={location}
+                >
                   <option value="지역">지역</option>
                   <option value="서울">서울</option>
                   <option value="경기">경기</option>
@@ -454,6 +460,7 @@ function ProgCreate() {
                     step="1"
                     name="kind"
                     onChange={handleMinKindValue}
+                    value={minkind}
                     required
                   />
                   <KindValue>{minkind}%</KindValue>
@@ -480,6 +487,7 @@ function ProgCreate() {
                   max="100"
                   name="people"
                   onChange={handleNumofRecruits}
+                  value={numOfRecruits}
                   required
                 />
               </RecruitContents>
@@ -496,6 +504,7 @@ function ProgCreate() {
                   min={getToday()}
                   max="2032-12-31"
                   onChange={handleProgramDate}
+                  value={programDate}
                   required
                 />
               </RecruitContents>
@@ -504,7 +513,11 @@ function ProgCreate() {
                   <Redstar>*</Redstar>
                   <RecruitName>모집지역</RecruitName>
                 </MobileTextGrp>
-                <AreaSelect name="area" onChange={handleLocation}>
+                <AreaSelect
+                  name="area"
+                  onChange={handleLocation}
+                  value={location}
+                >
                   <option value="지역">지역</option>
                   <option value="서울">서울</option>
                   <option value="경기">경기</option>
@@ -531,6 +544,7 @@ function ProgCreate() {
                     step="1"
                     name="kind"
                     onChange={handleMinKindValue}
+                    value={minkind}
                     required
                   />
                   <KindValue>{minkind}%</KindValue>
